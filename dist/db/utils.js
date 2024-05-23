@@ -10,7 +10,7 @@ const getData = async (fileName) => {
 };
 const parseCsv = async (fileType) => {
     const transactions = [];
-    const csvData = await getData('debit.csv');
+    const csvData = await getData('./inputs/debit.csv');
     if (csvData) {
         const csvValues = csvData.split(',');
         const totalCol = 6;
@@ -34,7 +34,7 @@ const parseCsv = async (fileType) => {
 };
 const parseOfx = async () => {
     const transactions = [];
-    const ofxString = await getData('debit.ofx');
+    const ofxString = await getData('./inputs/debit.ofx');
     const objectify = (ofxData) => {
         const transType = ofxData.slice(ofxData.indexOf('<TRNTYPE>') + 9, ofxData.indexOf('</TRNTYPE'));
         const datePosted = ofxData.slice(ofxData.indexOf('<DTPOSTED>') + 10, ofxData.indexOf('</DTPOSTED>'));

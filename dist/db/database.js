@@ -13,11 +13,10 @@ const populateDb = async () => {
         const db = createDatabase();
         // const transactions = parseCsv('DEBIT');
         const transactions = parseOfx();
-        const queryInsert = getData('sql/insert_transactions.sql');
-        return Promise.all([db, transactions, queryInsert]);
+        return Promise.all([db, transactions]);
     };
-    const [db, transactions, queryInsert] = await promises();
-    if (db && transactions && queryInsert) {
+    const [db, transactions] = await promises();
+    if (db && transactions) {
         const insertRow = db.prepare('INSERT INTO transactions (trans_type, date_posted, date_available, amount, fitid, trans_name, memo) VALUES (@transType , @datePosted, @dateAvailable, @amount, @fitid, @transName, @memo);');
         const insertData = db.transaction(() => {
             for (const trans of transactions) {

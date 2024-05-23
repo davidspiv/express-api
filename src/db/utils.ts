@@ -11,7 +11,7 @@ const getData = async (fileName: string) => {
 
 const parseCsv = async (fileType: 'DEBIT' | 'CREDIT') => {
 	const transactions = [];
-	const csvData = await getData('debit.csv');
+	const csvData = await getData('./inputs/debit.csv');
 	if (csvData) {
 		const csvValues = csvData.split(',');
 		const totalCol = 6;
@@ -37,7 +37,7 @@ const parseCsv = async (fileType: 'DEBIT' | 'CREDIT') => {
 
 const parseOfx = async () => {
 	const transactions = [];
-	const ofxString = await getData('debit.ofx');
+	const ofxString = await getData('./inputs/debit.ofx');
 	const objectify = (ofxData: string) => {
 		const transType = ofxData.slice(
 			ofxData.indexOf('<TRNTYPE>') + 9,
