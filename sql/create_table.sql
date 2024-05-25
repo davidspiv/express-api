@@ -1,10 +1,15 @@
 CREATE TABLE transactions (
-    trans_id INTEGER PRIMARY KEY,
-    trans_type TEXT,
-    date_posted DATE,
-    date_available DATE,
-    amount REAL,
+    db_id INTEGER PRIMARY KEY,
+    trans_type TEXT NOT NULL,
+    date_posted TEXT NOT NULL,
+    amount REAL NOT NULL,
     fitid TEXT,
-    trans_name TEXT,
-    memo TEXT
+    memo TEXT NOT NULL
 );
+
+	-- dbid: number;
+	-- transType: string;
+	-- datePosted: Date;
+	-- amount: number;
+	-- fitid: string;
+	-- memo: string;

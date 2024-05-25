@@ -3,12 +3,14 @@ import router from './routes/posts.js';
 import logger from './middleware/logger.js';
 import errorHandler from './middleware/errorHandler.js';
 import notFound from './middleware/notFound.js';
+import cors from 'cors';
 const port = process.env.PORT;
 const app = express();
 //Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(logger);
+app.use(cors());
 app.use('/api/posts', router);
 app.use(notFound);
 app.use(errorHandler);

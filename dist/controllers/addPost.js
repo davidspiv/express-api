@@ -1,5 +1,6 @@
 //@route POST /api/posts/:id
 export default (req, res, next) => {
+    const posts = [];
     const newPost = {
         id: posts.length + 1,
         title: req.body.title,

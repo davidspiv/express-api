@@ -1,12 +1,15 @@
 import refDb from './refDb.js';
 //@route GET /api/posts
 export default (req, res, next) => {
-    const posts = refDb('SELECT * FROM transactions');
-    // for (const post of posts) {
-    // 	post.trans_description = post.trans_description
-    // 		.replace(/[^A-Za-z ]/g, '')
-    // 		.replace(/ +/g, ' ');
-    // }
+    const limit = Number.parseInt(req.url.slice(req.url.indexOf('_limit') + 7));
+    let queryString;
+    if (Number.isNaN(limit)) {
+        queryString = 'SELECT * FROM transactions';
+    }
+    else {
+        queryString = `SELECT * FROM transactions LIMIT ${limit}`;
+    }
+    const posts = refDb(queryString);
     const limitData = String(req.query.limit);
     if (limitData.length > 0) {
         const limit = Number.parseInt(limitData);

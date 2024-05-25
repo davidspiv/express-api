@@ -20,12 +20,19 @@ const populateDb = async () => {
 	const [db, transactions] = await promises();
 	if (db && transactions) {
 		const insertRow = db.prepare(
-			'INSERT INTO transactions (trans_type, date_posted, date_available, amount, fitid, trans_name, memo) VALUES (@transType , @datePosted, @dateAvailable, @amount, @fitid, @transName, @memo);',
+			'INSERT INTO transactions (trans_type, date_posted, amount, memo, fitid) VALUES (@transType, @datePosted, @amount, @memo, @fitid);',
 		);
 
 		const insertData = db.transaction(() => {
+			//https://github.com/WiseLibs/better-sqlite3/issues/741
 			for (const trans of transactions) {
-				insertRow.run(trans);
+				insertRow.run({
+					transType: trans.transType,
+					datePosted: trans.datePosted,
+					amount: trans.amount,
+					memo: trans.memo,
+					fitid: trans.fitid,
+				});
 			}
 		});
 

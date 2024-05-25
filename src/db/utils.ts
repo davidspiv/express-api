@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import Transaction from '../classes/Transaction.js';
 
 const getData = async (fileName: string) => {
 	try {
@@ -13,22 +14,15 @@ const parseCsv = async (fileType: 'DEBIT' | 'CREDIT') => {
 	const transactions = [];
 	const csvData = await getData('./inputs/debit.csv');
 	if (csvData) {
-		const csvValues = csvData.split(',');
-		const totalCol = 6;
+		const csvValues = csvData.replace(/[\n]/g, ',').split(',');
+		const totalCol = 7;
 
 		for (let i = 1; i < Math.floor(csvValues.length / totalCol); i++) {
-			const datePosted = csvValues[i * totalCol].split('\n')[1];
+			const datePosted = csvValues[i * totalCol];
 			const memo = csvValues[i * totalCol + 1];
 			const amount = csvValues[i * totalCol + 5];
-			transactions.push({
-				transType: fileType,
-				datePosted,
-				dateAvailable: null,
-				amount,
-				fitid: null,
-				transName: null,
-				memo,
-			});
+
+			transactions.push(new Transaction('DEBIT', datePosted, amount, memo));
 		}
 		return transactions;
 	}
@@ -67,16 +61,10 @@ const parseOfx = async () => {
 			ofxData.indexOf('<MEMO>') + 6,
 			ofxData.indexOf('</MEMO>'),
 		);
-		return {
-			transType,
-			datePosted,
-			dateAvailable,
-			amount,
-			fitid,
-			transName,
-			memo,
-		};
+
+		return new Transaction(transType, datePosted, amount, memo, fitid);
 	};
+
 	if (ofxString) {
 		const ofxDataArr = ofxString.split('<STMTTRN>');
 		//skip first AND last el
