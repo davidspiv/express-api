@@ -1,20 +1,31 @@
 import type { Request, Response, NextFunction } from 'express';
 import refDb from './refDb.js';
+import Transaction from '../classes/Transaction.js';
+import Database from 'better-sqlite3';
 
-//@route POST /api/posts/:id
+//@route POST /api/posts/
 export default (req: Request, res: Response, next: NextFunction) => {
-	const posts = [];
-	const newPost = {
-		id: posts.length + 1,
-		title: req.body.title,
-	}; 
+	console.log(req.body);
+	const db = new Database('accounting.db', { fileMustExist: true });
+	const stmt = db.prepare(
+		'INSERT INTO transactions (trans_type, date_posted, amount, memo, fitid) VALUES (@transType, @datePosted, @amount, @memo, @fitid)',
+	);
 
-	if (!newPost) {
-		const error = new Error('Please include a title');
-		res.status(400);
-		return next(error);
-	}
+	const insertData = db.transaction(() => {
+		for (let i = 0; i < req.body.length; i++) {
+			const transaction = req.body[i];
+			stmt.run({
+				transType: transaction.transType,
+				datePosted: transaction.datePosted,
+				amount: transaction.amount,
+				memo: transaction.memo,
+				fitid: null,
+			});
+		}
+	});
 
-	posts.push(newPost);
-	res.status(201).json(posts);
+	insertData();
+	db.close();
+	res.status(201);
+	res.end();
 };
