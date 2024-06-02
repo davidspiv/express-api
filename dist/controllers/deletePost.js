@@ -10,7 +10,7 @@ export default (req, res, next) => {
         return next(error);
     }
     const db = new Database('accounting.db', { fileMustExist: true });
-    const stmt = db.prepare(`DELETE FROM transactions WHERE db_id = ${id}`);
-    stmt.run();
+    const query = db.prepare(`DELETE FROM transactions WHERE db_id = ${id}`);
+    query.run();
     res.status(200).json(post);
 };

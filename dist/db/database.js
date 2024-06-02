@@ -8,16 +8,10 @@ const createDatabase = async () => {
         return db;
     }
 };
-const populateDb = async () => {
-    const promises = () => {
-        const db = createDatabase();
-        // const transactions = parseCsv('DEBIT');
-        const transactions = parseOfx();
-        return Promise.all([db, transactions]);
-    };
-    const [db, transactions] = await promises();
-    if (db && transactions) {
-        const insertRow = db.prepare('INSERT INTO transactions (trans_type, date_posted, amount, memo, fitid) VALUES (@transType, @datePosted, @amount, @memo, @fitid);');
+const populateDb = async (db) => {
+    const transactions = await parseOfx();
+    const insertRow = db.prepare('INSERT INTO transactions (trans_type, date_posted, amount, memo, fitid) VALUES (@transType, @datePosted, @amount, @memo, @fitid);');
+    if (transactions) {
         const insertData = db.transaction(() => {
             //https://github.com/WiseLibs/better-sqlite3/issues/741
             for (const trans of transactions) {
@@ -34,4 +28,10 @@ const populateDb = async () => {
         db.close();
     }
 };
-populateDb();
+const db = await createDatabase();
+if (db) {
+    populateDb(db);
+}
+else {
+    console.log('error creating db');
+}
