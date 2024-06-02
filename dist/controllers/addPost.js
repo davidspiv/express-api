@@ -7,29 +7,35 @@ export default (req, res, next) => {
     };
     const db = new Database('accounting.db', { fileMustExist: true });
     const transArr = req.body.sort((a, b) => filterDate(b.datePosted) - filterDate(a.datePosted));
-    const lastDbDateObj = refDb('SELECT date_posted FROM transactions ORDER BY date_posted DESC LIMIT 1;')[0];
+    const recentDbTrans = refDb('SELECT * FROM transactions ORDER BY date_posted DESC LIMIT 1;')[0];
     const query = db.prepare('INSERT INTO transactions (trans_type, date_posted, amount, memo, fitid) VALUES (@transType, @datePosted, @amount, @memo, @fitid);');
-    const search = (arr, dateObj = {}) => {
-        if (!dateObj.date_posted)
+    const search = (arr, targetTrans = {}) => {
+        if (!targetTrans.date_posted || !targetTrans.amount || !targetTrans.memo)
             return -1;
-        const date = dateObj.date_posted;
+        const date = targetTrans.date_posted;
+        const amount = targetTrans.amount;
+        const memo = targetTrans.memo;
         for (let i = 0; i < arr.length; i++) {
-            if (arr[i].datePosted <= date)
+            if (arr[i].datePosted === date &&
+                arr[i].amount === amount &&
+                arr[i].memo === memo) {
                 return i;
+            }
         }
         return arr.length;
     };
     let updatedTransIndex = -1;
-    if (typeof lastDbDateObj === 'object' && lastDbDateObj !== null) {
-        updatedTransIndex = search(transArr, lastDbDateObj);
+    if (typeof recentDbTrans === 'object' && recentDbTrans !== null) {
+        updatedTransIndex = search(transArr, recentDbTrans);
     }
     if (updatedTransIndex === 0) {
-        res.status(201).json({ message: 'Transactions exist in db' }).end();
+        res.status(201).json({ message: 'Transactions already exist in db' }).end();
         return;
     }
     if (updatedTransIndex === -1) {
-        res.status(500).json({ message: 'Db error' }).end();
-        return;
+        const error = new Error('No transactions in database?');
+        res.status(500);
+        return next(error);
     }
     const insertData = db.transaction(() => {
         for (let i = 0; i < updatedTransIndex; i++) {
