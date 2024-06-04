@@ -6,10 +6,3 @@ CREATE TABLE transactions (
     fitid TEXT,
     memo TEXT NOT NULL
 );
-
-	-- dbid: number;
-	-- transType: string;
-	-- datePosted: Date;
-	-- amount: number;
-	-- fitid: string;
-	-- memo: string;

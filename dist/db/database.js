@@ -4,7 +4,7 @@ const createDatabase = async () => {
     const query = await getData('sql/create_table.sql');
     if (query) {
         const db = new Database('accounting.db');
-        db.exec(query);
+        db.prepare(query).run();
         return db;
     }
 };

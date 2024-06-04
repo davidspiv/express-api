@@ -6,9 +6,9 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	const limit = Number.parseInt(req.url.slice(req.url.indexOf('_limit') + 7));
 	let queryString: string;
 	if (Number.isNaN(limit)) {
-		queryString = 'SELECT * FROM transactions';
+		queryString = 'SELECT * FROM transactions ORDER BY date_posted DESC';
 	} else {
-		queryString = `SELECT * FROM transactions LIMIT ${limit}`;
+		queryString = `SELECT * FROM transactions ORDER BY date_posted DESC LIMIT ${limit}`;
 	}
 	const posts = refDb(queryString);
 	const limitData = String(req.query.limit);
