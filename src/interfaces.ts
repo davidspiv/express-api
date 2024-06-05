@@ -21,8 +21,8 @@ interface Transaction {
 	dateOffset: number;
 	amount: number;
 	memo: string;
-	accId: string;
-	userId: number;
+	accId: number;
+	userId: string;
 	fitid?: string;
 }
 

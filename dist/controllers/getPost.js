@@ -1,10 +1,20 @@
-import refDb from './refDb.js';
-//@route GET /api/posts/:id
+import { refDb } from '../db/refDb.js';
+//@route GET /api/posts/search
 export default (req, res, next) => {
-    const id = Number.parseInt(req.params.id);
-    const post = refDb(`SELECT * FROM transactions WHERE db_id = ${id}`);
+    const date = req.body.date;
+    const dateOffset = req.body.dateOffset;
+    const accId = req.body.accId;
+    const userId = req.body.userId;
+    const post = refDb(`
+	SELECT *
+	FROM transactions
+	WHERE trans_date = '${date}'
+	AND trans_date_offset = ${dateOffset}
+	AND acc_id = ${accId}
+	AND user_id = '${userId}';
+	`);
     if (!post) {
-        const error = new Error(`A post with the id of: ${id} was not found`);
+        const error = new Error('A post with those parameters was not found');
         res.status(404);
         return next(error);
     }

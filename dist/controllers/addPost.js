@@ -1,60 +1,45 @@
-import refDb from './refDb.js';
+import { refDb } from '../db/refDb.js';
 import Database from 'better-sqlite3';
-//@route POST /api/posts/
+//@route POST /api/posts/insert
 export default (req, res, next) => {
-    const filterDate = (date) => {
-        return new Date(Number.parseInt(date)).getTime();
+    const trans = {
+        date: req.body.date,
+        dateOffset: req.body.dateOffset,
+        amount: req.body.amount,
+        memo: req.body.memo.replace("'", "''"),
+        accId: req.body.accId,
+        userId: req.body.userId.replace("'", "''"),
     };
-    const db = new Database('accounting.db', { fileMustExist: true });
-    const transArr = req.body.sort((a, b) => filterDate(b.datePosted) - filterDate(a.datePosted));
-    const recentDbTrans = refDb('SELECT * FROM transactions ORDER BY date_posted DESC LIMIT 1;')[0];
-    const query = db.prepare('INSERT INTO transactions (trans_type, date_posted, amount, memo, fitid) VALUES (@transType, @datePosted, @amount, @memo, @fitid);');
-    const search = (arr, targetTrans = {}) => {
-        if (!targetTrans.date_posted || !targetTrans.amount || !targetTrans.memo)
-            return -1;
-        const date = targetTrans.date_posted;
-        const amount = targetTrans.amount;
-        const memo = targetTrans.memo;
-        for (let i = 0; i < arr.length; i++) {
-            if (arr[i].datePosted === date &&
-                arr[i].amount === amount &&
-                arr[i].memo === memo) {
-                return i;
-            }
-        }
-        return arr.length;
-    };
-    let updatedTransIndex = -1;
-    if (typeof recentDbTrans === 'object' && recentDbTrans !== null) {
-        updatedTransIndex = search(transArr, recentDbTrans);
-    }
-    if (updatedTransIndex === 0) {
-        res.status(201).json({ message: 'Transactions already exist in db' }).end();
-        return;
-    }
-    if (updatedTransIndex === -1) {
-        const error = new Error('No transactions in database?');
-        res.status(500);
+    const { date, dateOffset, accId, userId } = trans;
+    const post = refDb(`
+	SELECT *
+	FROM transactions
+	WHERE trans_date = '${date}'
+	AND trans_date_offset = '${dateOffset}'
+	AND acc_id = '${accId}'
+	AND user_id = '${userId}';
+	`);
+    if (post.length) {
+        const error = new Error('A post with those parameters was already found');
+        res.status(404);
         return next(error);
     }
-    const insertData = db.transaction(() => {
-        for (let i = 0; i < updatedTransIndex; i++) {
-            const transaction = transArr[i];
-            query.run({
-                transType: transaction.transType,
-                datePosted: transaction.datePosted,
-                amount: transaction.amount,
-                memo: transaction.memo,
-                fitid: null,
-            });
-        }
-    });
-    insertData();
+    const db = new Database('accounting.db', { fileMustExist: true });
+    const query = db.prepare(`
+	INSERT INTO
+		transactions (trans_date, trans_date_offset, trans_amount, trans_memo, acc_id, user_id)
+	VALUES
+		(@date, @dateOffset, @amount, @memo, @accId, @userId);
+		`);
+    query.run(trans);
+    const newPost = refDb(`
+		SELECT *
+		FROM transactions
+		WHERE trans_date = '${date}'
+		AND trans_date_offset = '${dateOffset}'
+		AND acc_id = '${accId}'
+		AND user_id = '${userId}';
+		`);
     db.close();
-    res
-        .status(201)
-        .json({
-        message: `Inserted ${updatedTransIndex} transactions into the database`,
-    })
-        .end();
+    res.status(200).json(newPost);
 };

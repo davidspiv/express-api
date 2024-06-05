@@ -1,14 +1,14 @@
 import type { Request, Response, NextFunction } from 'express';
-import refDb from './refDb.js';
+import {refDb} from '../db/refDb.js';
 
 //@route GET /api/posts
 export default (req: Request, res: Response, next: NextFunction) => {
 	const limit = Number.parseInt(req.url.slice(req.url.indexOf('_limit') + 7));
 	let queryString: string;
 	if (Number.isNaN(limit)) {
-		queryString = 'SELECT * FROM transactions ORDER BY date_posted DESC';
+		queryString = 'SELECT * FROM transactions ORDER BY trans_date DESC';
 	} else {
-		queryString = `SELECT * FROM transactions ORDER BY date_posted DESC LIMIT ${limit}`;
+		queryString = `SELECT * FROM transactions ORDER BY trans_date DESC LIMIT ${limit}`;
 	}
 	const posts = refDb(queryString);
 	const limitData = String(req.query.limit);

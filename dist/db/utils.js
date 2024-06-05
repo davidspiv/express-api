@@ -22,11 +22,12 @@ const parseCsv = async (accId) => {
         const csvValues = splitCsv(data.replace(/[\n]/g, ','));
         const totalCol = 7;
         for (let i = 1; i < Math.floor(csvValues.length / totalCol); i++) {
-            const date = csvValues[i * totalCol];
+            const date = new Date(csvValues[i * totalCol]).toISOString();
             const dateOffset = i;
             const amount = Number.parseInt(csvValues[i * totalCol + 5]);
             const memo = csvValues[i * totalCol + 1];
-            const userId = 1;
+            const accId = 1001;
+            const userId = 'David';
             const transObj = {
                 date,
                 dateOffset,
