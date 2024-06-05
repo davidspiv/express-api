@@ -1,32 +1,64 @@
 import { readFile } from 'node:fs/promises';
-import Transaction from '../classes/Transaction.js';
-
+import type { Transaction } from '../interfaces.js';
+const transactions: Transaction[] = [];
 const getData = async (fileName: string) => {
 	try {
 		const contents = await readFile(fileName, { encoding: 'utf8' });
 		return contents;
 	} catch (err) {
-		console.log('Could not read SQL statement');
+		console.log('Unable to retrieve text from file');
 	}
 };
 
-const parseCsv = async (fileType: 'DEBIT' | 'CREDIT') => {
-	const transactions = [];
+const parseCsv = async (accId: string) => {
 	const csvData = await getData('./inputs/debit.csv');
 	if (csvData) {
-		const csvValues = csvData.replace(/[\n]/g, ',').split(',');
+		buildTransObj(csvData);
+	} else {
+		console.log('Error with getData()');
+	}
+	return transactions;
+
+	function buildTransObj(data: string) {
+		const csvValues = splitCsv(data.replace(/[\n]/g, ','));
 		const totalCol = 7;
 
 		for (let i = 1; i < Math.floor(csvValues.length / totalCol); i++) {
-			const datePosted = csvValues[i * totalCol];
+			const date = csvValues[i * totalCol];
+			const dateOffset = i;
+			const amount = Number.parseInt(csvValues[i * totalCol + 5]);
 			const memo = csvValues[i * totalCol + 1];
-			const amount = csvValues[i * totalCol + 5];
+			const userId = 1;
+			const transObj: Transaction = {
+				date,
+				dateOffset,
+				amount,
+				memo,
+				accId,
+				userId,
+			};
 
-			transactions.push(new Transaction('DEBIT', datePosted, amount, memo));
+			transactions.push(transObj);
 		}
-		return transactions;
 	}
-	console.log('Error with getData()');
+
+	function splitCsv(str: string) {
+		const obj: { soFar: string[]; isConcatting: boolean } = {
+			soFar: [],
+			isConcatting: false,
+		};
+		return str.split(',').reduce((accum, curr) => {
+			if (accum.isConcatting) {
+				accum.soFar[accum.soFar.length - 1] += `,${curr}`;
+			} else {
+				accum.soFar.push(curr);
+			}
+			if (curr.split('"').length % 2 === 0) {
+				accum.isConcatting = !accum.isConcatting;
+			}
+			return accum;
+		}, obj).soFar;
+	}
 };
 
 const parseOfx = async () => {
@@ -62,7 +94,7 @@ const parseOfx = async () => {
 			ofxData.indexOf('</MEMO>'),
 		);
 
-		return new Transaction(transType, datePosted, amount, memo, fitid);
+		return { transType, datePosted, amount, memo, fitid };
 	};
 
 	if (ofxString) {

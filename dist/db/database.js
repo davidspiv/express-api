@@ -1,37 +1,42 @@
-import { getData, parseOfx } from './utils.js';
+import { getData, parseCsv } from './utils.js';
 import Database from 'better-sqlite3';
-const createDatabase = async () => {
-    const query = await getData('sql/create_table.sql');
-    if (query) {
-        const db = new Database('accounting.db');
-        db.prepare(query).run();
-        return db;
-    }
-};
-const populateDb = async (db) => {
-    const transactions = await parseOfx();
-    const insertRow = db.prepare('INSERT INTO transactions (trans_type, date_posted, amount, memo, fitid) VALUES (@transType, @datePosted, @amount, @memo, @fitid);');
-    if (transactions) {
-        const insertData = db.transaction(() => {
-            //https://github.com/WiseLibs/better-sqlite3/issues/741
-            for (const trans of transactions) {
-                insertRow.run({
-                    transType: trans.transType,
-                    datePosted: trans.datePosted,
-                    amount: trans.amount,
-                    memo: trans.memo,
-                    fitid: trans.fitid,
-                });
-            }
-        });
-        insertData();
-        db.close();
-    }
-};
-const db = await createDatabase();
-if (db) {
-    populateDb(db);
+const db = new Database('accounting.db');
+const queryArr = await getQueries('sql/up_migration.sql');
+const transArr = await parseCsv('Checking');
+runQueries(queryArr);
+runTransQueries(transArr);
+db.close();
+console.log(`
+${queryArr.length} initial query(ies) ran successfully.
+${transArr.length} transactions input successfully.
+`);
+async function getQueries(filePath) {
+    const data = await getData(filePath);
+    if (!data)
+        return [];
+    const queryArr = data.split(/(?<=;)/g);
+    queryArr.pop();
+    return queryArr;
 }
-else {
-    console.log('error creating db');
+function runQueries(queries) {
+    const enterQueries = db.transaction(() => {
+        for (const query of queries) {
+            db.prepare(query).run();
+        }
+    });
+    enterQueries();
+}
+function runTransQueries(transArr) {
+    const insertStatement = db.prepare(`
+	INSERT INTO
+		transactions (trans_date, trans_date_offset, trans_amount, trans_memo, acc_id, user_id)
+	VALUES
+		(@date, @dateOffset, @amount, @memo, @accId, @userId);
+		`);
+    const enterTrans = db.transaction(() => {
+        for (const trans of transArr) {
+            insertStatement.run(trans);
+        }
+    });
+    enterTrans();
 }

@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import refDb from './refDb.js';
-import type Transaction from '../classes/Transaction.js';
+import type Transaction from '../interfaces.js';
 import Database from 'better-sqlite3';
 
 //@route POST /api/posts/
