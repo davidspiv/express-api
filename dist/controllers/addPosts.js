@@ -1,4 +1,4 @@
-import { dbSelect } from '../db/refDb.js';
+import { dbSelect, dbAddAll } from '../db/refDb.js';
 //@route POST /api/posts/
 export default (req, res, next) => {
     const requestError = new Error('Request formatted incorrectly');
@@ -44,12 +44,11 @@ export default (req, res, next) => {
         if (!trans_date)
             return 0;
         for (let i = 0; i < inputTransArr.length; i++) {
-            console.log('test');
             if (inputTransArr[i].date === trans_date &&
                 inputTransArr[i].dateOffset === trans_date_offset &&
                 inputTransArr[i].accId === acc_id &&
                 inputTransArr[i].userId === user_id)
-                return i - 1;
+                return i;
         }
         return inputTransArr.length;
     }
@@ -57,5 +56,12 @@ export default (req, res, next) => {
     if (!sliceIndex)
         return next(noNewTransError);
     const filteredTransArr = inputTransArr.slice(0, sliceIndex);
+    const insertStatement = `
+	INSERT INTO transactions
+		(trans_date, trans_date_offset, trans_amount, trans_memo, acc_id, user_id)
+	VALUES
+		(@date, @dateOffset, @amount, @memo, @accId, @userId);
+	`;
+    dbAddAll(insertStatement, filteredTransArr);
     res.status(200).json(filteredTransArr);
 };

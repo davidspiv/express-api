@@ -16,9 +16,27 @@ const dbRunNoParams = (query: string) => {
 
 const dbAdd = (query: string, trans: Transaction) => {
 	const db = new Database('accounting.db', { fileMustExist: true });
-	console.log(trans)
 	db.prepare(query).run(trans);
 	db.close();
 };
 
-export { dbSelect, dbRunNoParams, dbAdd };
+const dbAddAll = (query: string, transArr: Transaction[]) => {
+	const db = new Database('accounting.db', { fileMustExist: true });
+	const statement = db.prepare(query);
+	const insertMany = db.transaction((transArr) => {
+		for (const trans of transArr) {
+			statement.run({
+				date: trans.date,
+				dateOffset: trans.dateOffset,
+				amount: trans.amount,
+				memo: trans.memo,
+				accId: trans.accId,
+				userId: trans.userId,
+			});
+		}
+	});
+	insertMany(transArr);
+	db.close();
+};
+
+export { dbSelect, dbRunNoParams, dbAdd, dbAddAll };
