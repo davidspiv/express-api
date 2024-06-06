@@ -1,7 +1,32 @@
 import Database from 'better-sqlite3';
-const dbSelect = (query) => {
+const dbSelect = (trans) => {
+    const { date, dateOffset, accId, userId } = trans;
+    const selectStatement = `
+	SELECT *
+	FROM transactions
+	WHERE trans_date = '${date}'
+	AND trans_date_offset = '${dateOffset}'
+	AND acc_id = '${accId}'
+	AND user_id = '${userId}';
+	`;
     const db = new Database('accounting.db', { fileMustExist: true });
-    const result = db.prepare(query).all();
+    const result = db.prepare(selectStatement).all();
+    db.close();
+    return result;
+};
+const dbSelectAll = (limit = 0) => {
+    let selectStatement = `
+	SELECT * FROM transactions
+	ORDER BY trans_date DESC;
+	`;
+    if (limit) {
+        const semicolonIndex = selectStatement.indexOf(';');
+        selectStatement = selectStatement
+            .slice(0, semicolonIndex)
+            .concat('', ` LIMIT ${limit};`);
+    }
+    const db = new Database('accounting.db', { fileMustExist: true });
+    const result = db.prepare(selectStatement).all();
     db.close();
     return result;
 };
@@ -33,4 +58,4 @@ const dbAddAll = (query, transArr) => {
     insertMany(transArr);
     db.close();
 };
-export { dbSelect, dbRunNoParams, dbAdd, dbAddAll };
+export { dbSelect, dbSelectAll, dbRunNoParams, dbAdd, dbAddAll };

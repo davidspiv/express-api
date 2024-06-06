@@ -7,7 +7,7 @@
 	"scripts": {
 		"dev": "pnpm exec tsc --watch & nodemon --env-file=.env dist/index.js",
 		"createdb": "node ./dist/db/database.js",
-		"test": "node ./dist/db/database.test.js"
+		"test": "vitest"
 	},
 	"keywords": [],
 	"author": "",
@@ -22,7 +22,9 @@
 		"@types/better-sqlite3": "^7.6.10",
 		"@types/express": "^4.17.21",
 		"@types/node": "^20.12.12",
+		"node-fetch": "^3.3.2",
 		"nodemon": "^3.1.0",
-		"typescript": "^5.4.5"
+		"typescript": "^5.4.5",
+		"vitest": "^1.6.0"
 	}
 }

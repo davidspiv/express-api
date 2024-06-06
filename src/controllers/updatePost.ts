@@ -7,21 +7,16 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	const error = new Error('Request formatted incorrectly');
 	if (req.body.length !== 2) return next(error);
 
-	const currDate = req.body[0].date;
-	const currDateOffset = req.body[0].dateOffset;
-	const currAccId = req.body[0].accId;
-	const currUserId = req.body[0].userId;
+	const currentTrans: Transaction = {
+		date: req.body[0].date,
+		dateOffset: req.body[0].dateOffset,
+		amount: req.body[0].amount,
+		memo: req.body[0].memo.replace("'", "''"),
+		accId: req.body[0].accId,
+		userId: req.body[0].userId.replace("'", "''"),
+	};
 
-	const selectStatementCurr = `
-	SELECT *
-	FROM transactions
-	WHERE trans_date = '${currDate}'
-	AND trans_date_offset = ${currDateOffset}
-	AND acc_id = ${currAccId}
-	AND user_id = '${currUserId}';
-	`;
-
-	const post = dbSelect(selectStatementCurr);
+	const post = dbSelect(currentTrans);
 
 	if (!post.length) {
 		const error = new Error('A post with those parameters was not found');
@@ -40,32 +35,23 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
 	const { date, dateOffset, amount, memo, accId, userId } = newTrans;
 	const updateStatement = `
-		UPDATE transactions
-		SET
-			trans_date = '${date}',
-			trans_date_offset = ${dateOffset},
-			trans_amount = ${amount},
-			trans_memo = '${memo}',
-			acc_id = ${accId},
-			user_id = '${userId}'
-		WHERE trans_date = '${currDate}'
-		AND trans_date_offset = ${currDateOffset}
-		AND acc_id = ${currAccId}
-		AND user_id = '${currUserId}';
+	UPDATE transactions
+	SET
+		trans_date = '${date}',
+		trans_date_offset = ${dateOffset},
+		trans_amount = ${amount},
+		trans_memo = '${memo}',
+		acc_id = ${accId},
+		user_id = '${userId}'
+	WHERE trans_date = '${currentTrans.date}'
+	AND trans_date_offset = ${currentTrans.dateOffset}
+	AND acc_id = ${currentTrans.accId}
+	AND user_id = '${currentTrans.userId}';
 `;
 
 	dbRunNoParams(updateStatement);
 
-	const selectStatementNew = `
-		SELECT *
-		FROM transactions
-		WHERE trans_date = '${date}'
-		AND trans_date_offset = '${dateOffset}'
-		AND acc_id = '${accId}'
-		AND user_id = '${userId}';
-	`;
-
-	const newPost = dbSelect(selectStatementNew);
+	const newPost = dbSelect(newTrans);
 
 	res.status(200).json(newPost);
 };

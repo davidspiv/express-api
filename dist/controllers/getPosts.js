@@ -1,18 +1,8 @@
-import { dbSelect } from '../db/refDb.js';
+import { dbSelectAll } from '../db/refDb.js';
 //@route GET /api/posts
 export default (req, res, next) => {
     const limit = Number.parseInt(req.url.slice(req.url.indexOf('_limit') + 7));
-    let selectStatement = `
-	SELECT * FROM transactions
-	ORDER BY trans_date DESC;
-	`;
-    if (limit) {
-        const semicolonIndex = selectStatement.indexOf(';');
-        selectStatement = selectStatement
-            .slice(0, semicolonIndex)
-            .concat('', ` LIMIT ${limit};`);
-    }
-    const posts = dbSelect(selectStatement);
+    const posts = dbSelectAll(limit);
     const limitData = String(req.query.limit);
     if (limitData.length > 0) {
         const limit = Number.parseInt(limitData);

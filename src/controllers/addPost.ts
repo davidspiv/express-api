@@ -13,18 +13,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		userId: req.body.userId.replace("'", "''"),
 	};
 
-	const { date, dateOffset, accId, userId } = trans;
-
-	const selectStatement = `
-	SELECT *
-	FROM transactions
-	WHERE trans_date = '${date}'
-	AND trans_date_offset = '${dateOffset}'
-	AND acc_id = '${accId}'
-	AND user_id = '${userId}';
-	`;
-
-	const post = dbSelect(selectStatement);
+	const post = dbSelect(trans);
 
 	if (post.length) {
 		const error = new Error('A post with those parameters was already found');
@@ -40,6 +29,6 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	`;
 
 	dbAdd(insertStatement, trans);
-	const newPost = dbSelect(selectStatement);
+	const newPost = dbSelect(trans);
 	res.status(200).json(newPost);
 };
