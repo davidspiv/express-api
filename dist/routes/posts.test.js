@@ -1,23 +1,50 @@
 import { expect, test } from 'vitest';
 import fetch from 'node-fetch';
+const res = await getData();
+const verify = (value) => {
+    return {
+        isTruthy: !!value,
+        isArray: Array.isArray(value),
+        hasSevenKeys: Array.isArray(value)
+            ? Object.keys(value[0]).length === 7
+            : false,
+        hasTransDate: (Array.isArray(value) ? 'trans_date' in value[0] : false) &&
+            typeof value[0].trans_date_offset === 'number',
+        hasTransDateOffset: (Array.isArray(value) ? 'trans_date_offset' in value[0] : false) &&
+            typeof value[0].trans_date_offset === 'number',
+        hasTransAmount: (Array.isArray(value) ? 'trans_amount' in value[0] : false) &&
+            typeof value[0].trans_amount === 'number',
+        hasTransMemo: (Array.isArray(value) ? 'trans_memo' in value[0] : false) &&
+            typeof value[0].acc_id === 'number',
+        hasUserId: (Array.isArray(value) ? 'user_id' in value[0] : false) &&
+            typeof value[0].user_id === 'string',
+    };
+};
 test('Req body formatted correctly', async () => {
-    const res = await testRoute();
-    const isTransactionArr = (value) => !!value &&
-        Array.isArray(value) &&
-        'trans_date' in value[0] &&
-        'trans_date_offset' in value[0] &&
-        'trans_amount' in value[0] &&
-        'trans_memo' in value[0] &&
-        'user_id' in value[0] &&
-        typeof value[0].trans_date === 'string' &&
-        typeof value[0].trans_date_offset === 'number' &&
-        typeof value[0].trans_amount === 'number' &&
-        typeof value[0].trans_memo === 'string' &&
-        typeof value[0].acc_id === 'number' &&
-        typeof value[0].user_id === 'string';
-    expect(isTransactionArr(res)).toBe(true);
+    const { isTruthy, isArray, hasTransDate, hasTransDateOffset, hasTransAmount, hasTransMemo, hasUserId, } = verify(res);
+    if (!isTruthy)
+        throw Error('isTruthy failed');
+    if (!isArray)
+        throw Error('isArray failed');
+    if (!hasTransDate)
+        throw Error('hasTransDate failed');
+    if (!hasTransDateOffset)
+        throw Error('hasTransDateOffset failed');
+    if (!hasTransAmount)
+        throw Error('hasTransAmount failed');
+    if (!hasTransMemo)
+        throw Error('hasTransMemo failed');
+    if (!hasUserId)
+        throw Error('hasUserId failed');
+    expect(isTruthy &&
+        isArray &&
+        hasTransDate &&
+        hasTransDateOffset &&
+        hasTransAmount &&
+        hasTransMemo &&
+        hasUserId).toBe(true);
 });
-async function testRoute() {
+async function getData() {
     const response = await fetch('http://localhost:5000/api/posts/');
     const data = await response.json();
     return data;
