@@ -26,9 +26,19 @@ interface Transaction {
 	fitid?: string;
 }
 
+interface TransactionData {
+	trans_date: string;
+	trans_date_offset: number;
+	trans_amount: number;
+	trans_memo: string;
+	acc_id: number;
+	user_id: string;
+	trans_fitid?: string;
+}
+
 interface Memo {
 	id: string;
 	acc_id: string;
 }
 
-export type { AccountType, Account, User, Transaction, Memo };
+export type { AccountType, Account, User, Transaction, TransactionData, Memo };

@@ -1,60 +1,58 @@
 import { refDb } from '../db/refDb.js';
-import Database from 'better-sqlite3';
 //@route POST /api/posts/
 export default (req, res, next) => {
-    const filterDate = (date) => {
-        return new Date(Number.parseInt(date)).getTime();
-    };
-    const db = new Database('accounting.db', { fileMustExist: true });
-    const transArr = req.body.sort((a, b) => filterDate(b.datePosted) - filterDate(a.datePosted));
-    const recentDbTrans = refDb('SELECT * FROM transactions ORDER BY date_posted DESC LIMIT 1;')[0];
-    const query = db.prepare('INSERT INTO transactions (trans_type, date_posted, amount, memo, fitid) VALUES (@transType, @datePosted, @amount, @memo, @fitid);');
-    const search = (arr, targetTrans = {}) => {
-        if (!targetTrans.date_posted || !targetTrans.amount || !targetTrans.memo)
-            return -1;
-        const date = targetTrans.date_posted;
-        const amount = targetTrans.amount;
-        const memo = targetTrans.memo;
-        for (let i = 0; i < arr.length; i++) {
-            if (arr[i].datePosted === date &&
-                arr[i].amount === amount &&
-                arr[i].memo === memo) {
-                return i;
-            }
+    const requestError = new Error('Request formatted incorrectly');
+    if (!req.body.length)
+        return next(requestError);
+    const recentDbTrans = refDb(`
+		SELECT *
+		FROM transactions
+		WHERE acc_id = ${req.body[0].accId}
+		AND user_id = '${req.body[0].userId}'
+		ORDER BY trans_date
+		DESC LIMIT 1;
+		`)[0];
+    const unseededError = new Error('Database unseeded');
+    if (!recentDbTrans)
+        return next(unseededError);
+    const inputTransArr = buildInputTransArr();
+    sortTransDataArr();
+    const sliceIndex = getSliceIndex(recentDbTrans);
+    function buildInputTransArr() {
+        const arr = [];
+        for (let i = 0; i < req.body.length; i++) {
+            const trans = {
+                date: req.body[i].date,
+                dateOffset: req.body[i].dateOffset,
+                amount: req.body[i].amount,
+                memo: req.body[i].memo.replace("'", "''"),
+                accId: req.body[i].accId,
+                userId: req.body[i].userId.replace("'", "''"),
+            };
+            arr.push(trans);
         }
-        return arr.length;
-    };
-    let updatedTransIndex = -1;
-    if (typeof recentDbTrans === 'object' && recentDbTrans !== null) {
-        updatedTransIndex = search(transArr, recentDbTrans);
+        return arr;
     }
-    if (updatedTransIndex === 0) {
-        res.status(201).json({ message: 'Transactions already exist in db' }).end();
-        return;
+    function sortTransDataArr() {
+        const filterDate = (date) => {
+            return new Date(Number.parseInt(date)).getTime();
+        };
+        inputTransArr.sort((a, b) => filterDate(b.date) - filterDate(a.date));
     }
-    if (updatedTransIndex === -1) {
-        const error = new Error('No transactions in database?');
-        res.status(500);
-        return next(error);
-    }
-    const insertData = db.transaction(() => {
-        for (let i = 0; i < updatedTransIndex; i++) {
-            const transaction = transArr[i];
-            query.run({
-                transType: transaction.transType,
-                datePosted: transaction.datePosted,
-                amount: transaction.amount,
-                memo: transaction.memo,
-                fitid: null,
-            });
+    function getSliceIndex({ trans_date, trans_date_offset, acc_id, user_id, }) {
+        if (!trans_date)
+            return 0;
+        for (let i = 0; i < inputTransArr.length; i++) {
+            if (inputTransArr[i].date === trans_date &&
+                inputTransArr[i].dateOffset === trans_date_offset &&
+                inputTransArr[i].accId === acc_id &&
+                inputTransArr[i].userId === user_id)
+                return i - 1;
         }
-    });
-    insertData();
-    db.close();
-    res
-        .status(201)
-        .json({
-        message: `Inserted ${updatedTransIndex} transactions into the database`,
-    })
-        .end();
+        return inputTransArr.length;
+    }
+    const noNewTransError = new Error('No new transactions to input');
+    if (!sliceIndex)
+        return next(noNewTransError);
+    res.status(200).json(inputTransArr.slice(0, sliceIndex));
 };
