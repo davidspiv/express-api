@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest';
+import { test } from 'vitest';
 import fetch from 'node-fetch';
 import type { TransactionData } from '../interfaces.js';
 
