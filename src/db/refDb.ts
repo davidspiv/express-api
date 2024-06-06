@@ -1,8 +1,24 @@
 import Database from 'better-sqlite3';
+import type { Transaction } from '../interfaces.js';
 
-const refDb = (query: string) => {
+const dbSelect = (query: string) => {
 	const db = new Database('accounting.db', { fileMustExist: true });
-	return db.prepare(query).all();
+	const result = db.prepare(query).all();
+	db.close();
+	return result;
 };
 
-export { refDb };
+const dbRunNoParams = (query: string) => {
+	const db = new Database('accounting.db', { fileMustExist: true });
+	db.prepare(query).run();
+	db.close();
+};
+
+const dbAdd = (query: string, trans: Transaction) => {
+	const db = new Database('accounting.db', { fileMustExist: true });
+	console.log(trans)
+	db.prepare(query).run(trans);
+	db.close();
+};
+
+export { dbSelect, dbRunNoParams, dbAdd };

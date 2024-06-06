@@ -1,12 +1,11 @@
-import { refDb } from '../db/refDb.js';
-import Database from 'better-sqlite3';
+import { dbSelect, dbRunNoParams } from '../db/refDb.js';
 //@route DELETE /api/posts/
 export default (req, res, next) => {
     const date = req.body.date;
     const dateOffset = req.body.dateOffset;
     const accId = req.body.accId;
     const userId = req.body.userId;
-    const post = refDb(`
+    const post = dbSelect(`
 	SELECT *
 	FROM transactions
 	WHERE trans_date = '${date}'
@@ -19,15 +18,12 @@ export default (req, res, next) => {
         res.status(404);
         return next(error);
     }
-    const db = new Database('accounting.db', { fileMustExist: true });
-    const query = db.prepare(`
+    dbRunNoParams(`
 	DELETE FROM transactions
 	WHERE trans_date = '${date}'
 	AND trans_date_offset = '${dateOffset}'
 	AND acc_id = '${accId}'
 	AND user_id = '${userId}';
 	`);
-    query.run();
-    db.close();
     res.status(200).json(post);
 };

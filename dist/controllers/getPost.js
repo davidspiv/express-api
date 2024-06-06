@@ -1,11 +1,11 @@
-import { refDb } from '../db/refDb.js';
+import { dbSelect } from '../db/refDb.js';
 //@route GET /api/posts/search
 export default (req, res, next) => {
     const date = req.body.date;
     const dateOffset = req.body.dateOffset;
     const accId = req.body.accId;
     const userId = req.body.userId;
-    const post = refDb(`
+    const post = dbSelect(`
 	SELECT *
 	FROM transactions
 	WHERE trans_date = '${date}'

@@ -1,14 +1,13 @@
 import type { Request, Response, NextFunction } from 'express';
-import { refDb } from '../db/refDb.js';
+import { dbSelect } from '../db/refDb.js';
 import type { Transaction, TransactionData } from '../interfaces.js';
-import Database from 'better-sqlite3';
 
 //@route POST /api/posts/
 export default (req: Request, res: Response, next: NextFunction) => {
 	const requestError = new Error('Request formatted incorrectly');
 	if (!req.body.length) return next(requestError);
 
-	const recentDbTrans = <TransactionData | null>refDb(`
+	const recentDbTrans = <TransactionData | null>dbSelect(`
 		SELECT *
 		FROM transactions
 		WHERE acc_id = ${req.body[0].accId}
@@ -51,14 +50,11 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		);
 	}
 
-	function getSliceIndex({
-		trans_date,
-		trans_date_offset,
-		acc_id,
-		user_id,
-	}: TransactionData) {
+	function getSliceIndex(recentDbTrans: TransactionData) {
+		const { trans_date, trans_date_offset, acc_id, user_id } = recentDbTrans;
 		if (!trans_date) return 0;
 		for (let i = 0; i < inputTransArr.length; i++) {
+			console.log('test');
 			if (
 				inputTransArr[i].date === trans_date &&
 				inputTransArr[i].dateOffset === trans_date_offset &&
@@ -73,5 +69,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	const noNewTransError = new Error('No new transactions to input');
 	if (!sliceIndex) return next(noNewTransError);
 
-	res.status(200).json(inputTransArr.slice(0, sliceIndex));
+	const filteredTransArr = inputTransArr.slice(0, sliceIndex);
+
+	res.status(200).json(filteredTransArr);
 };

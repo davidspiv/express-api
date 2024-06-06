@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { refDb } from '../db/refDb.js';
+import { dbSelect } from '../db/refDb.js';
 
 //@route GET /api/posts/search
 export default (req: Request, res: Response, next: NextFunction) => {
@@ -8,7 +8,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	const accId = req.body.accId;
 	const userId = req.body.userId;
 
-	const post = refDb(`
+	const post = dbSelect(`
 	SELECT *
 	FROM transactions
 	WHERE trans_date = '${date}'

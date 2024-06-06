@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import Database from 'better-sqlite3';
-import { refDb } from '../db/refDb.js';
+import { dbSelect, dbRunNoParams } from '../db/refDb.js';
 import type { Transaction } from '../interfaces.js';
 
 //@route PUT /api/posts/update
@@ -13,14 +12,16 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	const currAccId = req.body[0].accId;
 	const currUserId = req.body[0].userId;
 
-	const post = refDb(`
+	const selectStatementCurr = `
 	SELECT *
 	FROM transactions
 	WHERE trans_date = '${currDate}'
-	AND trans_date_offset = '${currDateOffset}'
-	AND acc_id = '${currAccId}'
+	AND trans_date_offset = ${currDateOffset}
+	AND acc_id = ${currAccId}
 	AND user_id = '${currUserId}';
-	`);
+	`;
+
+	const post = dbSelect(selectStatementCurr);
 
 	if (!post.length) {
 		const error = new Error('A post with those parameters was not found');
@@ -38,8 +39,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	};
 
 	const { date, dateOffset, amount, memo, accId, userId } = newTrans;
-	const db = new Database('accounting.db', { fileMustExist: true });
-	const query = db.prepare(`
+	const updateStatement = `
 		UPDATE transactions
 		SET
 			trans_date = '${date}',
@@ -52,19 +52,20 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		AND trans_date_offset = ${currDateOffset}
 		AND acc_id = ${currAccId}
 		AND user_id = '${currUserId}';
-		`);
+`;
 
-	query.run();
+	dbRunNoParams(updateStatement);
 
-	const newPost = refDb(`
+	const selectStatementNew = `
 		SELECT *
 		FROM transactions
 		WHERE trans_date = '${date}'
 		AND trans_date_offset = '${dateOffset}'
 		AND acc_id = '${accId}'
 		AND user_id = '${userId}';
-		`);
+	`;
 
-	db.close();
+	const newPost = dbSelect(selectStatementNew);
+
 	res.status(200).json(newPost);
 };

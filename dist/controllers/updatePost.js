@@ -1,5 +1,4 @@
-import Database from 'better-sqlite3';
-import { refDb } from '../db/refDb.js';
+import { dbSelect, dbRunNoParams } from '../db/refDb.js';
 //@route PUT /api/posts/update
 export default (req, res, next) => {
     const error = new Error('Request formatted incorrectly');
@@ -9,14 +8,15 @@ export default (req, res, next) => {
     const currDateOffset = req.body[0].dateOffset;
     const currAccId = req.body[0].accId;
     const currUserId = req.body[0].userId;
-    const post = refDb(`
+    const selectStatementCurr = `
 	SELECT *
 	FROM transactions
 	WHERE trans_date = '${currDate}'
-	AND trans_date_offset = '${currDateOffset}'
-	AND acc_id = '${currAccId}'
+	AND trans_date_offset = ${currDateOffset}
+	AND acc_id = ${currAccId}
 	AND user_id = '${currUserId}';
-	`);
+	`;
+    const post = dbSelect(selectStatementCurr);
     if (!post.length) {
         const error = new Error('A post with those parameters was not found');
         res.status(404);
@@ -31,8 +31,7 @@ export default (req, res, next) => {
         userId: req.body[1].userId.replace("'", "''"),
     };
     const { date, dateOffset, amount, memo, accId, userId } = newTrans;
-    const db = new Database('accounting.db', { fileMustExist: true });
-    const query = db.prepare(`
+    const updateStatement = `
 		UPDATE transactions
 		SET
 			trans_date = '${date}',
@@ -45,16 +44,16 @@ export default (req, res, next) => {
 		AND trans_date_offset = ${currDateOffset}
 		AND acc_id = ${currAccId}
 		AND user_id = '${currUserId}';
-		`);
-    query.run();
-    const newPost = refDb(`
+`;
+    dbRunNoParams(updateStatement);
+    const selectStatementNew = `
 		SELECT *
 		FROM transactions
 		WHERE trans_date = '${date}'
 		AND trans_date_offset = '${dateOffset}'
 		AND acc_id = '${accId}'
 		AND user_id = '${userId}';
-		`);
-    db.close();
+	`;
+    const newPost = dbSelect(selectStatementNew);
     res.status(200).json(newPost);
 };

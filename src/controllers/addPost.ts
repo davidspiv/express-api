@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { refDb } from '../db/refDb.js';
-import Database from 'better-sqlite3';
+import { dbSelect, dbAdd } from '../db/refDb.js';
 import type { Transaction } from '../interfaces.js';
 
 //@route POST /api/posts/insert
@@ -16,14 +15,16 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
 	const { date, dateOffset, accId, userId } = trans;
 
-	const post = refDb(`
+	const selectStatement = `
 	SELECT *
 	FROM transactions
 	WHERE trans_date = '${date}'
 	AND trans_date_offset = '${dateOffset}'
 	AND acc_id = '${accId}'
 	AND user_id = '${userId}';
-	`);
+	`;
+
+	const post = dbSelect(selectStatement);
 
 	if (post.length) {
 		const error = new Error('A post with those parameters was already found');
@@ -31,25 +32,14 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		return next(error);
 	}
 
-	const db = new Database('accounting.db', { fileMustExist: true });
-	const query = db.prepare(`
+	const insertStatement = `
 	INSERT INTO
 		transactions (trans_date, trans_date_offset, trans_amount, trans_memo, acc_id, user_id)
 	VALUES
 		(@date, @dateOffset, @amount, @memo, @accId, @userId);
-		`);
+	`;
 
-	query.run(trans);
-
-	const newPost = refDb(`
-		SELECT *
-		FROM transactions
-		WHERE trans_date = '${date}'
-		AND trans_date_offset = '${dateOffset}'
-		AND acc_id = '${accId}'
-		AND user_id = '${userId}';
-		`);
-
-	db.close();
+	dbAdd(insertStatement, trans);
+	const newPost = dbSelect(selectStatement);
 	res.status(200).json(newPost);
 };
