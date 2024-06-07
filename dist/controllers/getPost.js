@@ -1,15 +1,8 @@
 import { dbSelect } from '../db/refDb.js';
-//@route GET /api/posts/search
+//@route GET /api/posts/:id
 export default (req, res, next) => {
-    const trans = {
-        date: req.body.date,
-        dateOffset: req.body.dateOffset,
-        amount: req.body.amount,
-        memo: req.body.memo.replace("'", "''"),
-        accId: req.body.accId,
-        userId: req.body.userId.replace("'", "''"),
-    };
-    const post = dbSelect(trans);
+    const id = req.params.id;
+    const post = dbSelect(id);
     if (!post) {
         const error = new Error('A post with those parameters was not found');
         res.status(404);

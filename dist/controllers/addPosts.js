@@ -7,7 +7,7 @@ export default (req, res, next) => {
     const recentDbTrans = dbSelect(`
 		SELECT *
 		FROM transactions
-		WHERE acc_id = ${req.body[0].accId}
+		WHERE acc_code = ${req.body[0].accCode}
 		AND user_id = '${req.body[0].userId}'
 		ORDER BY trans_date
 		DESC LIMIT 1;
@@ -24,9 +24,9 @@ export default (req, res, next) => {
             const trans = {
                 date: req.body[i].date,
                 dateOffset: req.body[i].dateOffset,
-                amount: req.body[i].amount,
+                amount: Number.parseFloat(req.body[i].amount) * 100,
                 memo: req.body[i].memo.replace("'", "''"),
-                accId: req.body[i].accId,
+                accCode: req.body[i].accCode,
                 userId: req.body[i].userId.replace("'", "''"),
             };
             arr.push(trans);
@@ -40,13 +40,13 @@ export default (req, res, next) => {
         inputTransArr.sort((a, b) => filterDate(b.date) - filterDate(a.date));
     }
     function getSliceIndex(recentDbTrans) {
-        const { trans_date, trans_date_offset, acc_id, user_id } = recentDbTrans;
+        const { trans_date, trans_date_offset, acc_code, user_id } = recentDbTrans;
         if (!trans_date)
             return 0;
         for (let i = 0; i < inputTransArr.length; i++) {
             if (inputTransArr[i].date === trans_date &&
                 inputTransArr[i].dateOffset === trans_date_offset &&
-                inputTransArr[i].accId === acc_id &&
+                inputTransArr[i].accCode === acc_code &&
                 inputTransArr[i].userId === user_id)
                 return i;
         }
@@ -58,9 +58,9 @@ export default (req, res, next) => {
     const filteredTransArr = inputTransArr.slice(0, sliceIndex);
     const insertStatement = `
 	INSERT INTO transactions
-		(trans_date, trans_date_offset, trans_amount, trans_memo, acc_id, user_id)
+		(trans_date, trans_date_offset, trans_amount, trans_memo, acc_code, user_id)
 	VALUES
-		(@date, @dateOffset, @amount, @memo, @accId, @userId);
+		(@date, @dateOffset, @amount, @memo, @accCode, @userId);
 	`;
     dbAddAll(insertStatement, filteredTransArr);
     res.status(200).json(filteredTransArr);

@@ -4,7 +4,7 @@ import type { Transaction } from '../interfaces.js';
 
 const db = new Database('accounting.db');
 const queryArr = await getQueries('sql/up_migration.sql');
-const transArr = await parseCsv('Checking');
+const transArr = await parseCsv(1001);
 runQueries(queryArr);
 runTransQueries(transArr);
 db.close();
@@ -33,9 +33,9 @@ function runQueries(queries: string[]) {
 function runTransQueries(transArr: Transaction[]) {
 	const insertStatement = db.prepare(`
 	INSERT INTO
-		transactions (trans_date, trans_date_offset, trans_amount, trans_memo, acc_id, user_id)
+		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, user_id, acc_code)
 	VALUES
-		(@date, @dateOffset, @amount, @memo, @accId, @userId);
+		(@id, @date, @dateOffset, @amount, @memo, @userId, @accCode);
 		`);
 	const enterTrans = db.transaction(() => {
 		for (const trans of transArr) {

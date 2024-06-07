@@ -1,16 +1,12 @@
 import Database from 'better-sqlite3';
 import type { Transaction } from '../interfaces.js';
 
-const dbSelect = (trans: Transaction) => {
-	const { date, dateOffset, accId, userId } = trans;
+const dbSelect = (id: string) => {
 	const selectStatement = `
 	SELECT *
 	FROM transactions
-	WHERE trans_date = '${date}'
-	AND trans_date_offset = '${dateOffset}'
-	AND acc_id = '${accId}'
-	AND user_id = '${userId}';
-	`;
+	WHERE trans_id = '${id}';
+`;
 	const db = new Database('accounting.db', { fileMustExist: true });
 	const result = db.prepare(selectStatement).all();
 	db.close();
@@ -57,7 +53,7 @@ const dbAddAll = (query: string, transArr: Transaction[]) => {
 				dateOffset: trans.dateOffset,
 				amount: trans.amount,
 				memo: trans.memo,
-				accId: trans.accId,
+				accCode: trans.accCode,
 				userId: trans.userId,
 			});
 		}

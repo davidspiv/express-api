@@ -20,39 +20,39 @@ CREATE TABLE users (
 );
 
 CREATE TABLE accounts (
-    acc_id INTEGER NOT NULL,
+    acc_code INTEGER NOT NULL,
     user_id TEXT NOT NULL,
     acc_name TEXT NOT NULL,
     label_id TEXT NOT NULL,
     acc_initial_bal INTEGER DEFAULT 0,
-    FOREIGN KEY (acc_id, user_id)
-        REFERENCES accounts(acc_id, user_id)
+    FOREIGN KEY (acc_code, user_id)
+        REFERENCES accounts(acc_code, user_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
-    PRIMARY KEY (acc_id, user_id)
+    PRIMARY KEY (acc_code, user_id)
 );
 
 CREATE TABLE transactions (
+    trans_id TEXT PRIMARY KEY,
     trans_date TEXT NOT NULL,
     trans_date_offset INTEGER NOT NULL,
     trans_amount INTEGER NOT NULL,
     trans_memo TEXT NOT NULL,
-    acc_id INTEGER NOT NULL,
     user_id TEXT NOT NULL,
+    acc_code INTEGER NOT NULL,
     trans_fitid TEXT,
-    FOREIGN KEY (acc_id, user_id)
-        REFERENCES accounts(acc_id, user_id)
+    FOREIGN KEY (acc_code, user_id)
+        REFERENCES accounts(acc_code, user_id)
         ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    PRIMARY KEY(trans_date, trans_date_offset, acc_id, user_id)
+        ON DELETE RESTRICT
 );
 
 CREATE TABLE memos (
     memo_id TEXT NOT NULL,
-    acc_id INTEGER NOT NULL,
     user_id TEXT NOT NULL,
-    FOREIGN KEY (acc_id, user_id)
-        REFERENCES accounts(acc_id, user_id)
+    acc_code INTEGER NOT NULL,
+    FOREIGN KEY (user_id, acc_code)
+        REFERENCES accounts(user_id, acc_code)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
     PRIMARY KEY (memo_id)
@@ -83,26 +83,26 @@ INSERT INTO users (user_id, user_password, user_email, user_role)
     VALUES
     ('David', 'bebop', 'poop@gmail.com', 'admin');
 
-INSERT INTO accounts (acc_id, user_id, acc_name, label_id)
+INSERT INTO accounts (user_id, acc_code, acc_name, label_id)
     VALUES
-    (1001, 'David', 'Schools Checking', 'Cash and cash equivalents'),
-    (1002, 'David', 'Schools Savings', 'Cash and cash equivalents'),
-    (1003, 'David', 'Petty Cash', 'Cash and cash equivalents'),
-    (1004, 'David', 'Receivable', 'A/R'),
-    (1005, 'David', 'Prepaid', 'Prepaid'),
-    (2001, 'David', 'Payable', 'A/P'),
-    (3001, 'David', 'Stock', 'Stock'),
-    (5001, 'David', 'Housing', 'Expense'),
-    (5002, 'David', 'Food', 'Expense'),
-    (5003, 'David', 'Utilities', 'Expense'),
-    (5004, 'David', 'Transportation', 'Expense'),
-    (5005, 'David', 'Household', 'Expense'),
-    (5006, 'David', 'Education', 'Expense'),
-    (5007, 'David', 'Gifts', 'Expense'),
-    (5008, 'David', 'Personal', 'Expense');
+    ('David', 1001, 'Schools Checking', 'Cash and cash equivalents'),
+    ('David', 1002, 'Schools Savings', 'Cash and cash equivalents'),
+    ('David', 1003, 'Petty Cash', 'Cash and cash equivalents'),
+    ('David', 1004, 'Receivable', 'A/R'),
+    ('David', 1005, 'Prepaid', 'Prepaid'),
+    ('David', 2001, 'Payable', 'A/P'),
+    ('David', 3001, 'Stock', 'Stock'),
+    ('David', 5001, 'Housing', 'Expense'),
+    ('David', 5002, 'Food', 'Expense'),
+    ('David', 5003, 'Utilities', 'Expense'),
+    ('David', 5004, 'Transportation', 'Expense'),
+    ('David', 5005, 'Household', 'Expense'),
+    ('David', 5006, 'Education', 'Expense'),
+    ('David', 5007, 'Gifts', 'Expense'),
+    ('David', 5008, 'Personal', 'Expense');
 
-INSERT INTO memos (memo_id, acc_id, user_id)
+INSERT INTO memos (memo_id, user_id, acc_code)
     VALUES
-    ('WL *STEAM PURCHASE SEATTLE WA 10400 NO 4th', 5008, 'David'),
-    ('IN-N-OUT SACRAMENTO SACRAMENTO CA 200O ALT', 5002, 'David'),
-    ('POS ARCO#83191J STR SACRAMENTO CA SACRAMEO', 5004, 'David');
+    ('WL *STEAM PURCHASE SEATTLE WA 10400 NO 4th', 'David', 5008),
+    ('IN-N-OUT SACRAMENTO SACRAMENTO CA 200O ALT', 'David', 5002),
+    ('POS ARCO#83191J STR SACRAMENTO CA SACRAMEO', 'David', 5004);

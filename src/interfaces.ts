@@ -3,7 +3,7 @@ interface AccountType {
 }
 
 interface Account {
-	id: string;
+	code: string;
 	typeId: string;
 	initialBal?: number;
 }
@@ -17,28 +17,30 @@ interface User {
 }
 
 interface Transaction {
+	id?: string;
 	date: string;
 	dateOffset: number;
 	amount: number;
 	memo: string;
-	accId: number;
+	accCode: number;
 	userId: string;
 	fitid?: string;
 }
 
 interface TransactionData {
+	trans_id: string;
 	trans_date: string;
 	trans_date_offset: number;
 	trans_amount: number;
 	trans_memo: string;
-	acc_id: number;
 	user_id: string;
+	acc_code: number;
 	trans_fitid?: string;
 }
 
 interface Memo {
 	id: string;
-	acc_id: string;
+	acc_code: string;
 }
 
 export type { AccountType, Account, User, Transaction, TransactionData, Memo };

@@ -12,7 +12,24 @@ const getData = async (fileName: string) => {
 	}
 };
 
-const parseCsv = async (accId: string) => {
+function createId(
+	isoDate: string,
+	dateOffset: number,
+	accCode: number,
+	userId: string,
+) {
+	const month = isoDate.slice(5, 7);
+	const day = isoDate.slice(8, 10);
+	const year = isoDate.slice(2, 4);
+	const formattedDate = `${month}${day}${year}`;
+
+	const key = Number.parseInt(
+		`${formattedDate}${dateOffset}${accCode}`,
+	).toString(36);
+	return `${key}${userId}`;
+}
+
+const parseCsv = async (accCode: number) => {
 	const csvData = await getData('./inputs/debit.csv');
 	if (csvData) {
 		buildTransObj(csvData);
@@ -25,19 +42,34 @@ const parseCsv = async (accId: string) => {
 		const csvValues = splitCsv(data.replace(/[\n]/g, ','));
 		const totalCol = 7;
 
+		let lastDate: string | null = null;
+		let dateOffset = 0;
+
 		for (let i = 1; i < Math.floor(csvValues.length / totalCol); i++) {
 			const date = new Date(csvValues[i * totalCol]).toISOString();
-			const dateOffset = i;
-			const amount = Number.parseInt(csvValues[i * totalCol + 5]);
+
+			if (lastDate === date) {
+				dateOffset++;
+			} else {
+				dateOffset = 0;
+				lastDate = date;
+			}
+
+			const amount = Math.round(
+				Number.parseFloat(csvValues[i * totalCol + 5]) * 100,
+			);
 			const memo = csvValues[i * totalCol + 1];
-			const accId = 1001;
 			const userId = 'David';
+
+			const id = createId(date, dateOffset, accCode, userId);
+
 			const transObj: Transaction = {
+				id,
 				date,
 				dateOffset,
 				amount,
 				memo,
-				accId,
+				accCode,
 				userId,
 			};
 
@@ -112,4 +144,4 @@ const parseOfx = async () => {
 	console.log('Error with getData()');
 };
 
-export { getData, parseCsv, parseOfx };
+export { getData, createId, parseCsv, parseOfx };

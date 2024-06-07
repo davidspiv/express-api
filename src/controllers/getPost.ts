@@ -1,19 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
 import { dbSelect } from '../db/refDb.js';
-import type { Transaction } from '../interfaces.js';
 
-//@route GET /api/posts/search
+//@route GET /api/posts/:id
 export default (req: Request, res: Response, next: NextFunction) => {
-	const trans: Transaction = {
-		date: req.body.date,
-		dateOffset: req.body.dateOffset,
-		amount: req.body.amount,
-		memo: req.body.memo.replace("'", "''"),
-		accId: req.body.accId,
-		userId: req.body.userId.replace("'", "''"),
-	};
-
-	const post = dbSelect(trans);
+	const id = req.params.id;
+	const post = dbSelect(id);
 
 	if (!post) {
 		const error = new Error('A post with those parameters was not found');

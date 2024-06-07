@@ -11,7 +11,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		if (!Number.isNaN(limit) && limit > 0) {
 			return res.status(200).json(posts.slice(0, limit));
 		}
-		return res.status(200).json(posts);
+		return res.status(200).json({ posts });
 	}
 	const error = new Error('Server Error');
 	res.status(500);

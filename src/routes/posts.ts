@@ -9,10 +9,10 @@ import deletePosts from '../controllers/deletePost.js';
 const router = Router();
 
 router.get('/', getPosts);
-router.get('/search', getPost);
+router.get('/:id', getPost);
 router.post('/', addPosts);
-router.post('/insert', addPost);
-router.put('/update', updatePost);
+router.post('/:id', addPost);
+router.put('/:id', updatePost);
 router.delete('/', deletePosts);
 
 export default router;
