@@ -1,17 +1,14 @@
-import { dbSelect, dbAddAll } from '../db/refDb.js';
+import { createId } from '../db/utils.js';
+import { dbSelectSome, dbAddAll } from '../db/refDb.js';
 //@route POST /api/posts/
 export default (req, res, next) => {
-    const requestError = new Error('Request formatted incorrectly');
-    if (!req.body.length)
-        return next(requestError);
-    const recentDbTrans = dbSelect(`
-		SELECT *
-		FROM transactions
-		WHERE acc_code = ${req.body[0].accCode}
-		AND user_id = '${req.body[0].userId}'
-		ORDER BY trans_date
-		DESC LIMIT 1;
-		`)[0];
+    if (typeof req.body !== 'object' || !req.body || !('posts' in req.body))
+        throw Error("@res.body is not an object or doesn't have posts key.");
+    const postsArr = req.body.posts;
+    const isArray = Array.isArray(postsArr);
+    if (!isArray)
+        throw Error('@posts is not an array.');
+    const recentDbTrans = (dbSelectSome(req.body.posts[0].userId, req.body.posts[0].accCode)[0]);
     const unseededError = new Error('Database unseeded');
     if (!recentDbTrans)
         return next(unseededError);
@@ -20,14 +17,14 @@ export default (req, res, next) => {
     const sliceIndex = getSliceIndex(recentDbTrans);
     function buildInputTransArr() {
         const arr = [];
-        for (let i = 0; i < req.body.length; i++) {
+        for (let i = 0; i < postsArr.length; i++) {
             const trans = {
-                date: req.body[i].date,
-                dateOffset: req.body[i].dateOffset,
-                amount: Number.parseFloat(req.body[i].amount) * 100,
-                memo: req.body[i].memo.replace("'", "''"),
-                accCode: req.body[i].accCode,
-                userId: req.body[i].userId.replace("'", "''"),
+                date: postsArr[i].date,
+                dateOffset: postsArr[i].dateOffset,
+                amount: Number.parseFloat(postsArr[i].amount) * 100,
+                memo: postsArr[i].memo.replace("'", "''"),
+                accCode: postsArr[i].accCode,
+                userId: postsArr[i].userId.replace("'", "''"),
             };
             arr.push(trans);
         }
@@ -40,14 +37,13 @@ export default (req, res, next) => {
         inputTransArr.sort((a, b) => filterDate(b.date) - filterDate(a.date));
     }
     function getSliceIndex(recentDbTrans) {
-        const { trans_date, trans_date_offset, acc_code, user_id } = recentDbTrans;
-        if (!trans_date)
+        const { trans_id } = recentDbTrans;
+        if (!trans_id)
             return 0;
         for (let i = 0; i < inputTransArr.length; i++) {
-            if (inputTransArr[i].date === trans_date &&
-                inputTransArr[i].dateOffset === trans_date_offset &&
-                inputTransArr[i].accCode === acc_code &&
-                inputTransArr[i].userId === user_id)
+            const id = createId(inputTransArr[i].date, inputTransArr[i].dateOffset, inputTransArr[i].accCode, inputTransArr[i].userId);
+            inputTransArr[i].id = id;
+            if (id === trans_id)
                 return i;
         }
         return inputTransArr.length;
@@ -57,10 +53,10 @@ export default (req, res, next) => {
         return next(noNewTransError);
     const filteredTransArr = inputTransArr.slice(0, sliceIndex);
     const insertStatement = `
-	INSERT INTO transactions
-		(trans_date, trans_date_offset, trans_amount, trans_memo, acc_code, user_id)
+	INSERT INTO
+		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, acc_code, user_id)
 	VALUES
-		(@date, @dateOffset, @amount, @memo, @accCode, @userId);
+		(@id, @date, @dateOffset, @amount, @memo, @accCode, @userId);
 	`;
     dbAddAll(insertStatement, filteredTransArr);
     res.status(200).json(filteredTransArr);

@@ -1,6 +1,6 @@
 import { createId } from '../db/utils.js';
 import { dbSelect, dbAdd } from '../db/refDb.js';
-//@route POST /api/posts/
+//@route POST /api/posts/add?
 export default (req, res, next) => {
     const trans = {
         id: createId(req.body.date, req.body.dateOffset, req.body.accCode, req.body.userId),

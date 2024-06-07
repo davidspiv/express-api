@@ -5,7 +5,27 @@ const dbSelect = (id) => {
 	FROM transactions
 	WHERE trans_id = '${id}';
 `;
-    const db = new Database('accounting.db', { fileMustExist: true });
+    const db = new Database('accounting.db', {
+        fileMustExist: true,
+        readonly: true,
+    });
+    const result = db.prepare(selectStatement).all();
+    db.close();
+    return result;
+};
+const dbSelectSome = (userId, accCode) => {
+    const selectStatement = `
+		SELECT *
+		FROM transactions
+		WHERE user_id = '${userId}'
+		AND acc_code = ${accCode}
+		ORDER BY trans_date
+		DESC LIMIT 1;
+		`;
+    const db = new Database('accounting.db', {
+        fileMustExist: true,
+        readonly: true,
+    });
     const result = db.prepare(selectStatement).all();
     db.close();
     return result;
@@ -21,7 +41,10 @@ const dbSelectAll = (limit = 0) => {
             .slice(0, semicolonIndex)
             .concat('', ` LIMIT ${limit};`);
     }
-    const db = new Database('accounting.db', { fileMustExist: true });
+    const db = new Database('accounting.db', {
+        fileMustExist: true,
+        readonly: true,
+    });
     const result = db.prepare(selectStatement).all();
     db.close();
     return result;
@@ -42,6 +65,7 @@ const dbAddAll = (query, transArr) => {
     const insertMany = db.transaction((transArr) => {
         for (const trans of transArr) {
             statement.run({
+                id: trans.id,
                 date: trans.date,
                 dateOffset: trans.dateOffset,
                 amount: trans.amount,
@@ -54,4 +78,4 @@ const dbAddAll = (query, transArr) => {
     insertMany(transArr);
     db.close();
 };
-export { dbSelect, dbSelectAll, dbRunNoParams, dbAdd, dbAddAll };
+export { dbSelect, dbSelectSome, dbSelectAll, dbRunNoParams, dbAdd, dbAddAll };
