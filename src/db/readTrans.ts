@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 
-export default(id: string) => {
+export default (id: string) => {
 	const selectStatement = `
 	SELECT *
 	FROM transactions
@@ -12,5 +12,5 @@ export default(id: string) => {
 	});
 	const result = db.prepare(selectStatement).all();
 	db.close();
-	return result;
+	return result[0];
 };

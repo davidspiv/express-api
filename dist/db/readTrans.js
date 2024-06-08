@@ -11,5 +11,5 @@ export default (id) => {
     });
     const result = db.prepare(selectStatement).all();
     db.close();
-    return result;
+    return result[0];
 };

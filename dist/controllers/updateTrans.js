@@ -4,7 +4,7 @@ import updateTrans from '../db/updateTrans.js';
 export default (req, res, next) => {
     const id = req.params.id;
     const post = readTrans(id);
-    if (!post.length) {
+    if (!post) {
         const error = new Error('A post with those parameters was not found');
         res.status(404);
         return next(error);
