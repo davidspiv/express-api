@@ -11,34 +11,34 @@ test('@route GET /api/transactions: res formatted correctly', async () => {
     if (typeof resBody !== 'object' || !resBody)
         return new Error('@res.body is not an object.');
     const hasEightKeys = Object.keys(resBody).length === 8;
-    const isId = 'trans_id' in resBody &&
+    const hasId = 'trans_id' in resBody &&
         typeof resBody.trans_id === 'string';
-    const isDate = 'trans_date' in resBody &&
+    const hasDate = 'trans_date' in resBody &&
         typeof resBody.trans_date === 'string';
-    const isDateOffset = 'trans_date_offset' in resBody &&
+    const hasDateOffset = 'trans_date_offset' in resBody &&
         typeof resBody.trans_date_offset === 'number';
-    const isAmount = 'trans_amount' in resBody &&
+    const hasAmount = 'trans_amount' in resBody &&
         typeof resBody.trans_amount === 'number';
-    const isMemo = 'trans_memo' in resBody &&
+    const hasMemo = 'trans_memo' in resBody &&
         typeof resBody.trans_memo === 'string';
-    const isUserId = 'user_id' in resBody &&
+    const hasUserId = 'user_id' in resBody &&
         typeof resBody.user_id === 'string';
-    const isAccCode = 'acc_code' in resBody &&
+    const hasAccCode = 'acc_code' in resBody &&
         typeof resBody.acc_code === 'number';
     if (!hasEightKeys)
-        throw new Error("@transactions elements don't have exactly 8 keys.");
-    if (!isId)
-        throw new Error('@transactions trans_id missing / wrong type.');
-    if (!isDate)
-        throw new Error('@transactions trans_date missing / wrong type.');
-    if (!isDateOffset)
-        throw new Error('@transactions trans_date_offset missing / wrong type.');
-    if (!isAmount)
-        throw new Error('@transactions trans_amount missing / wrong type.');
-    if (!isMemo)
-        throw new Error('@transactions trans_memo missing / wrong type.');
-    if (!isUserId)
-        throw new Error('@transactions user_id missing / wrong type.');
-    if (!isAccCode)
-        throw new Error('@transactions acc_code missing / wrong type.');
+        throw new Error("@res.body doesn't have exactly 8 keys.");
+    if (!hasId)
+        throw new Error('@res.body trans_id missing / wrong type.');
+    if (!hasDate)
+        throw new Error('@res.body trans_date missing / wrong type.');
+    if (!hasDateOffset)
+        throw new Error('@res.body trans_date_offset missing / wrong type.');
+    if (!hasAmount)
+        throw new Error('@res.body trans_amount missing / wrong type.');
+    if (!hasMemo)
+        throw new Error('@res.body trans_memo missing / wrong type.');
+    if (!hasUserId)
+        throw new Error('@res.body user_id missing / wrong type.');
+    if (!hasAccCode)
+        throw new Error('@res.body acc_code missing / wrong type.');
 });
