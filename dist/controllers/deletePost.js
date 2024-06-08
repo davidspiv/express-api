@@ -1,4 +1,4 @@
-import { dbSelect, dbRunNoParams } from '../db/deletePost.js';
+import { dbSelect, dbDeletePost } from '../db/deletePost.js';
 //@route DELETE /api/posts/
 export default (req, res, next) => {
     const id = req.params.id;
@@ -8,6 +8,6 @@ export default (req, res, next) => {
         res.status(404);
         return next(error);
     }
-    dbRunNoParams(id);
+    dbDeletePost(id);
     res.status(200).json(post);
 };

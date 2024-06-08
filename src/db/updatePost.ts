@@ -1,4 +1,5 @@
 import Database from 'better-sqlite3';
+import type { Transaction } from '../interfaces/interfaces.js';
 
 const dbSelect = (id: string) => {
 	const selectStatement = `
@@ -15,9 +16,17 @@ const dbSelect = (id: string) => {
 	return result;
 };
 
-const dbRunNoParams = (id: string) => {
+const dbUpdate = (trans: Transaction) => {
+	const { id, date, dateOffset, amount, memo, accCode, userId } = trans;
 	const query = `
-	DELETE FROM transactions
+	UPDATE transactions
+	SET
+		trans_date = '${date}',
+		trans_date_offset = ${dateOffset},
+		trans_amount = ${amount},
+		trans_memo = '${memo}',
+		acc_code = ${accCode},
+		user_id = '${userId}'
 	WHERE trans_id = '${id}';
 	`;
 	const db = new Database('accounting.db', { fileMustExist: true });
@@ -25,4 +34,4 @@ const dbRunNoParams = (id: string) => {
 	db.close();
 };
 
-export { dbSelect, dbRunNoParams };
+export { dbSelect, dbUpdate };

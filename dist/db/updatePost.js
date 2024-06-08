@@ -13,13 +13,21 @@ const dbSelect = (id) => {
     db.close();
     return result;
 };
-const dbRunNoParams = (id) => {
+const dbUpdate = (trans) => {
+    const { id, date, dateOffset, amount, memo, accCode, userId } = trans;
     const query = `
-	DELETE FROM transactions
+	UPDATE transactions
+	SET
+		trans_date = '${date}',
+		trans_date_offset = ${dateOffset},
+		trans_amount = ${amount},
+		trans_memo = '${memo}',
+		acc_code = ${accCode},
+		user_id = '${userId}'
 	WHERE trans_id = '${id}';
 	`;
     const db = new Database('accounting.db', { fileMustExist: true });
     db.prepare(query).run();
     db.close();
 };
-export { dbSelect, dbRunNoParams };
+export { dbSelect, dbUpdate };

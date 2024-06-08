@@ -13,13 +13,19 @@ const dbSelect = (id) => {
     db.close();
     return result;
 };
-const dbDeletePost = (id) => {
-    const query = `
-	DELETE FROM transactions
-	WHERE trans_id = '${id}';
-	`;
+const dbDeleteAll = (idArr) => {
     const db = new Database('accounting.db', { fileMustExist: true });
-    db.prepare(query).run();
+    const updateMany = db.transaction(() => {
+        for (const id of idArr) {
+            const query = `
+			DELETE FROM transactions
+			WHERE trans_id = '${id}';
+			`;
+            const statement = db.prepare(query);
+            statement.run(id);
+        }
+    });
+    updateMany();
     db.close();
 };
-export { dbSelect, dbDeletePost };
+export { dbSelect, dbDeleteAll };
