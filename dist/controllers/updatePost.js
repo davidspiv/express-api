@@ -1,4 +1,4 @@
-import { dbSelect, dbRunNoParams } from '../services/refDb.js';
+import { dbSelect, dbRunNoParams } from '../db/updatePost.js';
 //@route PUT /api/posts/update
 export default (req, res, next) => {
     const error = new Error('Request formatted incorrectly');

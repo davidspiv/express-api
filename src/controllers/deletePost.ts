@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { dbSelect, dbRunNoParams } from '../services/refDb.js';
-import type { Transaction } from '../interfaces/interfaces.js';
+import { dbSelect, dbRunNoParams } from '../db/deletePost.js';
 
 //@route DELETE /api/posts/
 export default (req: Request, res: Response, next: NextFunction) => {
@@ -13,10 +12,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		return next(error);
 	}
 
-	dbRunNoParams(`
-	DELETE FROM transactions
-	WHERE trans_id = '${id}';
-	`);
+	dbRunNoParams(id);
 
 	res.status(200).json(post);
 };

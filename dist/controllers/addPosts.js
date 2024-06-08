@@ -1,5 +1,5 @@
-import { createId } from '../services/utils.js';
-import { dbSelectSome, dbAddAll } from '../services/refDb.js';
+import { createId } from '../dev/utils.js';
+import { dbSelectSome, dbAddAll } from '../db/addPosts.js';
 //@route POST /api/posts/
 export default (req, res, next) => {
     if (typeof req.body !== 'object' || !req.body || !('posts' in req.body))
@@ -52,12 +52,6 @@ export default (req, res, next) => {
     if (!sliceIndex)
         return next(noNewTransError);
     const filteredTransArr = inputTransArr.slice(0, sliceIndex);
-    const insertStatement = `
-	INSERT INTO
-		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, acc_code, user_id)
-	VALUES
-		(@id, @date, @dateOffset, @amount, @memo, @accCode, @userId);
-	`;
-    dbAddAll(insertStatement, filteredTransArr);
+    dbAddAll(filteredTransArr);
     res.status(200).json(filteredTransArr);
 };

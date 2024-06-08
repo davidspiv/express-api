@@ -1,4 +1,4 @@
-import { dbSelectAll } from '../services/refDb.js';
+import { dbSelectAll } from '../db/getPosts.js';
 //@route GET /api/posts
 export default (req, res, next) => {
     const limit = Number.parseInt(req.url.slice(req.url.indexOf('_limit') + 7));

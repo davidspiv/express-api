@@ -1,4 +1,4 @@
-import { dbSelect, dbRunNoParams } from '../services/refDb.js';
+import { dbSelect, dbRunNoParams } from '../db/deletePost.js';
 //@route DELETE /api/posts/
 export default (req, res, next) => {
     const id = req.params.id;
@@ -8,9 +8,6 @@ export default (req, res, next) => {
         res.status(404);
         return next(error);
     }
-    dbRunNoParams(`
-	DELETE FROM transactions
-	WHERE trans_id = '${id}';
-	`);
+    dbRunNoParams(id);
     res.status(200).json(post);
 };

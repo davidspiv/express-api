@@ -59,8 +59,14 @@ const dbAdd = (query, trans) => {
     db.prepare(query).run(trans);
     db.close();
 };
-const dbAddAll = (query, transArr) => {
+const dbAddAll = (transArr) => {
     const db = new Database('accounting.db', { fileMustExist: true });
+    const query = `
+	INSERT INTO
+		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, acc_code, user_id)
+	VALUES
+		(@id, @date, @dateOffset, @amount, @memo, @accCode, @userId);
+	`;
     const statement = db.prepare(query);
     const insertMany = db.transaction((transArr) => {
         for (const trans of transArr) {

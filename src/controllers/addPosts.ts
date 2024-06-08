@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import { createId } from '../services/utils.js';
-import { dbSelectSome, dbAddAll } from '../services/refDb.js';
+import { createId } from '../dev/utils.js';
+import { dbSelectSome, dbAddAll } from '../db/addPosts.js';
 import type { Transaction, TransactionData } from '../interfaces/interfaces.js';
 
 //@route POST /api/posts/
@@ -69,12 +69,6 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	if (!sliceIndex) return next(noNewTransError);
 
 	const filteredTransArr = inputTransArr.slice(0, sliceIndex);
-	const insertStatement = `
-	INSERT INTO
-		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, acc_code, user_id)
-	VALUES
-		(@id, @date, @dateOffset, @amount, @memo, @accCode, @userId);
-	`;
-	dbAddAll(insertStatement, filteredTransArr);
+	dbAddAll(filteredTransArr);
 	res.status(200).json(filteredTransArr);
 };

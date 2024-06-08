@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { dbSelect, dbRunNoParams } from '../services/refDb.js';
+import { dbSelect, dbRunNoParams } from '../db/updatePost.js';
 import type { Transaction } from '../interfaces/interfaces.js';
 
 //@route PUT /api/posts/update
