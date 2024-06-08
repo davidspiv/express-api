@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { dbSelectAll } from '../db/refDb.js';
+import { dbSelectAll } from '../services/refDb.js';
 
 //@route GET /api/posts
 export default (req: Request, res: Response, next: NextFunction) => {

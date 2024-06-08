@@ -1,14 +1,16 @@
 import { readFile } from 'node:fs/promises';
-import type { Transaction } from '../interfaces.js';
+import type { Transaction } from '../interfaces/interfaces.js';
 
 const transactions: Transaction[] = [];
 
 const getData = async (fileName: string) => {
 	try {
-		const contents = await readFile(fileName, { encoding: 'utf8' });
+		const contents = await readFile(fileName, {
+			encoding: 'utf8',
+		});
 		return contents;
 	} catch (err) {
-		console.log('Unable to retrieve text from file');
+		console.log('Unable to retrieve text from file.');
 	}
 };
 

@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Transaction } from '../interfaces.js';
+import type { Transaction } from '../interfaces/interfaces.js';
 
 const dbSelect = (id: string) => {
 	const selectStatement = `

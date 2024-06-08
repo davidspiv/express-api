@@ -1,13 +1,15 @@
 import { getData, parseCsv, parseOfx } from './utils.js';
 import Database from 'better-sqlite3';
-import type { Transaction } from '../interfaces.js';
+import type { Transaction } from '../interfaces/interfaces.js';
 
 const db = new Database('accounting.db');
-const queryArr = await getQueries('sql/up_migration.sql');
+const queryArr = await getQueries('./dist/models/up_migration.sql');
 const transArr = await parseCsv(1001);
+
 runQueries(queryArr);
 runTransQueries(transArr);
 db.close();
+
 console.log(`
 ${queryArr.length} initial query(ies) ran successfully.
 ${transArr.length} transactions input successfully.

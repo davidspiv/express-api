@@ -1,4 +1,4 @@
-import { dbSelect } from '../db/refDb.js';
+import { dbSelect } from '../services/refDb.js';
 //@route GET /api/posts/:id
 export default (req, res, next) => {
     const id = req.params.id;

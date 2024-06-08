@@ -1,7 +1,7 @@
 import { getData, parseCsv } from './utils.js';
 import Database from 'better-sqlite3';
 const db = new Database('accounting.db');
-const queryArr = await getQueries('sql/up_migration.sql');
+const queryArr = await getQueries('./dist/models/up_migration.sql');
 const transArr = await parseCsv(1001);
 runQueries(queryArr);
 runTransQueries(transArr);

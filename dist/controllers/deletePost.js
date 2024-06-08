@@ -1,4 +1,4 @@
-import { dbSelect, dbRunNoParams } from '../db/refDb.js';
+import { dbSelect, dbRunNoParams } from '../services/refDb.js';
 //@route DELETE /api/posts/
 export default (req, res, next) => {
     const id = req.params.id;

@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import { createId } from '../db/utils.js';
-import { dbSelectSome, dbAddAll } from '../db/refDb.js';
-import type { Transaction, TransactionData } from '../interfaces.js';
+import { createId } from '../services/utils.js';
+import { dbSelectSome, dbAddAll } from '../services/refDb.js';
+import type { Transaction, TransactionData } from '../interfaces/interfaces.js';
 
 //@route POST /api/posts/
 export default (req: Request, res: Response, next: NextFunction) => {

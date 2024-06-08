@@ -2,11 +2,13 @@ import { readFile } from 'node:fs/promises';
 const transactions = [];
 const getData = async (fileName) => {
     try {
-        const contents = await readFile(fileName, { encoding: 'utf8' });
+        const contents = await readFile(fileName, {
+            encoding: 'utf8',
+        });
         return contents;
     }
     catch (err) {
-        console.log('Unable to retrieve text from file');
+        console.log('Unable to retrieve text from file.');
     }
 };
 function createId(isoDate, dateOffset, accCode, userId) {

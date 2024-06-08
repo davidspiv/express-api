@@ -1,5 +1,5 @@
-import { createId } from '../db/utils.js';
-import { dbSelectSome, dbAddAll } from '../db/refDb.js';
+import { createId } from '../services/utils.js';
+import { dbSelectSome, dbAddAll } from '../services/refDb.js';
 //@route POST /api/posts/
 export default (req, res, next) => {
     if (typeof req.body !== 'object' || !req.body || !('posts' in req.body))

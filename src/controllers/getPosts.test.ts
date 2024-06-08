@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import fetch from 'node-fetch';
-import type { TransactionData } from '../interfaces.js';
+import type { TransactionData } from '../interfaces/interfaces.js';
 
 async function getData(address: string) {
 	const response = await fetch(address);

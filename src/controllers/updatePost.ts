@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import { dbSelect, dbRunNoParams } from '../db/refDb.js';
-import type { Transaction } from '../interfaces.js';
+import { dbSelect, dbRunNoParams } from '../services/refDb.js';
+import type { Transaction } from '../interfaces/interfaces.js';
 
 //@route PUT /api/posts/update
 export default (req: Request, res: Response, next: NextFunction) => {
