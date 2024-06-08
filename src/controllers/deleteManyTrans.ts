@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import { dbSelect, dbDeleteAll } from '../db/deleteManyTrans.js';
+import readTrans from '../db/readTrans.js';
+import deleteManyTrans from '../db/deleteManyTrans.js';
 
 //@route DELETE /api/transactions/
 export default (req: Request, res: Response, next: NextFunction) => {
@@ -18,14 +19,14 @@ export default (req: Request, res: Response, next: NextFunction) => {
 			),
 		);
 
-	dbDeleteAll(deletedTransIdArr);
+		deleteManyTrans(deletedTransIdArr);
 
 	function buildDeletedTransIdArr() {
 		const idArr: string[] = [];
 
 		for (let i = 0; i < transArr.length; i++) {
 			const id = transArr[i].id;
-			const exists = dbSelect(id);
+			const exists = readTrans(id);
 			if (!exists) return [];
 
 			idArr.push(id);

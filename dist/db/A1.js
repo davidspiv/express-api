@@ -1,10 +1,13 @@
 import Database from 'better-sqlite3';
-export default (id) => {
+const readLatestTrans = (userId, accCode) => {
     const selectStatement = `
-	SELECT *
-	FROM transactions
-	WHERE trans_id = '${id}';
-	`;
+		SELECT *
+		FROM transactions
+		WHERE user_id = '${userId}'
+		AND acc_code = ${accCode}
+		ORDER BY trans_date
+		DESC LIMIT 1;
+		`;
     const db = new Database('accounting.db', {
         fileMustExist: true,
         readonly: true,

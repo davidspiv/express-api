@@ -1,19 +1,5 @@
 import Database from 'better-sqlite3';
-const dbSelect = (id) => {
-    const selectStatement = `
-	SELECT *
-	FROM transactions
-	WHERE trans_id = '${id}';
-	`;
-    const db = new Database('accounting.db', {
-        fileMustExist: true,
-        readonly: true,
-    });
-    const result = db.prepare(selectStatement).all();
-    db.close();
-    return result;
-};
-const dbDeleteTrans = (id) => {
+export default (id) => {
     const query = `
 	DELETE FROM transactions
 	WHERE trans_id = '${id}';
@@ -22,4 +8,3 @@ const dbDeleteTrans = (id) => {
     db.prepare(query).run();
     db.close();
 };
-export { dbSelect, dbDeleteTrans };

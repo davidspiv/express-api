@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-const dbSelectAll = (limit = 0) => {
+export default (limit = 0) => {
     let selectStatement = `
 	SELECT * FROM transactions
 	ORDER BY trans_date DESC;
@@ -18,4 +18,3 @@ const dbSelectAll = (limit = 0) => {
     db.close();
     return result;
 };
-export { dbSelectAll };

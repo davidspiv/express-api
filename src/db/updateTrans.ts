@@ -1,22 +1,7 @@
 import Database from 'better-sqlite3';
 import type { Transaction } from '../interfaces/interfaces.js';
 
-const dbSelect = (id: string) => {
-	const selectStatement = `
-	SELECT *
-	FROM transactions
-	WHERE trans_id = '${id}';
-	`;
-	const db = new Database('accounting.db', {
-		fileMustExist: true,
-		readonly: true,
-	});
-	const result = db.prepare(selectStatement).all();
-	db.close();
-	return result;
-};
-
-const dbUpdate = (trans: Transaction) => {
+export default (trans: Transaction) => {
 	const { id, date, dateOffset, amount, memo, accCode, userId } = trans;
 	const query = `
 	UPDATE transactions
@@ -34,4 +19,3 @@ const dbUpdate = (trans: Transaction) => {
 	db.close();
 };
 
-export { dbSelect, dbUpdate };

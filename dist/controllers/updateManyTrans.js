@@ -1,4 +1,5 @@
-import { dbSelect, dbUpdateAll } from '../db/updateManyTrans.js';
+import readTrans from '../db/readTrans.js';
+import updateManyTrans from '../db/updateManyTrans.js';
 //@route PUT /api/transactions/update
 export default (req, res, next) => {
     if (typeof req.body !== 'object' || !req.body || !('transactions' in req.body))
@@ -11,14 +12,14 @@ export default (req, res, next) => {
     const updateTransIdArr = [];
     if (!updateArr.length)
         return next(Error(`Input after ${updateTransIdArr[updateTransIdArr.length - 1]} failed.`));
-    dbUpdateAll(updateArr);
+    updateManyTrans(updateArr);
     function buildInputTransArr() {
         const transArr = [];
         for (let i = 0; i < transArr.length; i++) {
             const id = transArr[i].id;
             if (!id)
                 return [];
-            const exists = dbSelect(id);
+            const exists = readTrans(id);
             if (!exists)
                 return [];
             const trans = {

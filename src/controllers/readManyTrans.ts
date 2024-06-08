@@ -1,10 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
-import { dbSelectAll } from '../db/readManyTrans.js';
+import readManyTrans from '../db/readManyTrans.js';
 
 //@route GET /api/transactions
 export default (req: Request, res: Response, next: NextFunction) => {
 	const limit = Number.parseInt(req.url.slice(req.url.indexOf('_limit') + 7));
-	const transArr = dbSelectAll(limit);
+	const transArr = readManyTrans(limit);
 	const limitData = String(req.query.limit);
 	if (limitData.length > 0) {
 		const limit = Number.parseInt(limitData);

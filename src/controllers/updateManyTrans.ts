@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import { dbSelect, dbUpdateAll } from '../db/updateManyTrans.js';
+import readTrans from '../db/readTrans.js';
+import updateManyTrans from '../db/updateManyTrans.js';
 import type { Transaction } from '../interfaces/interfaces.js';
 
 //@route PUT /api/transactions/update
@@ -22,7 +23,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 			),
 		);
 
-	dbUpdateAll(updateArr);
+		updateManyTrans(updateArr);
 
 	function buildInputTransArr() {
 		const transArr: Transaction[] = [];
@@ -30,7 +31,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		for (let i = 0; i < transArr.length; i++) {
 			const id = transArr[i].id;
 			if (!id) return [];
-			const exists = dbSelect(id);
+			const exists = readTrans(id);
 			if (!exists) return [];
 
 			const trans: Transaction = {

@@ -1,11 +1,11 @@
 import Database from 'better-sqlite3';
 
-const dbSelect = (id: string) => {
+export default(id: string) => {
 	const selectStatement = `
 	SELECT *
 	FROM transactions
 	WHERE trans_id = '${id}';
-`;
+	`;
 	const db = new Database('accounting.db', {
 		fileMustExist: true,
 		readonly: true,
@@ -14,5 +14,3 @@ const dbSelect = (id: string) => {
 	db.close();
 	return result;
 };
-
-export { dbSelect };

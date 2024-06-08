@@ -1,5 +1,5 @@
 import { createId } from '../dev/utils.js';
-import { dbSelectSomeTrans, dbAddAllTrans } from '../db/addManyTrans.js';
+import { readLatestTrans, insertManyTrans } from '../db/addManyTrans.js';
 //@route POST /api/transactions/
 export default (req, res, next) => {
     if (typeof req.body !== 'object' || !req.body || !('transactions' in req.body))
@@ -8,7 +8,7 @@ export default (req, res, next) => {
     const isArray = Array.isArray(transArr);
     if (!isArray)
         return next(new Error('@req.transactions is not an array.'));
-    const recentDbTrans = (dbSelectSomeTrans(req.body.transactions[0].userId, req.body.transactions[0].accCode)[0]);
+    const recentDbTrans = (readLatestTrans(req.body.transactions[0].userId, req.body.transactions[0].accCode)[0]);
     const unseededError = new Error('Database unseeded');
     if (!recentDbTrans)
         return next(unseededError);
@@ -52,6 +52,6 @@ export default (req, res, next) => {
     if (!sliceIndex)
         return next(noNewTransError);
     const filteredTransArr = inputTransArr.slice(0, sliceIndex);
-    dbAddAllTrans(filteredTransArr);
+    insertManyTrans(filteredTransArr);
     res.status(200).json(filteredTransArr);
 };

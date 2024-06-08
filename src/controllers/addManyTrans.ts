@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { createId } from '../dev/utils.js';
-import { dbSelectSomeTrans, dbAddAllTrans } from '../db/addManyTrans.js';
+import { readLatestTrans, insertManyTrans } from '../db/addManyTrans.js';
 import type { Transaction, TransactionData } from '../interfaces/interfaces.js';
 
 //@route POST /api/transactions/
@@ -12,7 +12,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	if (!isArray) return next( new Error('@req.transactions is not an array.'));
 
 	const recentDbTrans = <TransactionData | null>(
-		dbSelectSomeTrans(
+		readLatestTrans(
 			req.body.transactions[0].userId,
 			req.body.transactions[0].accCode,
 		)[0]
@@ -72,6 +72,6 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	if (!sliceIndex) return next(noNewTransError);
 
 	const filteredTransArr = inputTransArr.slice(0, sliceIndex);
-	dbAddAllTrans(filteredTransArr);
+	insertManyTrans(filteredTransArr);
 	res.status(200).json(filteredTransArr);
 };
