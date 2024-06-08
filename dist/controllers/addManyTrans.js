@@ -1,14 +1,14 @@
 import { createId } from '../dev/utils.js';
-import { dbSelectSome, dbAddAll } from '../db/addPosts.js';
-//@route POST /api/posts/
+import { dbSelectSomeTrans, dbAddAllTrans } from '../db/addManyTrans.js';
+//@route POST /api/transactions/
 export default (req, res, next) => {
-    if (typeof req.body !== 'object' || !req.body || !('posts' in req.body))
-        throw Error("@res.body is not an object or doesn't have posts key.");
-    const postsArr = req.body.posts;
-    const isArray = Array.isArray(postsArr);
+    if (typeof req.body !== 'object' || !req.body || !('transactions' in req.body))
+        return next(new Error("@res.body is not an object or doesn't have transactions key."));
+    const transArr = req.body.transactions;
+    const isArray = Array.isArray(transArr);
     if (!isArray)
-        throw Error('@posts is not an array.');
-    const recentDbTrans = (dbSelectSome(req.body.posts[0].userId, req.body.posts[0].accCode)[0]);
+        return next(new Error('@req.transactions is not an array.'));
+    const recentDbTrans = (dbSelectSomeTrans(req.body.transactions[0].userId, req.body.transactions[0].accCode)[0]);
     const unseededError = new Error('Database unseeded');
     if (!recentDbTrans)
         return next(unseededError);
@@ -17,14 +17,14 @@ export default (req, res, next) => {
     const sliceIndex = getSliceIndex(recentDbTrans);
     function buildInputTransArr() {
         const arr = [];
-        for (let i = 0; i < postsArr.length; i++) {
+        for (let i = 0; i < transArr.length; i++) {
             const trans = {
-                date: postsArr[i].date,
-                dateOffset: postsArr[i].dateOffset,
-                amount: Number.parseFloat(postsArr[i].amount) * 100,
-                memo: postsArr[i].memo.replace("'", "''"),
-                accCode: postsArr[i].accCode,
-                userId: postsArr[i].userId.replace("'", "''"),
+                date: transArr[i].date,
+                dateOffset: transArr[i].dateOffset,
+                amount: Number.parseFloat(transArr[i].amount) * 100,
+                memo: transArr[i].memo.replace("'", "''"),
+                accCode: transArr[i].accCode,
+                userId: transArr[i].userId.replace("'", "''"),
             };
             arr.push(trans);
         }
@@ -52,6 +52,6 @@ export default (req, res, next) => {
     if (!sliceIndex)
         return next(noNewTransError);
     const filteredTransArr = inputTransArr.slice(0, sliceIndex);
-    dbAddAll(filteredTransArr);
+    dbAddAllTrans(filteredTransArr);
     res.status(200).json(filteredTransArr);
 };

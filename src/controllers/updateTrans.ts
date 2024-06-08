@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
-import { dbSelect, dbUpdate } from '../db/updatePost.js';
+import { dbSelect, dbUpdate } from '../db/updateTrans.js';
 import type { Transaction } from '../interfaces/interfaces.js';
 
-//@route PUT /api/posts/update
+//@route PUT /api/transactions/update
 export default (req: Request, res: Response, next: NextFunction) => {
 	const id = req.params.id;
 	const post = dbSelect(id);

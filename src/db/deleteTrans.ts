@@ -15,7 +15,7 @@ const dbSelect = (id: string) => {
 	return result;
 };
 
-const dbDeletePost = (id: string) => {
+const dbDeleteTrans = (id: string) => {
 	const query = `
 	DELETE FROM transactions
 	WHERE trans_id = '${id}';
@@ -25,4 +25,4 @@ const dbDeletePost = (id: string) => {
 	db.close();
 };
 
-export { dbSelect, dbDeletePost };
+export { dbSelect, dbDeleteTrans };

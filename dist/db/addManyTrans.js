@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-const dbSelectSome = (userId, accCode) => {
+const dbSelectSomeTrans = (userId, accCode) => {
     const selectStatement = `
 		SELECT *
 		FROM transactions
@@ -16,7 +16,7 @@ const dbSelectSome = (userId, accCode) => {
     db.close();
     return result;
 };
-const dbAddAll = (transArr) => {
+const dbAddAllTrans = (transArr) => {
     const db = new Database('accounting.db', { fileMustExist: true });
     const query = `
 	INSERT INTO
@@ -41,4 +41,4 @@ const dbAddAll = (transArr) => {
     insertMany(transArr);
     db.close();
 };
-export { dbSelectSome, dbAddAll };
+export { dbSelectSomeTrans, dbAddAllTrans };

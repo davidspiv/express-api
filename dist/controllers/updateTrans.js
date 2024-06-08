@@ -1,5 +1,5 @@
-import { dbSelect, dbUpdate } from '../db/updatePost.js';
-//@route PUT /api/posts/update
+import { dbSelect, dbUpdate } from '../db/updateTrans.js';
+//@route PUT /api/transactions/update
 export default (req, res, next) => {
     const id = req.params.id;
     const post = dbSelect(id);

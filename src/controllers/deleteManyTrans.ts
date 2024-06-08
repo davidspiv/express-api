@@ -1,15 +1,16 @@
 import type { Request, Response, NextFunction } from 'express';
-import { dbSelect, dbDeleteAll } from '../db/deletePosts.js';
+import { dbSelect, dbDeleteAll } from '../db/deleteManyTrans.js';
 
-//@route DELETE /api/posts/
+//@route DELETE /api/transactions/
 export default (req: Request, res: Response, next: NextFunction) => {
-	if (typeof req.body !== 'object' || !req.body || !('posts' in req.body))
-		return next(Error("@res.body is not an object or doesn't have posts key."));
-	const postsArr = req.body.posts;
-	const isArray = Array.isArray(postsArr);
-	if (!isArray) return next(Error('@posts is not an array.'));
+	if (typeof req.body !== 'object' || !req.body || !('transactions' in req.body))
+		return next( new Error("@res.body is not an object or doesn't have transactions key."));
+	const transArr = req.body.transactions;
+	const isArray = Array.isArray(transArr);
+	if (!isArray) return next( new Error('@req.transactions is not an array.'));
 
 	const deletedTransIdArr = buildDeletedTransIdArr();
+
 	if (!deletedTransIdArr.length)
 		return next(
 			Error(
@@ -22,11 +23,11 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	function buildDeletedTransIdArr() {
 		const idArr: string[] = [];
 
-		for (let i = 0; i < postsArr.length; i++) {
-			const id = postsArr[i].id;
+		for (let i = 0; i < transArr.length; i++) {
+			const id = transArr[i].id;
 			const exists = dbSelect(id);
 			if (!exists) return [];
-			
+
 			idArr.push(id);
 		}
 

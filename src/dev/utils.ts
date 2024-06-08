@@ -32,7 +32,7 @@ function createId(
 }
 
 const parseCsv = async (accCode: number) => {
-	const csvData = await getData('./inputs/debit.csv');
+	const csvData = await getData('./test-inputs/debit.csv');
 	if (csvData) {
 		buildTransObj(csvData);
 	} else {

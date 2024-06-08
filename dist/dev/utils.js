@@ -20,7 +20,7 @@ function createId(isoDate, dateOffset, accCode, userId) {
     return `${key}${userId}`;
 }
 const parseCsv = async (accCode) => {
-    const csvData = await getData('./inputs/debit.csv');
+    const csvData = await getData('./test-inputs/debit.csv');
     if (csvData) {
         buildTransObj(csvData);
     }
