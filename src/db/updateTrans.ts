@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Transaction } from '../interfaces/interfaces.js';
+import type { Transaction } from '../models/classes.js';
 
 export default (trans: Transaction) => {
 	const { id, date, dateOffset, amount, memo, accCode, userId } = trans;
@@ -18,4 +18,3 @@ export default (trans: Transaction) => {
 	db.prepare(query).run();
 	db.close();
 };
-

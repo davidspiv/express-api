@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Transaction } from '../interfaces/interfaces.js';
+import type { Transaction } from '../models/classes.js';
 
 const readLatestTrans = (userId: string, accCode: number) => {
 	const selectStatement = `
@@ -18,7 +18,6 @@ const readLatestTrans = (userId: string, accCode: number) => {
 	db.close();
 	return result;
 };
-
 
 const insertManyTrans = (transArr: Transaction[]) => {
 	const db = new Database('accounting.db', { fileMustExist: true });

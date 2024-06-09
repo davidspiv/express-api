@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import readTrans from '../db/readTrans.js';
 import updateManyTrans from '../db/updateManyTrans.js';
-import type { Transaction } from '../interfaces/interfaces.js';
+import type { Transaction } from '../models/interfaces.js';
 
 //@route PUT /api/transactions/update
 export default (req: Request, res: Response, next: NextFunction) => {
@@ -23,7 +23,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 			),
 		);
 
-		updateManyTrans(updateArr);
+	updateManyTrans(updateArr);
 
 	function buildInputTransArr() {
 		const transArr: Transaction[] = [];

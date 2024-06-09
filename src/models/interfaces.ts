@@ -16,17 +16,6 @@ interface User {
 	role?: string;
 }
 
-interface Transaction {
-	id?: string;
-	date: string;
-	dateOffset: number;
-	amount: number;
-	memo: string;
-	accCode: number;
-	userId: string;
-	fitid?: string;
-}
-
 interface TransactionData {
 	trans_id: string;
 	trans_date: string;
@@ -43,4 +32,4 @@ interface Memo {
 	acc_code: string;
 }
 
-export type { AccountType, Account, User, Transaction, TransactionData, Memo };
+export type { AccountType, Account, User, TransactionData, Memo };

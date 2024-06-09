@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import type { Transaction } from '../interfaces/interfaces.js';
+import type { Transaction } from '../models/interfaces.js';
 
 const transactions: Transaction[] = [];
 

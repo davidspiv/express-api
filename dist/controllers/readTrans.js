@@ -8,5 +8,5 @@ export default (req, res, next) => {
         res.status(404);
         return next(error);
     }
-    res.status(200).json(trans);
+    res.status(200).json({ transactions: trans });
 };

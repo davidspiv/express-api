@@ -3,6 +3,11 @@ import readManyTrans from '../db/readManyTrans.js';
 export default (req, res, next) => {
     const limit = Number.parseInt(req.url.slice(req.url.indexOf('_limit') + 7));
     const transArr = readManyTrans(limit);
+    if (transArr instanceof Error) {
+        res.status(500);
+        next(transArr);
+        return;
+    }
     const limitData = String(req.query.limit);
     if (limitData.length > 0) {
         const limit = Number.parseInt(limitData);

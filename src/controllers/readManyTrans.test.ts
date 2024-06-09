@@ -1,6 +1,8 @@
 import { test } from 'vitest';
 import fetch from 'node-fetch';
-import type { TransactionData } from '../interfaces/interfaces.js';
+import type { Transaction } from '../models/classes.js';
+
+const PORT = process.env.PORT;
 
 async function getData(address: string) {
 	const response = await fetch(address);
@@ -9,38 +11,36 @@ async function getData(address: string) {
 }
 
 test('@route GET /api/transactions: res formatted correctly', async () => {
-	const resBody = await getData('http://localhost:5000/api/transactions/');
-	if (typeof resBody !== 'object' || !resBody || !('transactions' in resBody))
-		return new Error(
-			"@res.body is not an object or doesn't have transactions key.",
-		);
-	const transArr = resBody.transactions;
-	const isArray = Array.isArray(transArr);
-	if (!isArray) return new Error('@req.transactions is not an array.');
+	const resBody = await getData(`http://localhost:${PORT}/api/transactions/`);
+	const isObj = resBody && resBody !== undefined && typeof resBody === 'object';
+	if (!isObj) throw new Error('@res.body is not an object.');
 
-	for (let i = 0; i < transArr.length; i++) {
-		const hasEightKeys = Object.keys(transArr[i]).length === 8;
-		const hasId =
-			'trans_id' in transArr[i] &&
-			typeof (transArr as TransactionData[])[i].trans_id === 'string';
-		const hasDate =
-			'trans_date' in transArr[i] &&
-			typeof (transArr as TransactionData[])[i].trans_date === 'string';
+	const { transactions } = resBody as { transactions: Transaction[] };
+
+	const hasTransaction =
+		transactions !== undefined && typeof transactions === 'object';
+
+	if (!hasTransaction)
+		throw new Error("@res.body doesn't have transactions key.");
+
+	const isArray = Array.isArray(transactions);
+	if (!isArray)
+		throw new Error('@res.body @transactions key does not reference an array.');
+
+	for (let i = 0; i < transactions.length; i++) {
+		const { id, date, dateOffset, amount, memo, userId, accCode } = transactions[
+			i
+		] as Transaction;
+
+		const hasEightKeys = Object.keys(transactions[i]).length === 8;
+		const hasId = id !== undefined && typeof id === 'string';
+		const hasDate = date !== undefined && typeof date === 'string';
 		const hasDateOffset =
-			'trans_date_offset' in transArr[i] &&
-			typeof (transArr as TransactionData[])[i].trans_date_offset === 'number';
-		const hasAmount =
-			'trans_amount' in transArr[i] &&
-			typeof (transArr as TransactionData[])[i].trans_amount === 'number';
-		const hasMemo =
-			'trans_memo' in transArr[i] &&
-			typeof (transArr as TransactionData[])[i].trans_memo === 'string';
-		const hasUserId =
-			'user_id' in transArr[i] &&
-			typeof (transArr as TransactionData[])[i].user_id === 'string';
-		const hasAccCode =
-			'acc_code' in transArr[i] &&
-			typeof (transArr as TransactionData[])[i].acc_code === 'number';
+			dateOffset !== undefined && typeof dateOffset === 'number';
+		const hasAmount = amount !== undefined && typeof amount === 'number';
+		const hasMemo = memo !== undefined && typeof memo === 'string';
+		const hasUserId = userId !== undefined && typeof userId === 'string';
+		const hasAccCode = accCode !== undefined && typeof accCode === 'number';
 
 		if (!hasEightKeys)
 			throw new Error(

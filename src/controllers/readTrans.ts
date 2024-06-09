@@ -12,5 +12,5 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		return next(error);
 	}
 
-	res.status(200).json(trans);
+	res.status(200).json({ transactions: trans });
 };

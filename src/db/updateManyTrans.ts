@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
-import type { Transaction } from '../interfaces/interfaces.js';
+import type { Transaction } from '../models/classes.js';
 
-export default(transArr: Transaction[]) => {
+export default (transArr: Transaction[]) => {
 	const db = new Database('accounting.db', { fileMustExist: true });
 	const updateMany = db.transaction(() => {
 		for (const trans of transArr) {

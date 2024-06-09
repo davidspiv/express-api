@@ -1,17 +1,19 @@
 import type { Request, Response, NextFunction } from 'express';
 import { createId } from '../dev/utils.js';
 import { readLatestTrans, insertManyTrans } from '../db/addManyTrans.js';
-import type { Transaction, TransactionData } from '../interfaces/interfaces.js';
+import type { Transaction } from '../models/classes.js';
 
 //@route POST /api/transactions/
 export default (req: Request, res: Response, next: NextFunction) => {
 	if (typeof req.body !== 'object' || !req.body || !('transactions' in req.body))
-		return next( new Error("@res.body is not an object or doesn't have transactions key."));
+		return next(
+			new Error("@res.body is not an object or doesn't have transactions key."),
+		);
 	const transArr = req.body.transactions;
 	const isArray = Array.isArray(transArr);
-	if (!isArray) return next( new Error('@req.transactions is not an array.'));
+	if (!isArray) return next(new Error('@req.transactions is not an array.'));
 
-	const recentDbTrans = <TransactionData | null>(
+	const recentDbTrans = <Transaction | null>(
 		readLatestTrans(
 			req.body.transactions[0].userId,
 			req.body.transactions[0].accCode,

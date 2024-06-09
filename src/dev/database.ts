@@ -1,6 +1,6 @@
 import { getData, parseCsv, parseOfx } from './utils.js';
 import Database from 'better-sqlite3';
-import type { Transaction } from '../interfaces/interfaces.js';
+import type { Transaction } from '../models/interfaces.js';
 
 const db = new Database('accounting.db');
 const queryArr = await getQueries('./dist/models/up_migration.sql');
