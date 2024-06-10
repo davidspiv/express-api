@@ -16,11 +16,13 @@ const getData = async (fileName: string) => {
 
 const parseCsv = async (accCode: number) => {
 	const csvData = await getData('./test-inputs/debit.csv');
+
 	if (csvData) {
 		buildTransObj(csvData);
 	} else {
 		console.log('Error with getData()');
 	}
+
 	return transactions;
 
 	function buildTransObj(data: string) {

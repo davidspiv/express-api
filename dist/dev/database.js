@@ -46,7 +46,7 @@ function runTransQueries(transArr) {
                 userId,
                 accCode,
             };
-            insertStatement.run(anonTrans);
+            insertStatement.run(Object.setPrototypeOf({ ...trans }, null));
         }
     });
     enterTrans();

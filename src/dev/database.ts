@@ -52,7 +52,7 @@ function runTransQueries(transArr: Transaction[]) {
 				userId,
 				accCode,
 			};
-			insertStatement.run(anonTrans);
+			insertStatement.run(Object.setPrototypeOf({...trans}, null));
 		}
 	});
 	enterTrans();
