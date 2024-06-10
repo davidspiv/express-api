@@ -1,5 +1,5 @@
-import { createId } from '../dev/utils.js';
 import { readLatestTrans, insertManyTrans } from '../db/addManyTrans.js';
+import { Transaction } from '../models/classes.js';
 //@route POST /api/transactions/
 export default (req, res, next) => {
     if (typeof req.body !== 'object' || !req.body || !('transactions' in req.body))
@@ -18,14 +18,7 @@ export default (req, res, next) => {
     function buildInputTransArr() {
         const arr = [];
         for (let i = 0; i < transArr.length; i++) {
-            const trans = {
-                date: transArr[i].date,
-                dateOffset: transArr[i].dateOffset,
-                amount: Number.parseFloat(transArr[i].amount) * 100,
-                memo: transArr[i].memo.replace("'", "''"),
-                accCode: transArr[i].accCode,
-                userId: transArr[i].userId.replace("'", "''"),
-            };
+            const trans = new Transaction(transArr[i].date, transArr[i].dateOffset, transArr[i].amount, transArr[i].memo, transArr[i].userId, transArr[i].accCode);
             arr.push(trans);
         }
         return arr;
@@ -37,13 +30,11 @@ export default (req, res, next) => {
         inputTransArr.sort((a, b) => filterDate(b.date) - filterDate(a.date));
     }
     function getSliceIndex(recentDbTrans) {
-        const { trans_id } = recentDbTrans;
-        if (!trans_id)
+        const id = recentDbTrans.trans_id;
+        if (!id)
             return 0;
         for (let i = 0; i < inputTransArr.length; i++) {
-            const id = createId(inputTransArr[i].date, inputTransArr[i].dateOffset, inputTransArr[i].accCode, inputTransArr[i].userId);
-            inputTransArr[i].id = id;
-            if (id === trans_id)
+            if (inputTransArr[i].id === id)
                 return i;
         }
         return inputTransArr.length;

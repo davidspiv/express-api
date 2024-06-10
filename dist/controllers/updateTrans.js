@@ -1,5 +1,6 @@
 import readTrans from '../db/readTrans.js';
 import updateTrans from '../db/updateTrans.js';
+import { Transaction } from '../models/classes.js';
 //@route PUT /api/transactions/update
 export default (req, res, next) => {
     const id = req.params.id;
@@ -9,15 +10,7 @@ export default (req, res, next) => {
         res.status(404);
         return next(error);
     }
-    const newTrans = {
-        id,
-        date: req.body.date,
-        dateOffset: req.body.dateOffset,
-        amount: req.body.amount,
-        memo: req.body.memo.replace("'", "''"),
-        accCode: req.body.accCode,
-        userId: req.body.userId.replace("'", "''"),
-    };
+    const newTrans = new Transaction(id, req.body.date, req.body.dateOffset, req.body.amount, req.body.memo, req.body.accCode, req.body.userId);
     updateTrans(newTrans);
     const newPost = readTrans(id);
     res.status(200).json(newPost);

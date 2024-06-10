@@ -23,13 +23,13 @@ export default (id: string) => {
 
 	transArr.push(
 		new Transaction(
-			resultEl.trans_id,
 			resultEl.trans_date,
 			resultEl.trans_date_offset,
 			resultEl.trans_amount,
 			resultEl.trans_memo,
 			resultEl.user_id,
 			resultEl.acc_code,
+			resultEl.trans_id,
 			resultEl.trans_fitid,
 		),
 	);

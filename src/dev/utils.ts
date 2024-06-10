@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import type { Transaction } from '../models/interfaces.js';
+import { Transaction } from '../models/classes.js';
 
 const transactions: Transaction[] = [];
 
@@ -13,23 +13,6 @@ const getData = async (fileName: string) => {
 		console.log('Unable to retrieve text from file.');
 	}
 };
-
-function createId(
-	isoDate: string,
-	dateOffset: number,
-	accCode: number,
-	userId: string,
-) {
-	const month = isoDate.slice(5, 7);
-	const day = isoDate.slice(8, 10);
-	const year = isoDate.slice(2, 4);
-	const formattedDate = `${month}${day}${year}`;
-
-	const key = Number.parseInt(
-		`${formattedDate}${dateOffset}${accCode}`,
-	).toString(36);
-	return `${key}${userId}`;
-}
 
 const parseCsv = async (accCode: number) => {
 	const csvData = await getData('./test-inputs/debit.csv');
@@ -63,17 +46,14 @@ const parseCsv = async (accCode: number) => {
 			const memo = csvValues[i * totalCol + 1];
 			const userId = 'David';
 
-			const id = createId(date, dateOffset, accCode, userId);
-
-			const transObj: Transaction = {
-				id,
+			const transObj = new Transaction(
 				date,
 				dateOffset,
 				amount,
 				memo,
-				accCode,
 				userId,
-			};
+				accCode,
+			);
 
 			transactions.push(transObj);
 		}
@@ -146,4 +126,4 @@ const parseOfx = async () => {
 	console.log('Error with getData()');
 };
 
-export { getData, createId, parseCsv, parseOfx };
+export { getData, parseCsv, parseOfx };

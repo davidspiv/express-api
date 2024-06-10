@@ -21,7 +21,7 @@ export default (limit = 0) => {
     for (const resultEl of resultArr) {
         if (!isTrans(resultEl))
             return new Error('Internal database issue');
-        transArr.push(new Transaction(resultEl.trans_id, resultEl.trans_date, resultEl.trans_date_offset, resultEl.trans_amount, resultEl.trans_memo, resultEl.user_id, resultEl.acc_code, resultEl.trans_fitid));
+        transArr.push(new Transaction(resultEl.trans_date, resultEl.trans_date_offset, resultEl.trans_amount, resultEl.trans_memo, resultEl.user_id, resultEl.acc_code, resultEl.trans_id, resultEl.trans_fitid));
     }
     return transArr;
 };

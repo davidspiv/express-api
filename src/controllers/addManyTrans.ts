@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import { createId } from '../dev/utils.js';
 import { readLatestTrans, insertManyTrans } from '../db/addManyTrans.js';
-import type { Transaction } from '../models/classes.js';
+import { Transaction } from '../models/classes.js';
+import type { TransactionData } from '../models/interfaces.js';
 
 //@route POST /api/transactions/
 export default (req: Request, res: Response, next: NextFunction) => {
@@ -13,7 +13,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	const isArray = Array.isArray(transArr);
 	if (!isArray) return next(new Error('@req.transactions is not an array.'));
 
-	const recentDbTrans = <Transaction | null>(
+	const recentDbTrans = <TransactionData | null>(
 		readLatestTrans(
 			req.body.transactions[0].userId,
 			req.body.transactions[0].accCode,
@@ -31,14 +31,14 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		const arr: Transaction[] = [];
 
 		for (let i = 0; i < transArr.length; i++) {
-			const trans: Transaction = {
-				date: transArr[i].date,
-				dateOffset: transArr[i].dateOffset,
-				amount: Number.parseFloat(transArr[i].amount) * 100,
-				memo: transArr[i].memo.replace("'", "''"),
-				accCode: transArr[i].accCode,
-				userId: transArr[i].userId.replace("'", "''"),
-			};
+			const trans = new Transaction(
+				transArr[i].date,
+				transArr[i].dateOffset,
+				transArr[i].amount,
+				transArr[i].memo,
+				transArr[i].userId,
+				transArr[i].accCode,
+			);
 			arr.push(trans);
 		}
 
@@ -55,17 +55,10 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	}
 
 	function getSliceIndex(recentDbTrans: TransactionData) {
-		const { trans_id } = recentDbTrans;
-		if (!trans_id) return 0;
+		const id = recentDbTrans.trans_id;
+		if (!id) return 0;
 		for (let i = 0; i < inputTransArr.length; i++) {
-			const id = createId(
-				inputTransArr[i].date,
-				inputTransArr[i].dateOffset,
-				inputTransArr[i].accCode,
-				inputTransArr[i].userId,
-			);
-			inputTransArr[i].id = id;
-			if (id === trans_id) return i;
+			if (inputTransArr[i].id === id) return i;
 		}
 		return inputTransArr.length;
 	}

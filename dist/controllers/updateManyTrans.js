@@ -1,5 +1,6 @@
 import readTrans from '../db/readTrans.js';
 import updateManyTrans from '../db/updateManyTrans.js';
+import { Transaction } from '../models/classes.js';
 //@route PUT /api/transactions/update
 export default (req, res, next) => {
     if (typeof req.body !== 'object' || !req.body || !('transactions' in req.body))
@@ -22,14 +23,7 @@ export default (req, res, next) => {
             const exists = readTrans(id);
             if (!exists)
                 return [];
-            const trans = {
-                date: transArr[i].date,
-                dateOffset: transArr[i].dateOffset,
-                amount: transArr[i].amount * 100,
-                memo: transArr[i].memo.replace("'", "''"),
-                accCode: transArr[i].accCode,
-                userId: transArr[i].userId.replace("'", "''"),
-            };
+            const trans = new Transaction(id, req.body.date, req.body.dateOffset, req.body.amount, req.body.memo, req.body.accCode, req.body.userId);
             transArr.push(trans);
             updateTransIdArr.push(id);
         }

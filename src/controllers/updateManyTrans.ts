@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import readTrans from '../db/readTrans.js';
 import updateManyTrans from '../db/updateManyTrans.js';
-import type { Transaction } from '../models/interfaces.js';
+import { Transaction } from '../models/classes.js';
 
 //@route PUT /api/transactions/update
 export default (req: Request, res: Response, next: NextFunction) => {
@@ -34,14 +34,15 @@ export default (req: Request, res: Response, next: NextFunction) => {
 			const exists = readTrans(id);
 			if (!exists) return [];
 
-			const trans: Transaction = {
-				date: transArr[i].date,
-				dateOffset: transArr[i].dateOffset,
-				amount: transArr[i].amount * 100,
-				memo: transArr[i].memo.replace("'", "''"),
-				accCode: transArr[i].accCode,
-				userId: transArr[i].userId.replace("'", "''"),
-			};
+			const trans = new Transaction(
+				id,
+				req.body.date,
+				req.body.dateOffset,
+				req.body.amount,
+				req.body.memo,
+				req.body.accCode,
+				req.body.userId,
+			);
 			transArr.push(trans);
 			updateTransIdArr.push(id);
 		}

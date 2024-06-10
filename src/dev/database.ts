@@ -1,6 +1,6 @@
 import { getData, parseCsv, parseOfx } from './utils.js';
 import Database from 'better-sqlite3';
-import type { Transaction } from '../models/interfaces.js';
+import type { Transaction } from '../models/classes.js';
 
 const db = new Database('accounting.db');
 const queryArr = await getQueries('./dist/models/up_migration.sql');
@@ -41,7 +41,18 @@ function runTransQueries(transArr: Transaction[]) {
 		`);
 	const enterTrans = db.transaction(() => {
 		for (const trans of transArr) {
-			insertStatement.run(trans);
+			//better-sql-3 will reject a class instance?
+			const { id, date, dateOffset, amount, memo, userId, accCode } = trans;
+			const anonTrans = {
+				id,
+				date,
+				dateOffset,
+				amount,
+				memo,
+				userId,
+				accCode,
+			};
+			insertStatement.run(anonTrans);
 		}
 	});
 	enterTrans();
