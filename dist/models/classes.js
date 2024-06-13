@@ -2,7 +2,7 @@ class Transaction {
     constructor(dateInput, dateOffsetInput, amountInput, memoInput, userIdInput, accCodeInput, idInput, fitidInput) {
         this.date = dateInput;
         this.dateOffset = this.toNumber(dateOffsetInput);
-        this.amount = this.toNumber(amountInput) * 100;
+        this.amount = this.toNumber(amountInput);
         this.memo = this.formatString(memoInput);
         this.userId = this.formatString(userIdInput);
         this.accCode = this.toNumber(accCodeInput);
@@ -10,7 +10,7 @@ class Transaction {
         this.fitid = fitidInput;
     }
     toNumber(input) {
-        if (typeof input === 'string')
+        if (typeof input === "string")
             return Number.parseInt(input);
         return input;
     }
