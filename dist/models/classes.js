@@ -3,20 +3,20 @@ class Transaction {
         this.date = dateInput;
         this.dateOffset = this.toNumber(dateOffsetInput);
         this.amount = this.toNumber(amountInput);
-        this.memo = this.formatString(memoInput);
-        this.userId = this.formatString(userIdInput);
+        this.memo = memoInput;
+        this.userId = userIdInput;
         this.accCode = this.toNumber(accCodeInput);
         this.id = this.createId(dateInput, this.dateOffset, this.accCode, this.userId, idInput);
         this.fitid = fitidInput;
     }
     toNumber(input) {
-        if (typeof input === "string")
+        if (typeof input === 'string')
             return Number.parseInt(input);
         return input;
     }
-    formatString(input) {
-        return input.replace("'", "''");
-    }
+    // formatString(input: string) {
+    //   return input.replace("'", "''");
+    // }
     createId(isoDate, dateOffset, accCode, userId, idInput) {
         if (idInput)
             return idInput;

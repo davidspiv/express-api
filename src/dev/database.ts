@@ -41,17 +41,7 @@ function runTransQueries(transArr: Transaction[]) {
 		`);
 	const enterTrans = db.transaction(() => {
 		for (const trans of transArr) {
-			//better-sql-3 will reject a class instance?
-			const { id, date, dateOffset, amount, memo, userId, accCode } = trans;
-			const anonTrans = {
-				id,
-				date,
-				dateOffset,
-				amount,
-				memo,
-				userId,
-				accCode,
-			};
+			//better-sql-3 will reject a class instance
 			insertStatement.run(Object.setPrototypeOf({...trans}, null));
 		}
 	});
