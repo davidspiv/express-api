@@ -1,11 +1,13 @@
 class Transaction {
-    constructor(dateInput, dateOffsetInput, amountInput, memoInput, accIdInput, fitidInput) {
+    constructor(dateInput, dateOffsetInput, amountInput, memoInput, srcIdInput, idInput, fitidInput) {
         this.date = dateInput;
         this.dateOffset = this.toNumber(dateOffsetInput);
         this.amount = this.toNumber(amountInput);
         this.memo = memoInput;
-        this.srcId = accIdInput;
-        this.id = this.createId(this.srcId, this.date, this.dateOffset);
+        this.srcId = srcIdInput;
+        this.id = idInput
+            ? idInput
+            : this.createId(this.srcId, this.date, this.dateOffset);
         this.fitid = fitidInput;
     }
     toNumber(input) {

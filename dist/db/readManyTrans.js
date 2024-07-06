@@ -1,17 +1,17 @@
-import Database from 'better-sqlite3';
-import { Transaction } from '../models/classes.js';
+import Database from "better-sqlite3";
+import { Transaction } from "../models/classes.js";
 export default (limit = 0) => {
     let selectStatement = `
 	SELECT * FROM transactions
 	ORDER BY trans_date DESC;
 	`;
     if (limit) {
-        const semicolonIndex = selectStatement.indexOf(';');
+        const semicolonIndex = selectStatement.indexOf(";");
         selectStatement = selectStatement
             .slice(0, semicolonIndex)
-            .concat('', ` LIMIT ${limit};`);
+            .concat("", ` LIMIT ${limit};`);
     }
-    const db = new Database('accounting.db', {
+    const db = new Database("accounting.db", {
         fileMustExist: true,
         readonly: true,
     });
@@ -20,8 +20,8 @@ export default (limit = 0) => {
     const transArr = [];
     for (const resultEl of resultArr) {
         if (!isTrans(resultEl))
-            return new Error('Internal database issue');
-        transArr.push(new Transaction(resultEl.trans_date, resultEl.trans_date_offset, resultEl.trans_amount, resultEl.trans_memo, resultEl.user_id, resultEl.acc_code, resultEl.trans_id, resultEl.trans_fitid));
+            return new Error("Internal database issue");
+        transArr.push(new Transaction(resultEl.trans_date, resultEl.trans_date_offset, resultEl.trans_amount, resultEl.trans_memo, resultEl.src_id, resultEl.trans_id, resultEl.trans_fitid));
     }
     return transArr;
 };
@@ -31,7 +31,5 @@ function isTrans(obj) {
         obj?.trans_date_offset !== undefined &&
         obj?.trans_amount !== undefined &&
         obj?.trans_memo !== undefined &&
-        obj?.user_id !== undefined &&
-        obj?.acc_code !== undefined &&
-        obj?.trans_fitid !== undefined);
+        obj?.src_id !== undefined);
 }

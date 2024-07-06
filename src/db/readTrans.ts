@@ -27,10 +27,9 @@ export default (id: string) => {
 			resultEl.trans_date_offset,
 			resultEl.trans_amount,
 			resultEl.trans_memo,
-			resultEl.user_id,
-			resultEl.acc_code,
+			resultEl.src_id,
 			resultEl.trans_id,
-			resultEl.trans_fitid,
+			resultEl.trans_fitid
 		),
 	);
 
@@ -39,13 +38,11 @@ export default (id: string) => {
 
 function isTrans(obj: unknown): obj is TransactionData {
 	return (
-		(obj as TransactionData)?.trans_id !== undefined &&
-		(obj as TransactionData)?.trans_date !== undefined &&
-		(obj as TransactionData)?.trans_date_offset !== undefined &&
-		(obj as TransactionData)?.trans_amount !== undefined &&
-		(obj as TransactionData)?.trans_memo !== undefined &&
-		(obj as TransactionData)?.user_id !== undefined &&
-		(obj as TransactionData)?.acc_code !== undefined &&
-		(obj as TransactionData)?.trans_fitid !== undefined
+    (obj as TransactionData)?.trans_id !== undefined &&
+    (obj as TransactionData)?.trans_date !== undefined &&
+    (obj as TransactionData)?.trans_date_offset !== undefined &&
+    (obj as TransactionData)?.trans_amount !== undefined &&
+    (obj as TransactionData)?.trans_memo !== undefined &&
+    (obj as TransactionData)?.src_id !== undefined
 	);
 }

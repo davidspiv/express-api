@@ -44,9 +44,9 @@ CREATE TABLE transactions (
     trans_date_offset INTEGER NOT NULL,
     trans_amount INTEGER NOT NULL,
     trans_memo TEXT NOT NULL,
-    src_Id INTEGER NOT NULL,
+    src_id INTEGER NOT NULL,
     trans_fitid TEXT,
-    FOREIGN KEY (src_Id)
+    FOREIGN KEY (src_id)
         REFERENCES sources(src_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
