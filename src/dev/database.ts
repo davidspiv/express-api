@@ -3,7 +3,7 @@ import Database from 'better-sqlite3';
 import type { Transaction } from '../models/classes.js';
 
 const db = new Database('accounting.db');
-const queryArr = await getQueries('./dist/models/up_migration.sql');
+const queryArr = await getQueries('./dist/dev/up_migration.sql');
 const transArr = await parseCsv(1001);
 
 runQueries(queryArr);
@@ -42,7 +42,7 @@ function runTransQueries(transArr: Transaction[]) {
 	const enterTrans = db.transaction(() => {
 		for (const trans of transArr) {
 			//better-sql-3 will reject a class instance
-			insertStatement.run(Object.setPrototypeOf({...trans}, null));
+			insertStatement.run({...trans});
 		}
 	});
 	enterTrans();
