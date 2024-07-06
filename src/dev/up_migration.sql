@@ -7,27 +7,16 @@ CREATE TABLE users (
     user_password TEXT NOT NULL
 );
 
-CREATE TABLE banks (
-    bank_id INTEGER PRIMARY KEY,
-    bank_name INTEGER NOT NULL,
+CREATE TABLE sources (
+    src_id INTEGER PRIMARY KEY,
+    src_name TEXT NOT NULL,
+    src_routing_number INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id)
         REFERENCES users(user_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
-    UNIQUE (bank_name, user_id)
-);
-
-CREATE TABLE sources (
-    src_id INTEGER PRIMARY KEY,
-    src_name TEXT NOT NULL,
-    src_routing_number INTEGER NOT NULL,
-    bank_id INTEGER NOT NULL,
-    FOREIGN KEY (bank_id)
-        REFERENCES banks(bank_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    UNIQUE (src_name, bank_id)
+    UNIQUE (src_name, user_id)
 );
 
 CREATE TABLE accounts (
@@ -50,25 +39,25 @@ CREATE TABLE accounts (
 );
 
 CREATE TABLE transactions (
-    trans_id INTEGER PRIMARY KEY,
+    trans_id TEXT PRIMARY KEY,
     trans_date TEXT NOT NULL,
     trans_date_offset INTEGER NOT NULL,
     trans_amount INTEGER NOT NULL,
     trans_memo TEXT NOT NULL,
+    src_Id INTEGER NOT NULL,
     trans_fitid TEXT,
-    acc_id INTEGER NOT NULL,
-    FOREIGN KEY (acc_id)
-        REFERENCES accounts(acc_id)
+    FOREIGN KEY (src_Id)
+        REFERENCES sources(src_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
-    UNIQUE (trans_date, trans_date_offset, acc_id)
+    UNIQUE (trans_date, trans_date_offset, src_id)
 );
 
 CREATE TABLE memos (
     memo_id INTEGER PRIMARY KEY,
-    memo_text TEXT,
     user_id INTEGER NOT NULL,
     acc_default INTEGER NOT NULL,
+    memo_text TEXT,
     FOREIGN KEY (acc_default)
         REFERENCES accounts(acc_id)
         ON UPDATE CASCADE
@@ -81,6 +70,10 @@ CREATE TABLE memos (
 INSERT INTO users (user_name, user_password, user_email)
     VALUES
     ('David', 'bebop', 'poop@gmail.com');
+
+INSERT INTO sources (src_name, src_routing_number, user_id)
+    VALUES
+    ('Schools Debit', 121000248, 1);
 
 INSERT INTO accounts (acc_code, acc_name, user_id)
     VALUES

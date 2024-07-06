@@ -14,7 +14,7 @@ const getData = async (fileName: string) => {
   }
 };
 
-const parseCsv = async (accCode: number) => {
+const parseCsv = async () => {
   const csvData = await getData("./test-inputs/debit.csv");
 
   if (csvData) {
@@ -49,16 +49,9 @@ const parseCsv = async (accCode: number) => {
       );
 
       const memo = csvValues[i * totalCol + 1];
-      const userId = "David";
+      const srcId = 1;
 
-      const transObj = new Transaction(
-        date,
-        dateOffset,
-        amount,
-        memo,
-        userId,
-        accCode
-      );
+      const transObj = new Transaction(date, dateOffset, amount, memo, srcId);
 
       transactions.push(transObj);
     }

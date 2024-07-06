@@ -12,7 +12,7 @@ const getData = async (fileName) => {
         console.log("Unable to retrieve text from file.");
     }
 };
-const parseCsv = async (accCode) => {
+const parseCsv = async () => {
     const csvData = await getData("./test-inputs/debit.csv");
     if (csvData) {
         buildTransObj(csvData);
@@ -37,8 +37,8 @@ const parseCsv = async (accCode) => {
             }
             const amount = Math.round(Number.parseInt((Number.parseFloat(csvValues[i * totalCol + 5]) * 100).toFixed(2)));
             const memo = csvValues[i * totalCol + 1];
-            const userId = "David";
-            const transObj = new Transaction(date, dateOffset, amount, memo, userId, accCode);
+            const srcId = 1;
+            const transObj = new Transaction(date, dateOffset, amount, memo, srcId);
             transactions.push(transObj);
         }
     }
