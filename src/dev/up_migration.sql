@@ -1,8 +1,9 @@
---Up migration
+--Schema
+
 CREATE TABLE users (
     user_id INTEGER PRIMARY KEY,
-    user_name TEXT NOT NULL,
-    email_address TEXT NOT NULL,
+    user_name TEXT NOT NULL UNIQUE,
+    user_email TEXT NOT NULL UNIQUE,
     user_password TEXT NOT NULL
 );
 
@@ -13,18 +14,20 @@ CREATE TABLE banks (
     FOREIGN KEY (user_id)
         REFERENCES users(user_id)
         ON UPDATE CASCADE
-        ON DELETE RESTRICT
+        ON DELETE RESTRICT,
+    UNIQUE (bank_name, user_id)
 );
 
 CREATE TABLE sources (
     src_id INTEGER PRIMARY KEY,
     src_name TEXT NOT NULL,
     src_routing_number INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id)
-        REFERENCES users(user_id)
+    bank_id INTEGER NOT NULL,
+    FOREIGN KEY (bank_id)
+        REFERENCES banks(bank_id)
         ON UPDATE CASCADE
-        ON DELETE RESTRICT
+        ON DELETE RESTRICT,
+    UNIQUE (src_name, bank_id)
 );
 
 CREATE TABLE accounts (
@@ -33,26 +36,21 @@ CREATE TABLE accounts (
     acc_name TEXT NOT NULL,
     acc_initial_bal INTEGER DEFAULT 0,
     acc_is_hidden BOOLEAN DEFAULT 0,
+    dep_account INTEGER,
+    dep_percent INTEGER,
     user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id)
         REFERENCES users(user_id)
         ON UPDATE CASCADE
-        ON DELETE RESTRICT
-);
-
-CREATE TABLE deprecations (
-    dep_id INTEGER PRIMARY KEY,
-    dep_percent INTEGER NOT NULL,
-    acc_src INTEGER NOT NULL,
-    acc_rcv INTEGER NOT NULL,
-    FOREIGN KEY (acc_src, acc_rcv)
-        REFERENCES accounts(acc_id, acc_id)
+        ON DELETE RESTRICT,
+    FOREIGN KEY (dep_account)
+        REFERENCES accounts(acc_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
 
 CREATE TABLE transactions (
-    trans_id TEXT PRIMARY KEY,
+    trans_id INTEGER PRIMARY KEY,
     trans_date TEXT NOT NULL,
     trans_date_offset INTEGER NOT NULL,
     trans_amount INTEGER NOT NULL,
@@ -62,10 +60,12 @@ CREATE TABLE transactions (
     FOREIGN KEY (acc_id)
         REFERENCES accounts(acc_id)
         ON UPDATE CASCADE
-        ON DELETE RESTRICT
+        ON DELETE RESTRICT,
+    UNIQUE (trans_date, trans_date_offset, acc_id)
 );
 
 CREATE TABLE memos (
+    memo_id INTEGER PRIMARY KEY,
     memo_text TEXT,
     user_id INTEGER NOT NULL,
     acc_default INTEGER NOT NULL,
@@ -73,10 +73,34 @@ CREATE TABLE memos (
         REFERENCES accounts(acc_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
-    PRIMARY KEY (memo_text, user_id)
+    UNIQUE (memo_text, user_id)
 );
 
--- Base seed
+-- Test seed
+
+INSERT INTO users (user_name, user_password, user_email)
+    VALUES
+    ('David', 'bebop', 'poop@gmail.com');
+
+INSERT INTO accounts (acc_code, acc_name, user_id)
+    VALUES
+    (1001, 'Schools Checking', 1),
+    (1002, 'Schools Savings', 1),
+    (1003, 'Petty Cash', 1),
+    (1004, 'Receivable', 1),
+    (1005, 'Prepaid', 1),
+    (2001, 'Payable', 1),
+    (3001, 'Stock', 1),
+    (5001, 'Housing', 1),
+    (5002, 'Food', 1),
+    (5003, 'Utilities', 1),
+    (5004, 'Transportation', 1),
+    (5005, 'Household', 1),
+    (5006, 'Education', 1),
+    (5007, 'Gifts', 1),
+    (5008, 'Personal', 1);
+
+-- Old tests
 
 -- INSERT INTO account_types (type_id, type_name)
 --     VALUES
@@ -86,23 +110,6 @@ CREATE TABLE memos (
 --     (4000, 'Revenue'),
 --     (5000, 'Expense')
 
--- INSERT INTO labels (label_id)
---     VALUES
---     ('Cash and cash equivalents'),
---     ('A/R'),
---     ('Prepaid'),
---     ('A/P'),
---     ('Stock'),
---     ('Expense')
-
--- --Test seed
-
--- INSERT INTO users (user_id, user_password, user_email, user_role)
---     VALUES
---     ('David', 'bebop', 'poop@gmail.com', 'admin')
-
--- INSERT INTO accounts (user_id, acc_code, acc_name, label_id)
---     VALUES
 --     ('David', 1001, 'Schools Checking', 'Cash and cash equivalents'),
 --     ('David', 1002, 'Schools Savings', 'Cash and cash equivalents'),
 --     ('David', 1003, 'Petty Cash', 'Cash and cash equivalents'),
