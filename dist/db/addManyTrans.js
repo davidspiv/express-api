@@ -1,14 +1,13 @@
-import Database from 'better-sqlite3';
-const readLatestTrans = (userId, accCode) => {
+import Database from "better-sqlite3";
+const readLatestTrans = (srcId) => {
     const selectStatement = `
 		SELECT *
 		FROM transactions
-		WHERE user_id = '${userId}'
-		AND acc_code = ${accCode}
+		WHERE src_id = '${srcId}'
 		ORDER BY trans_date
 		DESC LIMIT 1;
 		`;
-    const db = new Database('accounting.db', {
+    const db = new Database("accounting.db", {
         fileMustExist: true,
         readonly: true,
     });
@@ -16,29 +15,21 @@ const readLatestTrans = (userId, accCode) => {
     db.close();
     return result;
 };
-const insertManyTrans = (transArr) => {
-    const db = new Database('accounting.db', { fileMustExist: true });
+const addManyTrans = (transArr) => {
+    const db = new Database("accounting.db", { fileMustExist: true });
     const query = `
 	INSERT INTO
-		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, acc_code, user_id)
+		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, src_id)
 	VALUES
-		(@id, @date, @dateOffset, @amount, @memo, @accCode, @userId);
+		(@id, @date, @dateOffset, @amount, @memo, @srcId);
 	`;
     const statement = db.prepare(query);
     const insertMany = db.transaction((transArr) => {
         for (const trans of transArr) {
-            statement.run({
-                id: trans.id,
-                date: trans.date,
-                dateOffset: trans.dateOffset,
-                amount: trans.amount,
-                memo: trans.memo,
-                accCode: trans.accCode,
-                userId: trans.userId,
-            });
+            statement.run({ ...trans });
         }
     });
     insertMany(transArr);
     db.close();
 };
-export { readLatestTrans, insertManyTrans };
+export { readLatestTrans, addManyTrans };

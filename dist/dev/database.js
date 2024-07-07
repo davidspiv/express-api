@@ -1,11 +1,10 @@
 import { getData, parseCsv } from "./utils.js";
 import Database from "better-sqlite3";
-const db = new Database("accounting.db");
+import { addManyTrans } from "../db/addManyTrans.js";
 const queryArr = await getQueries("./dist/dev/up_migration.sql");
 const transArr = await parseCsv();
-runQueries(queryArr);
-runTransQueries(transArr);
-db.close();
+buildSchema(queryArr);
+addManyTrans(transArr);
 console.log(`
 ${queryArr.length} initial query(ies) ran successfully.
 ${transArr.length} transactions input successfully.
@@ -18,26 +17,13 @@ async function getQueries(filePath) {
     queryArr.pop();
     return queryArr;
 }
-function runQueries(queries) {
+function buildSchema(queries) {
+    const db = new Database("accounting.db");
     const enterQueries = db.transaction(() => {
         for (const query of queries) {
             db.prepare(query).run();
         }
     });
     enterQueries();
-}
-function runTransQueries(transArr) {
-    const insertStatement = db.prepare(`
-	INSERT INTO
-		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, src_id)
-	VALUES
-		(@id, @date, @dateOffset, @amount, @memo, @srcId);
-		`);
-    const enterTrans = db.transaction(() => {
-        for (const trans of transArr) {
-            //better-sql-3 will reject a class instance
-            insertStatement.run({ ...trans });
-        }
-    });
-    enterTrans();
+    db.close();
 }

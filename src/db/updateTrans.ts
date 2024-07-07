@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import type { Transaction } from '../models/classes.js';
 
 export default (trans: Transaction) => {
-	const { id, date, dateOffset, amount, memo, accCode, userId } = trans;
+	const { id, date, dateOffset, amount, memo, srcId } = trans;
 	const query = `
 	UPDATE transactions
 	SET
@@ -10,8 +10,7 @@ export default (trans: Transaction) => {
 		trans_date_offset = ${dateOffset},
 		trans_amount = ${amount},
 		trans_memo = '${memo}',
-		acc_code = ${accCode},
-		user_id = '${userId}'
+		src_id = ${srcId},
 	WHERE trans_id = '${id}';
 	`;
 	const db = new Database('accounting.db', { fileMustExist: true });
