@@ -5,7 +5,6 @@ class Transaction {
   amount: number;
   memo: string;
   srcId: number;
-  idInput?: string;
   fitid?: string;
 
   constructor(
