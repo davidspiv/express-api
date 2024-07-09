@@ -18,22 +18,61 @@ const readLatestTrans = (srcId: number) => {
   return result;
 };
 
+const runQuery = () => {
+  const usrId = 1;
+  const queryString = `
+    INSERT INTO
+		  document (doc_date_offset, usr_id)
+	  VALUES
+	    (0, ${usrId});
+
+    INSERT INTO
+		  receipt (rcpt_id)
+    SELECT last_insert_rowid();
+
+    INSERT INTO
+		  document (doc_date_offset, usr_id)
+	  VALUES
+	    (1, ${usrId});
+
+    INSERT INTO
+		  receipt (rcpt_id)
+    SELECT last_insert_rowid();
+		`;
+  const queryArr = queryString.split(/(?<=;)/g);
+  queryArr.pop();
+  const db = new Database("accounting.db", {
+    fileMustExist: true,
+  });
+  const enterQueries = db.transaction(() => {
+    for (const query of queryArr) {
+      db.prepare(query).run();
+    }
+  });
+  enterQueries();
+
+  db.close();
+};
+
 const addManyTrans = (transArr: Transaction[]) => {
   const db = new Database("accounting.db", { fileMustExist: true });
   const query = `
 	INSERT INTO
-		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, src_id)
+		document (doc_date_offset, usr_id)
 	VALUES
-		(@id, @date, @dateOffset, @amount, @memo, @srcId);
+	  (@dateOffset, @usrId);
+  INSERT INTO
+		receipt (rcpt_id)
+  SELECT last_insert_rowid();
 	`;
   const statement = db.prepare(query);
   const insertMany = db.transaction((transArr) => {
     for (const trans of transArr) {
-      statement.run({ ...trans });
+      statement.run({ ...trans, usrId: 1 });
     }
   });
   insertMany(transArr);
   db.close();
 };
 
-export { readLatestTrans, addManyTrans };
+export { readLatestTrans, runQuery, addManyTrans };

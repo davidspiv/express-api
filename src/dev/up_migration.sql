@@ -44,13 +44,13 @@ CREATE TABLE transactions (
     trans_date_offset INTEGER NOT NULL,
     trans_amount INTEGER NOT NULL,
     trans_memo TEXT NOT NULL,
-    src_id INTEGER NOT NULL,
+    acc_id INTEGER NOT NULL,
     trans_fitid TEXT,
-    FOREIGN KEY (src_id)
-        REFERENCES sources(src_id)
+    FOREIGN KEY (acc_id)
+        REFERENCES accounts(acc_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
-    UNIQUE (trans_date, trans_date_offset, src_id)
+    UNIQUE (trans_date, trans_date_offset, acc_id)
 );
 
 CREATE TABLE memos (

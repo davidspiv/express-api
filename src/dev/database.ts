@@ -1,17 +1,16 @@
 import { getData, parseCsv, parseOfx } from "./utils.js";
 import Database from "better-sqlite3";
-import { addManyTrans } from "../db/addManyTrans.js";
+import { addManyTrans, runQuery } from "../db/addManyTrans.js";
 
-const queryArr = await getQueries("./dist/dev/up_migration.sql");
+const queryArr = await getQueries("./dist/dev/schema.sql");
 const transArr = await parseCsv();
 
 buildSchema(queryArr);
-addManyTrans(transArr);
+runQuery();
 
 console.log(`
-${queryArr.length} initial query(ies) ran successfully.
-${transArr.length} transactions input successfully.
-`);
+  ${queryArr.length} initial query(ies) ran successfully.
+  `);
 
 async function getQueries(filePath: string) {
   const data = await getData(filePath);
