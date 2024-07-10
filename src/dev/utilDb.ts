@@ -10,6 +10,7 @@ const getData = async (fileName: string) => {
   } catch (err) {
     console.log("Unable to retrieve text from file.");
   }
+  return "";
 };
 
 async function getQueries(filePath: string) {
@@ -20,7 +21,7 @@ async function getQueries(filePath: string) {
   return queryArr;
 }
 
-function runTransaction(queries: string[]) {
+function execDbTransaction(queries: string[]) {
   const db = new Database("accounting.db");
   const enterQueries = db.transaction(() => {
     for (const query of queries) {
@@ -31,4 +32,4 @@ function runTransaction(queries: string[]) {
   db.close();
 }
 
-export { getData, getQueries, runTransaction };
+export { getData, getQueries, execDbTransaction };
