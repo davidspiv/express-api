@@ -4,12 +4,14 @@ import Database from "better-sqlite3";
 import type { Transaction } from "../models/classes.js";
 
 try {
-  const data = await Promise.all([
-    getQueries("./dist/dev/schema.sql"),
-    getQueries("./dist/dev/seed.sql"),
-    getData("./dist/dev/insert.sql"),
-    parseCsv(),
-  ]);
+  const data = <[string[], string[], string, Transaction[]]>(
+    await Promise.all([
+      getQueries("./dist/dev/schema.sql"),
+      getQueries("./dist/dev/seed.sql"),
+      getData("./dist/dev/insert.sql"),
+      parseCsv(),
+    ])
+  );
 
   buildDb(data);
 } catch (err) {

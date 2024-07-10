@@ -2,12 +2,12 @@ import { getData, getQueries, execDbTransaction } from "./utilDb.js";
 import { parseCsv } from "./utilParse.js";
 import Database from "better-sqlite3";
 try {
-    const data = await Promise.all([
+    const data = (await Promise.all([
         getQueries("./dist/dev/schema.sql"),
         getQueries("./dist/dev/seed.sql"),
         getData("./dist/dev/insert.sql"),
         parseCsv(),
-    ]);
+    ]));
     buildDb(data);
 }
 catch (err) {
