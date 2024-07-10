@@ -17,45 +17,57 @@ const readLatestTrans = (srcId) => {
 };
 const runQuery = () => {
     const usrId = 1;
+    const date = new Date("1/1/2024").toDateString();
+    const dateOffset = 0;
+    const memoText = "hello";
+    const defaultDebitAcc = 5002;
+    const defaultCreditAcc = 1001;
+    const amount = 200;
+    const query1 = `
+  INSERT INTO
+    memo (memo_text, usr_id, acc_default_dr, acc_default_cr)
+  VALUES
+    ('${memoText}', ${usrId}, ${defaultDebitAcc}, ${defaultCreditAcc});
+`;
+    const query2 = "SELECT last_insert_rowid();";
+    const db = new Database("accounting.db", {
+        fileMustExist: true,
+    });
+    let memoId;
+    const createMemo = db.transaction(() => {
+        db.prepare(query1).run();
+        const selectArr = db.prepare(query2).all();
+        memoId = selectArr[0]["last_insert_rowid()"];
+    });
+    createMemo();
     const queryString = `
     INSERT INTO
 		  document (doc_date_offset, usr_id)
 	  VALUES
-	    (0, ${usrId});
+	    (${dateOffset}, ${usrId});
 
     INSERT INTO
 		  receipt (rcpt_id)
-    SELECT last_insert_rowid();
+    VALUES
+	    (last_insert_rowid());
 
-    INSERT INTO
-		  document (doc_date_offset, usr_id)
-	  VALUES
-	    (1, ${usrId});
-
-    INSERT INTO
-		  receipt (rcpt_id)
-    SELECT last_insert_rowid();
-
-    INSERT INTO
-      memo (memo_text, usr_id, acc_default_dr, acc_default_cr)
-	  VALUES
-	    ('hello', ${usrId}, 5002, 1001);
-
-    WITH memoId AS (
-      SELECT memo_id
-      FROM memo
-      WHERE memo_text = 'hello'
-    )
     INSERT INTO
 		  activity (act_memo, act_date, usr_id, doc_id)
     VALUES
-	    (1, 1/1/2024, ${usrId}, 1);
-		`;
+	    (${memoId}, 'date', ${usrId}, 1);
+
+    INSERT INTO
+		  adjustment (adj_is_dr, adj_amount, act_id, acc_to_adjust)
+    VALUES
+	    (1, ${amount}, last_insert_rowid(), ${defaultDebitAcc});
+
+    INSERT INTO
+		  adjustment (adj_is_dr, adj_amount, act_id, acc_to_adjust)
+    VALUES
+	    (0, ${amount}, last_insert_rowid(), ${defaultCreditAcc});
+	`;
     const queryArr = queryString.split(/(?<=;)/g);
     queryArr.pop();
-    const db = new Database("accounting.db", {
-        fileMustExist: true,
-    });
     const enterQueries = db.transaction(() => {
         for (const query of queryArr) {
             db.prepare(query).run();

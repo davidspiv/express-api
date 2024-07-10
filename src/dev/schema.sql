@@ -37,7 +37,7 @@ CREATE TABLE receipt (
 CREATE TABLE activity (
     act_id INTEGER PRIMARY KEY,
     act_memo INTEGER,
-    act_date BOOLEAN NOT NULL,
+    act_date TEXT NOT NULL,
     usr_id TEXT NOT NULL,
     doc_id INTEGER UNIQUE,
     FOREIGN KEY (act_memo)
