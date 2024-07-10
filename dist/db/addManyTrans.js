@@ -35,6 +35,21 @@ const runQuery = () => {
     INSERT INTO
 		  receipt (rcpt_id)
     SELECT last_insert_rowid();
+
+    INSERT INTO
+      memo (memo_text, usr_id, acc_default_dr, acc_default_cr)
+	  VALUES
+	    ('hello', ${usrId}, 5002, 1001);
+
+    WITH memoId AS (
+      SELECT memo_id
+      FROM memo
+      WHERE memo_text = 'hello'
+    )
+    INSERT INTO
+		  activity (act_memo, act_date, usr_id, doc_id)
+    VALUES
+	    (1, 1/1/2024, ${usrId}, 1);
 		`;
     const queryArr = queryString.split(/(?<=;)/g);
     queryArr.pop();

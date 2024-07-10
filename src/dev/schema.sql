@@ -36,12 +36,15 @@ CREATE TABLE receipt (
 
 CREATE TABLE activity (
     act_id INTEGER PRIMARY KEY,
-    act_memo INTEGER NOT NULL,
-    act_date BOOLEAN DEFAULT 0,
+    act_memo INTEGER,
+    act_date BOOLEAN NOT NULL,
     usr_id TEXT NOT NULL,
     doc_id INTEGER UNIQUE,
+    FOREIGN KEY (act_memo)
+        REFERENCES memo(memo_id)
+        ON DELETE RESTRICT,
     FOREIGN KEY (usr_id)
-        REFERENCES document(usr_id)
+        REFERENCES user(usr_id)
         ON DELETE RESTRICT,
     FOREIGN KEY (doc_id)
         REFERENCES document(doc_id)
@@ -80,7 +83,7 @@ CREATE TABLE adjustment (
         ON DELETE RESTRICT
 );
 
-CREATE TABLE memos (
+CREATE TABLE memo (
     memo_id INTEGER PRIMARY KEY,
     memo_text TEXT NOT NULL,
     usr_id INTEGER NOT NULL,
