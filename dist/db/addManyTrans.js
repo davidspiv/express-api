@@ -15,6 +15,26 @@ const readLatestTrans = (srcId) => {
     db.close();
     return result;
 };
+const addManyTrans = (transArr) => {
+    const db = new Database("accounting.db", { fileMustExist: true });
+    const query = `
+	INSERT INTO
+		document (doc_date_offset, usr_id)
+	VALUES
+	  (@dateOffset, @usrId);
+  INSERT INTO
+		receipt (rcpt_id)
+  SELECT last_insert_rowid();
+	`;
+    const statement = db.prepare(query);
+    const insertMany = db.transaction((transArr) => {
+        for (const trans of transArr) {
+            statement.run({ ...trans, usrId: 1 });
+        }
+    });
+    insertMany(transArr);
+    db.close();
+};
 const runQuery = () => {
     const usrId = 1;
     const date = new Date("1/1/2024").toDateString();
@@ -76,24 +96,4 @@ const runQuery = () => {
     enterQueries();
     db.close();
 };
-const addManyTrans = (transArr) => {
-    const db = new Database("accounting.db", { fileMustExist: true });
-    const query = `
-	INSERT INTO
-		document (doc_date_offset, usr_id)
-	VALUES
-	  (@dateOffset, @usrId);
-  INSERT INTO
-		receipt (rcpt_id)
-  SELECT last_insert_rowid();
-	`;
-    const statement = db.prepare(query);
-    const insertMany = db.transaction((transArr) => {
-        for (const trans of transArr) {
-            statement.run({ ...trans, usrId: 1 });
-        }
-    });
-    insertMany(transArr);
-    db.close();
-};
-export { readLatestTrans, runQuery, addManyTrans };
+export { readLatestTrans, addManyTrans, runQuery };

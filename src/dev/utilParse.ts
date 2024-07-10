@@ -1,20 +1,9 @@
-import { readFile } from "node:fs/promises";
 import { Transaction } from "../models/classes.js";
+import { getData } from "./utilDb.js";
 
 const transactions: Transaction[] = [];
 
-const getData = async (fileName: string) => {
-  try {
-    const contents = await readFile(fileName, {
-      encoding: "utf8",
-    });
-    return contents;
-  } catch (err) {
-    console.log("Unable to retrieve text from file.");
-  }
-};
-
-const parseCsv = async () => {
+export const parseCsv = async () => {
   const csvData = await getData("./test-inputs/debit.csv");
 
   if (csvData) {
@@ -76,7 +65,7 @@ const parseCsv = async () => {
   }
 };
 
-const parseOfx = async () => {
+export const parseOfx = async () => {
   const transactions = [];
   const ofxString = await getData("./inputs/debit.ofx");
   const objectify = (ofxData: string) => {
@@ -123,5 +112,3 @@ const parseOfx = async () => {
   }
   console.log("Error with getData()");
 };
-
-export { getData, parseCsv, parseOfx };

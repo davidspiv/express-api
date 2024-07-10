@@ -1,32 +1,35 @@
-import { getData, parseCsv, parseOfx } from "./utils.js";
+import { getQueries, runTransaction } from "./utilDb.js";
+import { parseCsv, parseOfx } from "./utilParse.js";
 import Database from "better-sqlite3";
-import { addManyTrans, runQuery } from "../db/addManyTrans.js";
+import type { Transaction } from "../models/classes.js";
 
-const queryArr = await getQueries("./dist/dev/schema.sql");
+const schemaStatements = await getQueries("./dist/dev/schema.sql");
+const seedStatements = await getQueries("./dist/dev/seed.sql");
 const transArr = await parseCsv();
 
-buildSchema(queryArr);
-runQuery();
+runTransaction(schemaStatements);
+console.log("Schema successful.");
 
-console.log(`
-  ${queryArr.length} initial query(ies) ran successfully.
-  `);
+runTransaction(seedStatements);
+console.log("Initial seed successful.");
 
-async function getQueries(filePath: string) {
-  const data = await getData(filePath);
-  if (!data) return [];
-  const queryArr = data.split(/(?<=;)/g);
-  queryArr.pop();
-  return queryArr;
-}
+inputTrans(transArr);
 
-function buildSchema(queries: string[]) {
+function inputTrans(transArr: Transaction[]) {
   const db = new Database("accounting.db");
-  const enterQueries = db.transaction(() => {
-    for (const query of queries) {
-      db.prepare(query).run();
+  const insertStatement = db.prepare(`
+	INSERT INTO
+		transactions (trans_id, trans_date, trans_date_offset, trans_amount, trans_memo, acc_id)
+	VALUES
+		(@id, @date, @dateOffset, @amount, @memo, @accId);
+		`);
+  const enterTrans = db.transaction(() => {
+    for (const trans of transArr) {
+      //better-sql-3 will reject a class instance
+      insertStatement.run({ ...trans, accId: 1 });
     }
   });
-  enterQueries();
+  enterTrans();
   db.close();
+  console.log(`${transArr.length} transactions input successfully.`);
 }
