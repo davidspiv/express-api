@@ -1,5 +1,5 @@
 import readTrans from "../../db/transaction/readOne.js";
-import updateManyTrans from "../../db/transaction/updateMany.js";
+import updateMany from "../../db/transaction/updateMany.js";
 import { Transaction } from "../../models/classes.js";
 //@route PUT /api/transactions/update
 export default (req, res, next) => {
@@ -15,7 +15,7 @@ export default (req, res, next) => {
     const updateTransIdArr = [];
     if (!updateArr.length)
         return next(Error(`Input after ${updateTransIdArr[updateTransIdArr.length - 1]} failed.`));
-    updateManyTrans(updateArr);
+    updateMany(updateArr);
     function buildInputTransArr() {
         const transArr = [];
         for (let i = 0; i < transArr.length; i++) {

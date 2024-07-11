@@ -13,7 +13,7 @@ async function getQueries(filePath: string) {
   const queryArr = data.split(/(?<=;)/g);
   queryArr.pop();
   return queryArr;
-}
+}   
 
 function execDbTransaction(queries: string[]) {
   const db = new Database("accounting.db");

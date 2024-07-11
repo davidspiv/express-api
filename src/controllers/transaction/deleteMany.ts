@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import readTrans from "../../db/transaction/readOne.js";
-import deleteManyTrans from "../../db/transaction/deleteMany.js";
+import deleteMany from "../../db/transaction/deleteMany.js";
 
 //@route DELETE /api/transactions/
 export default (req: Request, res: Response, next: NextFunction) => {
@@ -25,7 +25,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
       )
     );
 
-  deleteManyTrans(deletedTransIdArr);
+  deleteMany(deletedTransIdArr);
 
   function buildDeletedTransIdArr() {
     const idArr: string[] = [];

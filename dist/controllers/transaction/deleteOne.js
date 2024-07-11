@@ -1,5 +1,5 @@
 import readTrans from "../../db/transaction/readOne.js";
-import deleteTrans from "../../db/transaction/deleteOne.js";
+import deleteOne from "../../db/transaction/deleteOne.js";
 //@route DELETE /api/transactions/
 export default (req, res, next) => {
     const id = req.params.id;
@@ -9,6 +9,6 @@ export default (req, res, next) => {
         res.status(404);
         return next(error);
     }
-    deleteTrans(id);
+    deleteOne(id);
     res.status(200).json(trans);
 };

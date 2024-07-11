@@ -4,9 +4,9 @@ import type { TransactionData } from "../../models/interfaces.js";
 
 export default (limit = 0) => {
   let selectStatement = `
-	SELECT * FROM transactions
-	ORDER BY trans_date DESC;
-	`;
+  SELECT * FROM transactions
+  ORDER BY trans_date DESC;
+  `;
 
   if (limit) {
     const semicolonIndex = selectStatement.indexOf(";");

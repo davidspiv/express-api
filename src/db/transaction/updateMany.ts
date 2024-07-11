@@ -1,21 +1,21 @@
 import Database from "better-sqlite3";
-import type { Transaction } from "../models/classes.js";
+import type { Transaction } from "../../models/classes.js";
 
 export default (transArr: Transaction[]) => {
   const db = new Database("accounting.db", { fileMustExist: true });
   const updateMany = db.transaction(() => {
     for (const trans of transArr) {
-      const { id, date, dateOffset, amount, memo, srcId } = trans;
+      const { id, date, dateOffset, amount, memo, accId } = trans;
       const query = `
-			UPDATE transactions
-			SET
-				trans_date = '${date}',
-				trans_date_offset = ${dateOffset},
-				trans_amount = ${amount},
-				trans_memo = '${memo}',
-				src_id = ${srcId},
-			WHERE trans_id = '${id}';
-			`;
+        UPDATE transactions
+        SET
+          trans_date = '${date}',
+          trans_date_offset = ${dateOffset},
+          trans_amount = ${amount},
+          trans_memo = '${memo}',
+          src_id = ${accId},
+        WHERE trans_id = '${id}';
+        `;
 
       const statement = db.prepare(query);
 
@@ -24,7 +24,7 @@ export default (transArr: Transaction[]) => {
         dateOffset,
         amount,
         memo,
-        srcId,
+        accId,
       });
     }
   });

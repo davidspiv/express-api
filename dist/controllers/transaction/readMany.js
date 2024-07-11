@@ -1,8 +1,8 @@
-import readManyTrans from '../../db/transaction/readMany.js';
+import readMany from '../../db/transaction/readMany.js';
 //@route GET /api/transactions
 export default (req, res, next) => {
     const limit = Number.parseInt(req.url.slice(req.url.indexOf('_limit') + 7));
-    const transArr = readManyTrans(limit);
+    const transArr = readMany(limit);
     if (transArr instanceof Error) {
         res.status(500);
         next(transArr);

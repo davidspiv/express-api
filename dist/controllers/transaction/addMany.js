@@ -1,17 +1,15 @@
-import { readLatestTrans, addManyTrans, } from "../../db/transaction/addMany.js";
-import { Transaction } from "../../models/classes.js";
+import { readLatest, addMany } from '../../db/transaction/addMany.js';
+import { Transaction } from '../../models/classes.js';
 //@route POST /api/transactions/
 export default (req, res, next) => {
-    if (typeof req.body !== "object" ||
-        !req.body ||
-        !("transactions" in req.body))
+    if (typeof req.body !== 'object' || !req.body || !('transactions' in req.body))
         return next(new Error("@res.body is not an object or doesn't have transactions key."));
     const transArr = req.body.transactions;
     const isArray = Array.isArray(transArr);
     if (!isArray)
-        return next(new Error("@req.transactions is not an array."));
-    const recentDbTrans = (readLatestTrans(req.body.transactions[0].srcId)[0]);
-    const unseededError = new Error("Database unseeded");
+        return next(new Error('@req.transactions is not an array.'));
+    const recentDbTrans = (readLatest(req.body.transactions[0].srcId)[0]);
+    const unseededError = new Error('Database unseeded');
     if (!recentDbTrans)
         return next(unseededError);
     const inputTransArr = buildInputTransArr();
@@ -41,10 +39,10 @@ export default (req, res, next) => {
         }
         return inputTransArr.length;
     }
-    const noNewTransError = new Error("No new transactions to input");
+    const noNewTransError = new Error('No new transactions to input');
     if (!sliceIndex)
         return next(noNewTransError);
     const filteredTransArr = inputTransArr.slice(0, sliceIndex);
-    addManyTrans(filteredTransArr);
+    addMany(filteredTransArr);
     res.status(200).json(filteredTransArr);
 };

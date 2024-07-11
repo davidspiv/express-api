@@ -2,9 +2,9 @@ import Database from "better-sqlite3";
 import { Transaction } from "../../models/classes.js";
 export default (limit = 0) => {
     let selectStatement = `
-	SELECT * FROM transactions
-	ORDER BY trans_date DESC;
-	`;
+  SELECT * FROM transactions
+  ORDER BY trans_date DESC;
+  `;
     if (limit) {
         const semicolonIndex = selectStatement.indexOf(";");
         selectStatement = selectStatement

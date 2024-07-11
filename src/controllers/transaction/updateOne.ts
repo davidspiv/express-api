@@ -1,12 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
-import readTrans from "../../db/transaction/readOne.js";
-import updateTrans from "../../db/transaction/updateOne.js";
+import readOne from "../../db/transaction/readOne.js";
+import updateOne from "../../db/transaction/updateOne.js";
 import { Transaction } from "../../models/classes.js";
 
 //@route PUT /api/transactions/update
 export default (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id;
-  const post = readTrans(id);
+  const post = readOne(id);
 
   if (!post) {
     const error = new Error("A post with those parameters was not found");
@@ -24,9 +24,9 @@ export default (req: Request, res: Response, next: NextFunction) => {
     req.body.userId
   );
 
-  updateTrans(newTrans);
+  updateOne(newTrans);
 
-  const newPost = readTrans(id);
+  const newPost = readOne(id);
 
   res.status(200).json(newPost);
 };

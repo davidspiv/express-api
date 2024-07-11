@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import readTrans from "../../db/transaction/readOne.js";
-import deleteTrans from "../../db/transaction/deleteOne.js";
+import deleteOne from "../../db/transaction/deleteOne.js";
 
 //@route DELETE /api/transactions/
 export default (req: Request, res: Response, next: NextFunction) => {
@@ -13,7 +13,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
 
-  deleteTrans(id);
+  deleteOne(id);
 
   res.status(200).json(trans);
 };

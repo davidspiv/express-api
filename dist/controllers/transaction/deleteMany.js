@@ -1,5 +1,5 @@
 import readTrans from "../../db/transaction/readOne.js";
-import deleteManyTrans from "../../db/transaction/deleteMany.js";
+import deleteMany from "../../db/transaction/deleteMany.js";
 //@route DELETE /api/transactions/
 export default (req, res, next) => {
     if (typeof req.body !== "object" ||
@@ -13,7 +13,7 @@ export default (req, res, next) => {
     const deletedTransIdArr = buildDeletedTransIdArr();
     if (!deletedTransIdArr.length)
         return next(Error(`Input after ${deletedTransIdArr[deletedTransIdArr.length - 1]} failed.`));
-    deleteManyTrans(deletedTransIdArr);
+    deleteMany(deletedTransIdArr);
     function buildDeletedTransIdArr() {
         const idArr = [];
         for (let i = 0; i < transArr.length; i++) {
