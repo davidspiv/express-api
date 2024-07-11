@@ -1,1 +1,0 @@
-../../src/dev/schema.sql

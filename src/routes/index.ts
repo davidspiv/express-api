@@ -1,11 +1,11 @@
 import { Router } from "express";
-import addManyTrans from "../controllers/addManyTrans.js";
-import readManyTrans from "../controllers/readManyTrans.js";
-import updateManyTrans from "../controllers/updateManyTrans.js";
-import deleteManyTrans from "../controllers/deleteManyTrans.js";
-import readTrans from "../controllers/readTrans.js";
-import updateTrans from "../controllers/updateTrans.js";
-import deleteTrans from "../controllers/deleteTrans.js";
+import addManyTrans from "../controllers/transaction/addManyTrans.js";
+import readManyTrans from "../controllers/transaction/readManyTrans.js";
+import updateManyTrans from "../controllers/transaction/updateManyTrans.js";
+import deleteManyTrans from "../controllers/transaction/deleteManyTrans.js";
+import readTrans from "../controllers/transaction/readTrans.js";
+import updateTrans from "../controllers/transaction/updateTrans.js";
+import deleteTrans from "../controllers/transaction/deleteTrans.js";
 
 import getFormData from "../controllers/getFormData.js";
 import getAccData from "../controllers/getAccData.js";

@@ -2,8 +2,11 @@ import Database from "better-sqlite3";
 
 export default () => {
   const statement = `
-  SELECT acc_name, acc_initial_bal
-  FROM accounts;
+  SELECT acc_name, SUM(trans_amount)
+  FROM transactions
+  INNER JOIN accounts on accounts.acc_id = transactions.acc_id
+  WHERE trans_date BETWEEN '2023-01-01' AND '2023-01-31'
+  AND acc_code = 1001;
 	`;
 
   const db = new Database("accounting.db", {
@@ -14,3 +17,6 @@ export default () => {
   db.close();
   return result;
 };
+
+// SELECT acc_name, acc_initial_bal
+// FROM accounts;
