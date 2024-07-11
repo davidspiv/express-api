@@ -6,7 +6,7 @@ export default () => {
   FROM transactions
   INNER JOIN accounts on accounts.acc_id = transactions.acc_id
   WHERE trans_date BETWEEN '2023-01-01' AND '2023-01-31'
-  AND acc_code = 1001;
+  GROUP BY acc_code
 	`;
 
 	const db = new Database('accounting.db', {

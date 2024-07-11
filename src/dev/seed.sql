@@ -26,6 +26,24 @@ INSERT INTO accounts (acc_code, acc_name, user_id)
     (5007, 'Gifts', 1),
     (5008, 'Personal', 1);
 
+-- INSERT INTO transactions (trans_date, trans_date_offset, trans_amount, trans_memo, acc_id)
+--     VALUES
+--     ('12/2/21', 0, 43535, 'hello', 2),
+--     ('12/3/21', 0, 1233, 'hello', 2),
+--     ('12/4/23', 0, 8097, 'hello', 2),
+--     ('12/5/23', 0, 67867, 'hello', 2),
+--     ('12/6/23', 0, 213412, 'hello', 2),
+--     ('12/7/23', 0, 89678, 'hello', 2),
+--     ('12/8/23', 0, 234, 'hello', 2),
+--     ('12/9/23', 0, 5464, 'hello', 2),
+--     ('12/10/23', 0, 234234, 'hello', 2),
+--     ('12/11/23', 0, 3453, 'hello', 2),
+--     ('12/12/23', 0, 234234, 'hello', 2),
+--     ('12/13/23', 0, 6345, 'hello', 2),
+--     ('12/14/23', 0, 345345, 'hello', 2),
+--     ('12/15/23', 0, 1243124, 'hello', 2),
+--     ('12/16/23', 0, 34564, 'hello', 2)
+
 -- Old tests
 
 -- INSERT INTO account_types (type_id, type_name)
@@ -35,22 +53,6 @@ INSERT INTO accounts (acc_code, acc_name, user_id)
 --     (3000, 'Equity'),
 --     (4000, 'Revenue'),
 --     (5000, 'Expense')
-
---     ('David', 1001, 'Schools Checking', 'Cash and cash equivalents'),
---     ('David', 1002, 'Schools Savings', 'Cash and cash equivalents'),
---     ('David', 1003, 'Petty Cash', 'Cash and cash equivalents'),
---     ('David', 1004, 'Receivable', 'A/R'),
---     ('David', 1005, 'Prepaid', 'Prepaid'),
---     ('David', 2001, 'Payable', 'A/P'),
---     ('David', 3001, 'Stock', 'Stock'),
---     ('David', 5001, 'Housing', 'Expense'),
---     ('David', 5002, 'Food', 'Expense'),
---     ('David', 5003, 'Utilities', 'Expense'),
---     ('David', 5004, 'Transportation', 'Expense'),
---     ('David', 5005, 'Household', 'Expense'),
---     ('David', 5006, 'Education', 'Expense'),
---     ('David', 5007, 'Gifts', 'Expense'),
---     ('David', 5008, 'Personal', 'Expense')
 
 -- INSERT INTO memos (memo_id, user_id, acc_code)
 --     VALUES

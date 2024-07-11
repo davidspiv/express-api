@@ -3,8 +3,8 @@ import { getData } from "./utilDb.js";
 
 const transactions: Transaction[] = [];
 
-export const parseCsv = async () => {
-  const csvData = await getData("./test-inputs/debit.csv");
+export const parseCsv = async (fileName: string) => {
+  const csvData = await getData(fileName);
 
   if (csvData) {
     buildTransObj(csvData);

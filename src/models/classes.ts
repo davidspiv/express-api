@@ -14,7 +14,7 @@ class Transaction {
 		amountInput: string | number,
 		memoInput: string,
 		accId: number,
-		isDebit: boolean,
+		isDebit?: boolean,
 		idInput?: string,
 		fitidInput?: string,
 	) {
@@ -23,7 +23,7 @@ class Transaction {
 		this.amount = this.toNumber(amountInput);
 		this.memo = memoInput;
 		this.accId = accId;
-		this.isDebit = isDebit;
+		this.isDebit = isDebit ? isDebit : false;
 		this.id = idInput
 			? idInput
 			: this.createId(this.accId, this.date, this.dateOffset);
