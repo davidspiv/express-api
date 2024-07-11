@@ -53,13 +53,12 @@ const runQuery = () => {
     const db = new Database("accounting.db", {
         fileMustExist: true,
     });
-    let memoId;
     const createMemo = db.transaction(() => {
         db.prepare(query1).run();
-        const selectArr = db.prepare(query2).all();
-        memoId = selectArr[0]["last_insert_rowid()"];
+        const selectArr = (db.prepare(query2).all());
+        return selectArr[0]["last_insert_rowid()"];
     });
-    createMemo();
+    const memoId = createMemo();
     const queryString = `
     INSERT INTO
 		  document (doc_date_offset, usr_id)

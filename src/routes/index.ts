@@ -8,6 +8,7 @@ import updateTrans from "../controllers/updateTrans.js";
 import deleteTrans from "../controllers/deleteTrans.js";
 
 import getFormData from "../controllers/getFormData.js";
+import getAccData from "../controllers/getAccData.js";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.put("/transactions/:id", updateTrans);
 router.delete("/transactions/:id", deleteTrans);
 
 router.get("/forms", getFormData);
+router.get("/accounts", getAccData);
 
 export default router;
