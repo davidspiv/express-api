@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import readTrans from "../../db/transaction/readTrans.js";
-import deleteManyTrans from "../../db/transaction/deleteManyTrans.js";
+import readTrans from "../../db/transaction/readOne.js";
+import deleteManyTrans from "../../db/transaction/deleteMany.js";
 
 //@route DELETE /api/transactions/
 export default (req: Request, res: Response, next: NextFunction) => {

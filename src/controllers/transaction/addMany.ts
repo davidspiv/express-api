@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import {
   readLatestTrans,
   addManyTrans,
-} from "../../db/transaction/addManyTrans.js";
+} from "../../db/transaction/addMany.js";
 import { Transaction } from "../../models/classes.js";
 import type { TransactionData } from "../../models/interfaces.js";
 

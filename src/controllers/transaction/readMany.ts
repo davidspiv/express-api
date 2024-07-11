@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import readManyTrans from '../../db/transaction/readManyTrans.js';
+import readManyTrans from '../../db/transaction/readMany.js';
 
 //@route GET /api/transactions
 export default (req: Request, res: Response, next: NextFunction) => {

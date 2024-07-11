@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import readTrans from "../../db/transaction/readTrans.js";
-import updateTrans from "../../db/transaction/updateTrans.js";
+import readTrans from "../../db/transaction/readOne.js";
+import updateTrans from "../../db/transaction/updateOne.js";
 import { Transaction } from "../../models/classes.js";
 
 //@route PUT /api/transactions/update
