@@ -4,7 +4,7 @@ class Transaction {
   dateOffset: number;
   amount: number;
   memo: string;
-  srcId: number;
+  accId: number;
   fitid?: string;
 
   constructor(
@@ -12,7 +12,7 @@ class Transaction {
     dateOffsetInput: string | number,
     amountInput: string | number,
     memoInput: string,
-    srcIdInput: number,
+    accId: number,
     idInput?: string,
     fitidInput?: string
   ) {
@@ -20,10 +20,10 @@ class Transaction {
     this.dateOffset = this.toNumber(dateOffsetInput);
     this.amount = this.toNumber(amountInput);
     this.memo = memoInput;
-    this.srcId = srcIdInput;
+    this.accId = accId;
     this.id = idInput
       ? idInput
-      : this.createId(this.srcId, this.date, this.dateOffset);
+      : this.createId(this.accId, this.date, this.dateOffset);
     this.fitid = fitidInput;
   }
 

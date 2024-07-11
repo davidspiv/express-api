@@ -21,7 +21,7 @@ export default (limit = 0) => {
     for (const resultEl of resultArr) {
         if (!isTrans(resultEl))
             return new Error("Internal database issue");
-        transArr.push(new Transaction(resultEl.trans_date, resultEl.trans_date_offset, resultEl.trans_amount, resultEl.trans_memo, resultEl.src_id, resultEl.trans_id, resultEl.trans_fitid));
+        transArr.push(new Transaction(resultEl.trans_date, resultEl.trans_date_offset, resultEl.trans_amount, resultEl.trans_memo, resultEl.acc_id, resultEl.trans_id, resultEl.trans_fitid));
     }
     return transArr;
 };
@@ -31,5 +31,5 @@ function isTrans(obj) {
         obj?.trans_date_offset !== undefined &&
         obj?.trans_amount !== undefined &&
         obj?.trans_memo !== undefined &&
-        obj?.src_id !== undefined);
+        obj?.acc_id !== undefined);
 }

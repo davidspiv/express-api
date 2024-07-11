@@ -22,7 +22,7 @@ interface TransactionData {
   trans_date_offset: number;
   trans_amount: number;
   trans_memo: string;
-  src_id: number;
+  acc_id: number;
   trans_fitid?: string;
 }
 
