@@ -16,7 +16,7 @@ export default (id) => {
     const transArr = [];
     if (!isTrans(resultEl))
         return;
-    transArr.push(new Transaction(resultEl.trans_date, resultEl.trans_date_offset, resultEl.trans_amount, resultEl.trans_memo, resultEl.acc_id, resultEl.trans_id, resultEl.trans_fitid));
+    transArr.push(new Transaction(resultEl.trans_date, resultEl.trans_date_offset, resultEl.trans_amount, resultEl.trans_memo, resultEl.acc_id, resultEl.is_debit, resultEl.trans_id, resultEl.trans_fitid));
     return transArr;
 };
 function isTrans(obj) {
@@ -25,5 +25,6 @@ function isTrans(obj) {
         obj?.trans_date_offset !== undefined &&
         obj?.trans_amount !== undefined &&
         obj?.trans_memo !== undefined &&
-        obj?.acc_id !== undefined);
+        obj?.acc_id !== undefined &&
+        obj?.is_debit !== undefined);
 }

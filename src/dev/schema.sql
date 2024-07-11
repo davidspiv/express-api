@@ -44,8 +44,9 @@ CREATE TABLE transactions (
     trans_date_offset INTEGER NOT NULL,
     trans_amount INTEGER NOT NULL,
     trans_memo TEXT NOT NULL,
-    acc_id INTEGER NOT NULL,
     trans_fitid TEXT,
+    acc_id INTEGER NOT NULL,
+    is_debit BOOLEAN DEFAULT 1,
     FOREIGN KEY (acc_id)
         REFERENCES accounts(acc_id)
         ON UPDATE CASCADE

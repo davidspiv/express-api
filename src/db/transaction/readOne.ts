@@ -28,6 +28,7 @@ export default (id: string) => {
       resultEl.trans_amount,
       resultEl.trans_memo,
       resultEl.acc_id,
+      resultEl.is_debit,
       resultEl.trans_id,
       resultEl.trans_fitid
     )
@@ -43,6 +44,7 @@ function isTrans(obj: unknown): obj is TransactionData {
     (obj as TransactionData)?.trans_date_offset !== undefined &&
     (obj as TransactionData)?.trans_amount !== undefined &&
     (obj as TransactionData)?.trans_memo !== undefined &&
-    (obj as TransactionData)?.acc_id !== undefined
+    (obj as TransactionData)?.acc_id !== undefined &&
+    (obj as TransactionData)?.is_debit !== undefined
   );
 }

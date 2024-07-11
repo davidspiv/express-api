@@ -39,7 +39,7 @@ const addMany = (transArr: Transaction[]) => {
   db.close();
 };
 
-const runQuery = () => {
+const runTestQuery = () => {
   const usrId = 1;
   const date = new Date("1/1/2024").toDateString();
   const dateOffset = 0;
@@ -111,4 +111,4 @@ const runQuery = () => {
   db.close();
 };
 
-export { readLatest, addMany, runQuery };
+export { readLatest, addMany, runTestQuery };

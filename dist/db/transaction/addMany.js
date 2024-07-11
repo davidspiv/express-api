@@ -35,7 +35,7 @@ const addMany = (transArr) => {
     insertMany(transArr);
     db.close();
 };
-const runQuery = () => {
+const runTestQuery = () => {
     const usrId = 1;
     const date = new Date("1/1/2024").toDateString();
     const dateOffset = 0;
@@ -95,4 +95,4 @@ const runQuery = () => {
     enterQueries();
     db.close();
 };
-export { readLatest, addMany, runQuery };
+export { readLatest, addMany, runTestQuery };
