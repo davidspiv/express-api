@@ -10,33 +10,33 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
   const timeRangeMod = () => {
     switch (timeRange) {
       case "day":
-        return `WHERE trans_date > date('now', '-1 day')`;
+        return `trans_date > date('now', '-1 day')`;
       case "week":
-        return `WHERE trans_date > date('now', '-7 day')`;
+        return `trans_date > date('now', '-7 day')`;
       case "month":
-        return `WHERE trans_date > date('now', '-30 day')`;
+        return `trans_date > date('now', '-30 day')`;
       case "year-to-date":
-        return `WHERE trans_date > date('now', '-365 day')`;
+        return `trans_date > date('now', '-365 day')`;
       case "year":
-        return `WHERE trans_date > date('now', '-365 day')`;
+        return `trans_date > date('now', '-365 day')`;
       default:
-        return "";
+        return `trans_date > date('now', '-365 day')`;
     }
   };
   const accRangeMod = () => {
     switch (accRange) {
       case "liabilities":
-        return "WHERE acc_id < 2000";
+        return "acc_id < 2000";
       case "expenses":
-        return "WHERE acc_id < 3000";
+        return "acc_id < 3000";
       case "earnings":
-        return "WHERE acc_id < 4000";
+        return "acc_id < 4000";
       case "assets":
-        return "WHERE acc_id < 5000";
+        return "acc_id < 5000";
       case "equity":
-        return "WHERE acc_id < 6000";
+        return "acc_id < 6000";
       default:
-        return "";
+        return "acc_id < 6000";
     }
   };
 
@@ -48,10 +48,12 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
   };
 
   const selectStatement = baseStatement.concat(
+    " WHERE ",
     timeRangeMod(),
+    " AND ",
     limitMod(),
     accRangeMod(),
-    "ORDER BY trans_date DESC;"
+    " ORDER BY trans_date DESC; "
   );
 
   console.log(selectStatement);
