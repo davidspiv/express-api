@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 import { Transaction } from "../../models/classes.js";
-export default (limit = 0, timeRange = "all", accRange = "all") => {
+export default (timeRange = "all", accRange = "all", limit = 0) => {
     const baseStatement = `
   SELECT * FROM transactions
   `;
@@ -45,7 +45,7 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
     const whereConnector = timeRangeMod().length || accRangeMod().length ? " WHERE " : " ";
     const andConnector = timeRangeMod().length && accRangeMod().length ? " AND " : " ";
     const selectStatement = baseStatement.concat(whereConnector, timeRangeMod(), andConnector, accRangeMod(), " ORDER BY trans_date DESC", limitMod(), ";");
-    console.log(selectStatement);
+    // console.log(selectStatement);
     const db = new Database("accounting.db", {
         fileMustExist: true,
         readonly: true,

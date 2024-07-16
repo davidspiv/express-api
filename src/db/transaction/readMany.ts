@@ -2,7 +2,7 @@ import Database from "better-sqlite3";
 import { Transaction } from "../../models/classes.js";
 import type { TransactionData } from "../../models/interfaces.js";
 
-export default (limit = 0, timeRange = "all", accRange = "all") => {
+export default (timeRange = "all", accRange = "all", limit = 0) => {
   const baseStatement = `
   SELECT * FROM transactions
   `;
@@ -63,7 +63,7 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
     ";"
   );
 
-  console.log(selectStatement);
+  // console.log(selectStatement);
 
   const db = new Database("accounting.db", {
     fileMustExist: true,
