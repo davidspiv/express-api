@@ -25,13 +25,13 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
             case "asset":
                 return "acc_id < 2000";
             case "liability":
-                return "acc_id < 3000";
+                return "acc_id > 2000 AND acc_id < 3000";
             case "equity":
-                return "acc_id < 4000";
+                return "acc_id > 3000 AND acc_id < 4000";
             case "revenue":
-                return "acc_id < 5000";
+                return "acc_id > 4000 AND acc_id < 5000";
             case "expense":
-                return "acc_id < 6000";
+                return "acc_id > 5000 AND acc_id < 6000";
             default:
                 return "";
         }
