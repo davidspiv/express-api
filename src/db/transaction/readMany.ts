@@ -58,7 +58,7 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
     timeRangeMod(),
     andConnector,
     accRangeMod(),
-    " ORDER BY trans_date DESC ",
+    " ORDER BY trans_date DESC",
     limitMod(),
     ";"
   );

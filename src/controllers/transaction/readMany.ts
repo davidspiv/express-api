@@ -3,7 +3,9 @@ import readMany from "../../db/transaction/readMany.js";
 
 //@route GET /api/transactions
 export default (req: Request, res: Response, next: NextFunction) => {
-  const limit = Number.parseInt(req.url.slice(req.url.indexOf("_limit") + 7));
+  const limit = Number.parseInt(
+    req.url.slice(req.url.indexOf("_limit") + "_limit=".length)
+  );
   const transArr = readMany(limit, "year", "");
   if (transArr instanceof Error) {
     res.status(500);
