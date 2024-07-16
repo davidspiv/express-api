@@ -1,8 +1,8 @@
-import readMany from '../../db/transaction/readMany.js';
+import readMany from "../../db/transaction/readMany.js";
 //@route GET /api/transactions
 export default (req, res, next) => {
-    const limit = Number.parseInt(req.url.slice(req.url.indexOf('_limit') + 7));
-    const transArr = readMany(limit);
+    const limit = Number.parseInt(req.url.slice(req.url.indexOf("_limit") + 7));
+    const transArr = readMany(limit, "week");
     if (transArr instanceof Error) {
         res.status(500);
         next(transArr);
@@ -16,7 +16,7 @@ export default (req, res, next) => {
         }
         return res.status(200).json({ transactions: transArr });
     }
-    const error = new Error('Server Error');
+    const error = new Error("Server Error");
     res.status(500);
     next(error);
 };

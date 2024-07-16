@@ -3,7 +3,6 @@ import { Transaction } from "../../models/classes.js";
 import type { TransactionData } from "../../models/interfaces.js";
 
 export default (limit = 0, timeRange = "all", accRange = "all") => {
-	
   const baseStatement = `
   SELECT * FROM transactions
   `;
@@ -50,17 +49,18 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
   };
 
   const whereConnector =
-    timeRangeMod().length || limitMod().length ? " WHERE " : " ";
+    timeRangeMod().length || accRangeMod().length ? " WHERE " : " ";
   const andConnector =
-    timeRangeMod().length && limitMod().length ? " AND " : " ";
+    timeRangeMod().length && accRangeMod().length ? " AND " : " ";
 
   const selectStatement = baseStatement.concat(
     whereConnector,
     timeRangeMod(),
     andConnector,
-    limitMod(),
     accRangeMod(),
-    " ORDER BY trans_date DESC; "
+    " ORDER BY trans_date DESC ",
+    limitMod(),
+    ";"
   );
 
   console.log(selectStatement);

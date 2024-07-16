@@ -42,9 +42,9 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
         }
         return "";
     };
-    const whereConnector = timeRangeMod().length || limitMod().length ? " WHERE " : " ";
-    const andConnector = timeRangeMod().length && limitMod().length ? " AND " : " ";
-    const selectStatement = baseStatement.concat(whereConnector, timeRangeMod(), andConnector, limitMod(), accRangeMod(), " ORDER BY trans_date DESC; ");
+    const whereConnector = timeRangeMod().length || accRangeMod().length ? " WHERE " : " ";
+    const andConnector = timeRangeMod().length && accRangeMod().length ? " AND " : " ";
+    const selectStatement = baseStatement.concat(whereConnector, timeRangeMod(), andConnector, accRangeMod(), " ORDER BY trans_date DESC ", limitMod(), ";");
     console.log(selectStatement);
     const db = new Database("accounting.db", {
         fileMustExist: true,
