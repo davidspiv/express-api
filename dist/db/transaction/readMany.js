@@ -1,23 +1,49 @@
 import Database from "better-sqlite3";
 import { Transaction } from "../../models/classes.js";
-export default (limit = 0, timeRange = "week", accRange = "all") => {
+export default (limit = 0, timeRange = "all", accRange = "all") => {
     const baseStatement = `
   SELECT * FROM transactions
-  ORDER BY trans_date DESC
   `;
     const timeRangeMod = () => {
-        return "";
+        switch (timeRange) {
+            case "day":
+                return `WHERE trans_date > date('now', '-1 day')`;
+            case "week":
+                return `WHERE trans_date > date('now', '-7 day')`;
+            case "month":
+                return `WHERE trans_date > date('now', '-30 day')`;
+            case "year-to-date":
+                return `WHERE trans_date > date('now', '-365 day')`;
+            case "year":
+                return `WHERE trans_date > date('now', '-365 day')`;
+            default:
+                return "";
+        }
     };
     const accRangeMod = () => {
-        return "";
+        switch (accRange) {
+            case "liabilities":
+                return "WHERE acc_id < 2000";
+            case "expenses":
+                return "WHERE acc_id < 3000";
+            case "earnings":
+                return "WHERE acc_id < 4000";
+            case "assets":
+                return "WHERE acc_id < 5000";
+            case "equity":
+                return "WHERE acc_id < 6000";
+            default:
+                return "";
+        }
     };
-    const limitMod = (input) => {
-        if (input) {
-            return ` LIMIT ${input}`;
+    const limitMod = () => {
+        if (limit) {
+            return ` LIMIT ${limit}`;
         }
         return "";
     };
-    const selectStatement = baseStatement.concat(timeRangeMod(), accRangeMod(), limitMod(limit), ";");
+    const selectStatement = baseStatement.concat(timeRangeMod(), limitMod(), accRangeMod(), "ORDER BY trans_date DESC;");
+    console.log(selectStatement);
     const db = new Database("accounting.db", {
         fileMustExist: true,
         readonly: true,
