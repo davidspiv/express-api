@@ -3,6 +3,7 @@ import { Transaction } from "../../models/classes.js";
 import type { TransactionData } from "../../models/interfaces.js";
 
 export default (limit = 0, timeRange = "all", accRange = "all") => {
+	
   const baseStatement = `
   SELECT * FROM transactions
   `;
@@ -20,23 +21,24 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
       case "year":
         return `trans_date > date('now', '-365 day')`;
       default:
-        return `trans_date > date('now', '-365 day')`;
+        return "";
     }
   };
+
   const accRangeMod = () => {
     switch (accRange) {
-      case "liabilities":
+      case "asset":
         return "acc_id < 2000";
-      case "expenses":
+      case "liability":
         return "acc_id < 3000";
-      case "earnings":
-        return "acc_id < 4000";
-      case "assets":
-        return "acc_id < 5000";
       case "equity":
+        return "acc_id < 4000";
+      case "revenue":
+        return "acc_id < 5000";
+      case "expense":
         return "acc_id < 6000";
       default:
-        return "acc_id < 6000";
+        return "";
     }
   };
 
@@ -47,10 +49,15 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
     return "";
   };
 
+  const whereConnector =
+    timeRangeMod().length || limitMod().length ? " WHERE " : " ";
+  const andConnector =
+    timeRangeMod().length && limitMod().length ? " AND " : " ";
+
   const selectStatement = baseStatement.concat(
-    " WHERE ",
+    whereConnector,
     timeRangeMod(),
-    " AND ",
+    andConnector,
     limitMod(),
     accRangeMod(),
     " ORDER BY trans_date DESC; "

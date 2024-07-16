@@ -17,23 +17,23 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
             case "year":
                 return `trans_date > date('now', '-365 day')`;
             default:
-                return `trans_date > date('now', '-365 day')`;
+                return "";
         }
     };
     const accRangeMod = () => {
         switch (accRange) {
-            case "liabilities":
+            case "asset":
                 return "acc_id < 2000";
-            case "expenses":
+            case "liability":
                 return "acc_id < 3000";
-            case "earnings":
-                return "acc_id < 4000";
-            case "assets":
-                return "acc_id < 5000";
             case "equity":
+                return "acc_id < 4000";
+            case "revenue":
+                return "acc_id < 5000";
+            case "expense":
                 return "acc_id < 6000";
             default:
-                return "acc_id < 6000";
+                return "";
         }
     };
     const limitMod = () => {
@@ -42,7 +42,9 @@ export default (limit = 0, timeRange = "all", accRange = "all") => {
         }
         return "";
     };
-    const selectStatement = baseStatement.concat(" WHERE ", timeRangeMod(), " AND ", limitMod(), accRangeMod(), " ORDER BY trans_date DESC; ");
+    const whereConnector = timeRangeMod().length || limitMod().length ? " WHERE " : " ";
+    const andConnector = timeRangeMod().length && limitMod().length ? " AND " : " ";
+    const selectStatement = baseStatement.concat(whereConnector, timeRangeMod(), andConnector, limitMod(), accRangeMod(), " ORDER BY trans_date DESC; ");
     console.log(selectStatement);
     const db = new Database("accounting.db", {
         fileMustExist: true,
