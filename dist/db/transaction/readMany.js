@@ -23,15 +23,15 @@ export default (timeRange = "all", accRange = "all", limit = 0) => {
     const timeRangeMod = () => {
         switch (timeRange) {
             case "day":
-                return `trans_date > date('${targetDate}', '-1 day')`;
+                return `trans_date > date('${targetDate}')`;
             case "week":
-                return `trans_date > date('${targetDate}', '-7 day')`;
+                return `trans_date > date('${targetDate}', '-6 day')`;
             case "month":
-                return `trans_date > date('${targetDate}', '-30 day')`;
+                return `trans_date > date('${targetDate}', '-29 day')`;
             case "year-to-date":
-                return `trans_date > date('${targetDate}', '-365 day')`;
+                return `trans_date > date('${targetDate}', '-364 day')`;
             case "year":
-                return `trans_date > date('${targetDate}', '-365 day')`;
+                return `trans_date > date('${targetDate}', '-364 day')`;
             default:
                 return "";
         }
