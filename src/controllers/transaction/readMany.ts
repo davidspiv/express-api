@@ -20,7 +20,9 @@ export default (req: Request, res: Response, next: NextFunction) => {
     next(transArr);
     return;
   }
-  console.log(timeRange, accRange, limit);
+  
+  // console.log(timeRange, accRange, limit);
+
   const limitData = String(req.query.limit);
   if (limitData.length > 0) {
     const limit = Number.parseInt(limitData);
