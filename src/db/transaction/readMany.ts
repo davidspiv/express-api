@@ -3,6 +3,26 @@ import { Transaction } from "../../models/classes.js";
 import type { TransactionData } from "../../models/interfaces.js";
 
 export default (timeRange = "all", accRange = "all", limit = 0) => {
+  const readLatest = () => {
+    const recentTransStatement = `
+    SELECT trans_date
+    FROM transactions
+    ORDER BY trans_date
+    DESC LIMIT 1;
+    `;
+    const db = new Database("accounting.db", {
+      fileMustExist: true,
+      readonly: true,
+    });
+    const recentTrans = <[{ trans_date: string }] | null>(
+      db.prepare(recentTransStatement).all()
+    );
+    db.close();
+
+    return recentTrans ? recentTrans[0].trans_date : "now";
+  };
+
+  const targetDate = readLatest();
   const baseStatement = `
   SELECT * FROM transactions
   `;
@@ -10,15 +30,15 @@ export default (timeRange = "all", accRange = "all", limit = 0) => {
   const timeRangeMod = () => {
     switch (timeRange) {
       case "day":
-        return `trans_date > date('now', '-1 day')`;
+        return `trans_date > date('${targetDate}', '-1 day')`;
       case "week":
-        return `trans_date > date('now', '-7 day')`;
+        return `trans_date > date('${targetDate}', '-7 day')`;
       case "month":
-        return `trans_date > date('now', '-30 day')`;
+        return `trans_date > date('${targetDate}', '-30 day')`;
       case "year-to-date":
-        return `trans_date > date('now', '-365 day')`;
+        return `trans_date > date('${targetDate}', '-365 day')`;
       case "year":
-        return `trans_date > date('now', '-365 day')`;
+        return `trans_date > date('${targetDate}', '-365 day')`;
       default:
         return "";
     }
