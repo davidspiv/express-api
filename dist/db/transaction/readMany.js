@@ -1,17 +1,24 @@
-import Database from 'better-sqlite3';
-import { Transaction } from '../../models/classes.js';
-export default (limit = 0) => {
-    let selectStatement = `
+import Database from "better-sqlite3";
+import { Transaction } from "../../models/classes.js";
+export default (limit = 0, timeRange = "week", accRange = "all") => {
+    const baseStatement = `
   SELECT * FROM transactions
-  ORDER BY trans_date DESC;
+  ORDER BY trans_date DESC
   `;
-    if (limit) {
-        const semicolonIndex = selectStatement.indexOf(';');
-        selectStatement = selectStatement
-            .slice(0, semicolonIndex)
-            .concat('', ` LIMIT ${limit};`);
-    }
-    const db = new Database('accounting.db', {
+    const timeRangeMod = () => {
+        return "";
+    };
+    const accRangeMod = () => {
+        return "";
+    };
+    const limitMod = (input) => {
+        if (input) {
+            return ` LIMIT ${input}`;
+        }
+        return "";
+    };
+    const selectStatement = baseStatement.concat(timeRangeMod(), accRangeMod(), limitMod(limit), ";");
+    const db = new Database("accounting.db", {
         fileMustExist: true,
         readonly: true,
     });
@@ -20,7 +27,7 @@ export default (limit = 0) => {
     const transArr = [];
     for (const resultEl of resultArr) {
         if (!isTrans(resultEl))
-            return new Error('Internal database issue');
+            return new Error("Internal database issue");
         transArr.push(new Transaction(resultEl.trans_date, resultEl.trans_date_offset, resultEl.trans_amount, resultEl.trans_memo, resultEl.acc_id, resultEl.is_debit, resultEl.trans_id, resultEl.trans_fitid));
     }
     return transArr;

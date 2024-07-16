@@ -1,11 +1,11 @@
-import { getQueries, execDbTransaction } from "./utilDb.js";
-import { parseCsv } from "./utilParse.js";
-import Database from "better-sqlite3";
+import { getQueries, execDbTransaction } from './utilDb.js';
+import { parseCsv } from './utilParse.js';
+import Database from 'better-sqlite3';
 try {
     const data = (await Promise.all([
-        getQueries("./dist/dev/schema.sql"),
-        getQueries("./dist/dev/seed.sql"),
-        parseCsv(),
+        getQueries('./dist/dev/schema.sql'),
+        getQueries('./dist/dev/seed.sql'),
+        parseCsv('./testInputs/transactions.csv'),
     ]));
     buildDb(data);
 }
@@ -15,12 +15,12 @@ catch (err) {
 function buildDb(data) {
     const [schemaData, seedData, transArr] = data;
     execDbTransaction(schemaData);
-    console.log("Schema successful.");
+    console.log('Schema successful.');
     execDbTransaction(seedData);
-    console.log("Initial seed successful.");
+    console.log('Initial seed successful.');
     inputTrans(transArr);
     function inputTrans(transArr) {
-        const db = new Database("accounting.db");
+        const db = new Database('accounting.db');
         const enterTrans = db.transaction(() => {
             for (const trans of transArr) {
                 const insertStatement = `

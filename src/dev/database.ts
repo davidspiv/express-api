@@ -8,7 +8,7 @@ try {
 		await Promise.all([
 			getQueries('./dist/dev/schema.sql'),
 			getQueries('./dist/dev/seed.sql'),
-			parseCsv('./test-inputs/debit.csv'),
+			parseCsv('./testInputs/transactions.csv'),
 		])
 	);
 
