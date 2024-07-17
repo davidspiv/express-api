@@ -3,25 +3,22 @@ import readMany from "../../db/transaction/readMany.js";
 
 //@route GET /api/transactions
 export default (req: Request, res: Response, next: NextFunction) => {
-  const limit = Number.parseInt(
-    req.url.slice(req.url.indexOf("_limit") + "_limit=".length)
+  const parameterArr = req.url.slice(req.url.indexOf("?") + 2).split("_");
+  const parameterObj: { time?: string; acc?: string; limit?: string } = {};
+  parameterArr.map((el) => {
+    const string = <"time" | "acc" | "limit">el.slice(0, el.indexOf("="));
+    parameterObj[string] = el.slice(el.indexOf("=") + 1);
+  });
+  const transArr = readMany(
+    parameterObj.time,
+    parameterObj.acc,
+    parameterObj.limit ? Number.parseInt(parameterObj.limit) : 0
   );
-  const timeRange = req.url.slice(
-    req.url.indexOf("_time") + "_time=".length,
-    req.url.indexOf("_acc")
-  );
-  const accRange = req.url.slice(
-    req.url.indexOf("_acc") + "_acc=".length,
-    req.url.indexOf("_limit")
-  );
-  const transArr = readMany(timeRange, accRange, limit);
   if (transArr instanceof Error) {
     res.status(500);
     next(transArr);
     return;
   }
-  
-  // console.log(timeRange, accRange, limit);
 
   const limitData = String(req.query.limit);
   if (limitData.length > 0) {

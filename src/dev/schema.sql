@@ -21,7 +21,6 @@ CREATE TABLE sources (
 
 CREATE TABLE accounts (
     acc_id INTEGER PRIMARY KEY,
-    acc_code INTEGER NOT NULL,
     acc_name TEXT NOT NULL,
     acc_initial_bal INTEGER DEFAULT 0,
     acc_is_hidden BOOLEAN DEFAULT 0,
