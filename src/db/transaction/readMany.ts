@@ -68,9 +68,6 @@ export default (timeRange = "all", accRange = "all", limit = 0) => {
     return "";
   };
 
-  console.log(`timerange: ${timeRangeMod()}`);
-  console.log(`accrange: ${accRangeMod()}`);
-
   const whereConnector =
     timeRangeMod().length || accRangeMod().length ? " WHERE " : " ";
   const andConnector =
