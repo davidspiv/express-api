@@ -83,8 +83,6 @@ export default (timeRange = "all", accRange = "all", limit = 0) => {
     ";"
   );
 
-  // console.log(selectStatement);
-
   const db = new Database("accounting.db", {
     fileMustExist: true,
     readonly: true,

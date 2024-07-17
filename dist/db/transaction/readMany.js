@@ -61,7 +61,6 @@ export default (timeRange = "all", accRange = "all", limit = 0) => {
     const whereConnector = timeRangeMod().length || accRangeMod().length ? " WHERE " : " ";
     const andConnector = timeRangeMod().length && accRangeMod().length ? " AND " : " ";
     const selectStatement = baseStatement.concat(whereConnector, timeRangeMod(), andConnector, accRangeMod(), " ORDER BY trans_date DESC", limitMod(), ";");
-    // console.log(selectStatement);
     const db = new Database("accounting.db", {
         fileMustExist: true,
         readonly: true,
