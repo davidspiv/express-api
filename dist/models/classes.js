@@ -1,3 +1,4 @@
+const { randomUUID } = await import("node:crypto");
 class Transaction {
     constructor(dateInput, dateOffsetInput, amountInput, memoInput, accId, isDebit, idInput, fitidInput) {
         this.date = dateInput;
@@ -6,22 +7,16 @@ class Transaction {
         this.memo = memoInput;
         this.accId = accId;
         this.isDebit = isDebit ? isDebit : false;
-        this.id = idInput
-            ? idInput
-            : this.createId(this.accId, this.date, this.dateOffset);
+        this.id = idInput ? idInput : this.createId();
         this.fitid = fitidInput;
     }
     toNumber(input) {
-        if (typeof input === 'string')
+        if (typeof input === "string")
             return Number.parseInt(input);
         return input;
     }
-    createId(srcId, isoDate, dateOffset) {
-        const month = isoDate.slice(5, 7);
-        const day = isoDate.slice(8, 10);
-        const year = isoDate.slice(2, 4);
-        const formattedDate = `${month}${day}${year}`;
-        return Number.parseInt(`${srcId}${formattedDate}${dateOffset}`).toString(36);
+    createId() {
+        return randomUUID();
     }
 }
 export { Transaction };
