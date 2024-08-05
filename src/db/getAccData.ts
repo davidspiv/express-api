@@ -2,10 +2,10 @@ import Database from 'better-sqlite3';
 
 export default () => {
 	const statement = `
-  SELECT acc_name, SUM(trans_amount) AS acc_total
-  FROM transactions
-  INNER JOIN accounts on accounts.acc_id = transactions.acc_id
-  WHERE trans_date BETWEEN '2023-01-01' AND '2023-01-31'
+  SELECT acc_name, SUM(rcpt_amount) AS acc_total
+  FROM receipt
+  INNER JOIN accounts on accounts.acc_id = receipt.acc_id
+  WHERE rcpt_date BETWEEN '2023-01-01' AND '2023-01-31'
   GROUP BY acc_code
 	`;
 

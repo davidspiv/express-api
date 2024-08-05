@@ -16,15 +16,15 @@ interface User {
 	role?: string;
 }
 
-interface TransactionData {
-	trans_id: string;
-	trans_date: string;
-	trans_date_offset: number;
-	trans_amount: number;
-	trans_memo: string;
+interface ReceiptData {
+	rcpt_id: string;
+	rcpt_date: string;
+	rcpt_date_offset: number;
+	rcpt_amount: number;
+	rcpt_memo: string;
 	acc_id: number;
 	is_debit: boolean;
-	trans_fitid?: string;
+	rcpt_fitid?: string;
 }
 
 interface Memo {
@@ -32,4 +32,4 @@ interface Memo {
 	acc_code: string;
 }
 
-export type { AccountType, Account, User, TransactionData, Memo };
+export type { AccountType, Account, User, ReceiptData, Memo };

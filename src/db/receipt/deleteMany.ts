@@ -6,8 +6,8 @@ export default(idArr: string[]) => {
 	const updateMany = db.transaction(() => {
 		for (const id of idArr) {
 			const query = `
-			DELETE FROM transactions
-			WHERE trans_id = '${id}';
+			DELETE FROM receipts
+			WHERE rcpt_id = '${id}';
 			`;
 
 			const statement = db.prepare(query);

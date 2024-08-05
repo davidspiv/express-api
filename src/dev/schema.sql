@@ -37,20 +37,20 @@ CREATE TABLE accounts (
         ON DELETE RESTRICT
 );
 
-CREATE TABLE transactions (
-    trans_id TEXT PRIMARY KEY,
-    trans_date TEXT NOT NULL,
-    trans_date_offset INTEGER NOT NULL,
-    trans_amount INTEGER NOT NULL,
-    trans_memo TEXT NOT NULL,
-    trans_fitid TEXT,
+CREATE TABLE receipts (
+    rcpt_id TEXT PRIMARY KEY,
+    rcpt_date TEXT NOT NULL,
+    rcpt_date_offset INTEGER NOT NULL,
+    rcpt_amount INTEGER NOT NULL,
+    rcpt_memo TEXT NOT NULL,
+    rcpt_fitid TEXT,
     acc_id INTEGER NOT NULL,
     is_debit BOOLEAN DEFAULT 1,
     FOREIGN KEY (acc_id)
         REFERENCES accounts(acc_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
-    UNIQUE (trans_date, trans_date_offset, acc_id)
+    UNIQUE (rcpt_date, rcpt_date_offset, acc_id)
 );
 
 CREATE TABLE memos (

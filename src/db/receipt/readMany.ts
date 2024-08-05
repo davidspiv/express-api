@@ -1,26 +1,25 @@
 import Database from 'better-sqlite3';
-import { Transaction } from '../../models/classes.js';
-import type { TransactionData } from '../../models/interfaces.js';
+import { Receipt } from '../../models/classes.js';
+import type { ReceiptData } from '../../models/interfaces.js';
 
 export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
-
 	const getMostRecentDate = () => {
-		const recentTransStatement = `
-    SELECT trans_date
-    FROM transactions
-    ORDER BY trans_date
+		const recentRcptStatement = `
+    SELECT rcpt_date
+    FROM receipts
+    ORDER BY rcpt_date
     DESC LIMIT 1;
     `;
 		const db = new Database('accounting.db', {
 			fileMustExist: true,
 			readonly: true,
 		});
-		const recentTrans = <[{ trans_date: string }] | null>(
-			db.prepare(recentTransStatement).all()
+		const recentRcpt = <[{ rcpt_date: string }] | null>(
+			db.prepare(recentRcptStatement).all()
 		);
 		db.close();
 
-		return recentTrans ? recentTrans[0].trans_date : 'now';
+		return recentRcpt ? recentRcpt[0].rcpt_date : 'now';
 	};
 
 	const targetDate = getMostRecentDate();
@@ -28,15 +27,15 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const getTimeRange = () => {
 		switch (timeInput) {
 			case 'day':
-				return `trans_date > date('${targetDate}')`;
+				return `rcpt_date > date('${targetDate}')`;
 			case 'week':
-				return `trans_date > date('${targetDate}', '-6 day')`;
+				return `rcpt_date > date('${targetDate}', '-6 day')`;
 			case 'month':
-				return `trans_date > date('${targetDate}', '-29 day')`;
+				return `rcpt_date > date('${targetDate}', '-29 day')`;
 			case 'year-to-date':
-				return `trans_date > date('${targetDate}', '-364 day')`;
+				return `rcpt_date > date('${targetDate}', '-364 day')`;
 			case 'year':
-				return `trans_date > date('${targetDate}', '-364 day')`;
+				return `rcpt_date > date('${targetDate}', '-364 day')`;
 			default:
 				return '';
 		}
@@ -66,7 +65,7 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 		return '';
 	};
 
-	const baseStatement = 'SELECT * FROM transactions';
+	const baseStatement = 'SELECT * FROM receipts';
 
 	const timeRange = getTimeRange();
 	const accRange = getAccRange();
@@ -80,7 +79,7 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 		timeRange,
 		andConnector,
 		accRange,
-		' ORDER BY trans_date DESC',
+		' ORDER BY rcpt_date DESC',
 		limit,
 		';',
 	);
@@ -92,36 +91,36 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const resultArr = db.prepare(selectStatement).all();
 	db.close();
 
-	const transArr: Transaction[] = [];
+	const rcptArr: Receipt[] = [];
 
 	for (const resultEl of resultArr) {
-		if (!isTrans(resultEl)) return new Error('Internal database issue');
+		if (!isRcpt(resultEl)) return new Error('Internal database issue');
 
-		transArr.push(
-			new Transaction(
-				resultEl.trans_date,
-				resultEl.trans_date_offset,
-				resultEl.trans_amount,
-				resultEl.trans_memo,
+		rcptArr.push(
+			new Receipt(
+				resultEl.rcpt_date,
+				resultEl.rcpt_date_offset,
+				resultEl.rcpt_amount,
+				resultEl.rcpt_memo,
 				resultEl.acc_id,
 				resultEl.is_debit,
-				resultEl.trans_id,
-				resultEl.trans_fitid,
+				resultEl.rcpt_id,
+				resultEl.rcpt_fitid,
 			),
 		);
 	}
 
-	return transArr;
+	return rcptArr;
 };
 
-function isTrans(obj: unknown): obj is TransactionData {
+function isRcpt(obj: unknown): obj is ReceiptData {
 	return (
-		(obj as TransactionData)?.trans_id !== undefined &&
-		(obj as TransactionData)?.trans_date !== undefined &&
-		(obj as TransactionData)?.trans_date_offset !== undefined &&
-		(obj as TransactionData)?.trans_amount !== undefined &&
-		(obj as TransactionData)?.trans_memo !== undefined &&
-		(obj as TransactionData)?.acc_id !== undefined &&
-		(obj as TransactionData)?.is_debit !== undefined
+		(obj as ReceiptData)?.rcpt_id !== undefined &&
+		(obj as ReceiptData)?.rcpt_date !== undefined &&
+		(obj as ReceiptData)?.rcpt_date_offset !== undefined &&
+		(obj as ReceiptData)?.rcpt_amount !== undefined &&
+		(obj as ReceiptData)?.rcpt_memo !== undefined &&
+		(obj as ReceiptData)?.acc_id !== undefined &&
+		(obj as ReceiptData)?.is_debit !== undefined
 	);
 }
