@@ -5,7 +5,7 @@ export default (rcptArr: Receipt[]) => {
 	const db = new Database('accounting.db', { fileMustExist: true });
 	const updateMany = db.transaction(() => {
 		for (const rcpt of rcptArr) {
-			const { id, date, dateOffset, amount, memo, accId } = rcpt;
+			const { id, date, dateOffset, amount, memo, srcId } = rcpt;
 			const query = `
         UPDATE receipts
         SET
@@ -13,7 +13,7 @@ export default (rcptArr: Receipt[]) => {
           rcpt_date_offset = ${dateOffset},
           rcpt_amount = ${amount},
           rcpt_memo = '${memo}',
-          src_id = ${accId},
+          src_id = ${srcId},
         WHERE rcpt_id = '${id}';
         `;
 
@@ -24,7 +24,7 @@ export default (rcptArr: Receipt[]) => {
 				dateOffset,
 				amount,
 				memo,
-				accId,
+				srcId,
 			});
 		}
 	});

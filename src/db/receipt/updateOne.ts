@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import type { Receipt } from '../../models/classes.js';
 
 export default (rcpt: Receipt) => {
-	const { id, date, dateOffset, amount, memo, accId } = rcpt;
+	const { id, date, dateOffset, amount, memo, srcId } = rcpt;
 	const query = `
 	UPDATE receipts
 	SET
@@ -10,7 +10,7 @@ export default (rcpt: Receipt) => {
 		rcpt_date_offset = ${dateOffset},
 		rcpt_amount = ${amount},
 		rcpt_memo = '${memo}',
-		src_id = ${accId},
+		src_id = ${srcId},
 	WHERE rcpt_id = '${id}';
 	`;
 	const db = new Database('accounting.db', { fileMustExist: true });

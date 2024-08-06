@@ -27,7 +27,7 @@ export default (id: string) => {
 			resultEl.rcpt_date_offset,
 			resultEl.rcpt_amount,
 			resultEl.rcpt_memo,
-			resultEl.acc_id,
+			resultEl.src_id,
 			resultEl.is_debit,
 			resultEl.rcpt_id,
 			resultEl.rcpt_fitid,
@@ -44,7 +44,7 @@ function isRcpt(obj: unknown): obj is ReceiptData {
 		(obj as ReceiptData)?.rcpt_date_offset !== undefined &&
 		(obj as ReceiptData)?.rcpt_amount !== undefined &&
 		(obj as ReceiptData)?.rcpt_memo !== undefined &&
-		(obj as ReceiptData)?.acc_id !== undefined &&
+		(obj as ReceiptData)?.src_id !== undefined &&
 		(obj as ReceiptData)?.is_debit !== undefined
 	);
 }

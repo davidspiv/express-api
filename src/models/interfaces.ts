@@ -22,7 +22,7 @@ interface ReceiptData {
 	rcpt_date_offset: number;
 	rcpt_amount: number;
 	rcpt_memo: string;
-	acc_id: number;
+	src_id: number;
 	is_debit: boolean;
 	rcpt_fitid?: string;
 }

@@ -29,7 +29,7 @@ test('@route GET /api/receipts: res formatted correctly', async () => {
 	if (!isArray)
 		throw new Error('@res.body @receipts key does not reference an array.');
 
-	const { id, date, dateOffset, amount, memo, accId } = receipts[0] as Receipt;
+	const { id, date, dateOffset, amount, memo, srcId } = receipts[0] as Receipt;
 
 	const hasId = id !== undefined && typeof id === 'string';
 	const hasDate = date !== undefined && typeof date === 'string';
@@ -37,7 +37,7 @@ test('@route GET /api/receipts: res formatted correctly', async () => {
 		dateOffset !== undefined && typeof dateOffset === 'number';
 	const hasAmount = amount !== undefined && typeof amount === 'number';
 	const hasMemo = memo !== undefined && typeof memo === 'string';
-	const hasSrcId = accId !== undefined && typeof accId === 'number';
+	const hasSrcId = srcId !== undefined && typeof srcId === 'number';
 
 	if (!hasId)
 		throw new Error('@res.body @receipts key rcpt_id missing / wrong type.');
