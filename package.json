@@ -6,7 +6,7 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "pnpm exec tsc --watch & nodemon --env-file=.env dist/index.js",
-		"createdb": "node ./dist/dev/database.js",
+		"db": "node ./dist/dev/database.js",
 		"test": "vitest run"
 	},
 	"keywords": [],

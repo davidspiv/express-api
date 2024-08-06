@@ -1,4 +1,4 @@
-import { getQueries, execDbReceipt } from './utilDb.js';
+import { getQueries, execDbTransaction } from './utilDb.js';
 import { parseCsv, parseOfx } from './utilParse.js';
 import Database from 'better-sqlite3';
 import type { Receipt } from '../models/classes.js';
@@ -20,10 +20,10 @@ try {
 function buildDb(data: [string[], string[], Receipt[]]) {
 	const [schemaData, seedData, rcptArr] = data;
 
-	execDbReceipt(schemaData);
+	execDbTransaction(schemaData);
 	console.log('Schema successful.');
 
-	execDbReceipt(seedData);
+	execDbTransaction(seedData);
 	console.log('Initial seed successful.');
 
 	inputRcpt(rcptArr);
@@ -40,9 +40,9 @@ function buildDb(data: [string[], string[], Receipt[]]) {
           rcpt_date_offset,
           rcpt_amount,
           rcpt_memo,
-          acc_id
+          src_id
           )
-        VALUES (@id, @date, @dateOffset, @amount, @memo, @accId);
+        VALUES (@id, @date, @dateOffset, @amount, @memo, @srcId);
         `;
 				//better-sql-3 will reject a class instance
 				db.prepare(insertStatement).run({ ...rcpt, accId: 1001 });

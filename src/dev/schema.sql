@@ -24,15 +24,9 @@ CREATE TABLE accounts (
     acc_name TEXT NOT NULL,
     acc_initial_bal INTEGER DEFAULT 0,
     acc_is_hidden BOOLEAN DEFAULT 0,
-    dep_account INTEGER,
-    dep_percent INTEGER,
     user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id)
         REFERENCES users(user_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    FOREIGN KEY (dep_account)
-        REFERENCES accounts(acc_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
@@ -44,13 +38,35 @@ CREATE TABLE receipts (
     rcpt_amount INTEGER NOT NULL,
     rcpt_memo TEXT NOT NULL,
     rcpt_fitid TEXT,
-    acc_id INTEGER NOT NULL,
+    src_id INTEGER NOT NULL,
     is_debit BOOLEAN DEFAULT 1,
-    FOREIGN KEY (acc_id)
+    FOREIGN KEY (src_id)
+        REFERENCES sources(src_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    UNIQUE (rcpt_date, rcpt_date_offset, src_id)
+);
+
+CREATE TABLE transactions (
+    trans_id TEXT PRIMARY KEY,
+    trans_date TEXT NOT NULL,
+    trans_amount INTEGER NOT NULL,
+    trans_description TEXT NOT NULL,
+    debit_acc INTEGER NOT NULL,
+    credit_acc INTEGER NOT NULL,
+    rcpt_id TEXT,
+    FOREIGN KEY (debit_acc)
         REFERENCES accounts(acc_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
-    UNIQUE (rcpt_date, rcpt_date_offset, acc_id)
+    FOREIGN KEY (credit_acc)
+        REFERENCES accounts(acc_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (rcpt_id)
+        REFERENCES receipts(rcpt_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 );
 
 CREATE TABLE memos (

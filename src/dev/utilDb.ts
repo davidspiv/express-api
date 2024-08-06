@@ -15,7 +15,7 @@ async function getQueries(filePath: string) {
 	return queryArr;
 }
 
-function execDbReceipt(queries: string[]) {
+function execDbTransaction(queries: string[]) {
 	const db = new Database('accounting.db');
 	const enterQueries = db.transaction(() => {
 		for (const query of queries) {
@@ -26,4 +26,4 @@ function execDbReceipt(queries: string[]) {
 	db.close();
 }
 
-export { getData, getQueries, execDbReceipt };
+export { getData, getQueries, execDbTransaction };

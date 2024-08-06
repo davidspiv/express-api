@@ -6,7 +6,7 @@ class Receipt {
 	dateOffset: number;
 	amount: number;
 	memo: string;
-	accId: number;
+	srcId: number;
 	isDebit: boolean;
 	fitid?: string;
 
@@ -15,7 +15,7 @@ class Receipt {
 		dateOffsetInput: string | number,
 		amountInput: string | number,
 		memoInput: string,
-		accId: number,
+		srcId: number,
 		isDebit?: boolean,
 		idInput?: string,
 		fitidInput?: string,
@@ -24,7 +24,7 @@ class Receipt {
 		this.dateOffset = this.toNumber(dateOffsetInput);
 		this.amount = this.toNumber(amountInput);
 		this.memo = memoInput;
-		this.accId = accId;
+		this.srcId = srcId;
 		this.isDebit = isDebit ? isDebit : false;
 		this.id = idInput ? idInput : this.createId();
 		this.fitid = fitidInput;
