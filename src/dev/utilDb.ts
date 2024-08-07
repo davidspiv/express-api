@@ -11,8 +11,13 @@ const getData = async (fileName: string) => {
 async function getQueries(filePath: string) {
 	const data = await getData(filePath);
 	const queryArr = data.split(/(?<=;)/g);
-	queryArr.pop();
-	return queryArr;
+
+	const filteredQueryArr = queryArr.filter((query) => {
+		const firstWord = query.trim().split(' ')[0];
+		return firstWord === 'CREATE' || firstWord === 'INSERT';
+	});
+
+	return filteredQueryArr;
 }
 
 function execDbTransaction(queries: string[]) {

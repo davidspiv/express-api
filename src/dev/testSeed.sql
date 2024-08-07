@@ -1,5 +1,3 @@
--- User Crandice Seed
-
 INSERT INTO user (usr_name, usr_password, usr_email)
     VALUES
     ('Crandice', 'crandice123', 'crandice@gmail.com');

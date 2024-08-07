@@ -1,5 +1,3 @@
---Schema
-
 CREATE TABLE user (
     usr_id INTEGER PRIMARY KEY,
     usr_name TEXT NOT NULL UNIQUE,
