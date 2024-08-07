@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Response } from 'express';
 
 import addMany from '../controllers/receipt/addMany.js';
 import readOne from '../controllers/receipt/readOne.js';
@@ -21,6 +22,11 @@ router.put('/receipts/', deleteMany);
 router.get('/receipts/:id', readOne);
 router.put('/receipts/:id', updateOne);
 router.delete('/receipts/:id', deleteOne);
+
+//Transaction view
+router.get('/transactions/', (res: Response) => {
+	res.status(200).json([]);
+});
 
 //Other views
 router.get('/accounts', getAccData);

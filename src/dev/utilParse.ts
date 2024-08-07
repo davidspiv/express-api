@@ -3,9 +3,18 @@ import { getData } from './utilDb.js';
 
 const receipts: Receipt[] = [];
 
-export const parseCsv = async (fileName: string) => {
-	const csvData = await getData(fileName);
+function parseQueries(data: string) {
+	const queryArr = data.split(/(?<=;)/g);
 
+	const filteredQueryArr = queryArr.filter((query) => {
+		const firstWord = query.trim().split(' ')[0];
+		return firstWord === 'CREATE' || firstWord === 'INSERT';
+	});
+
+	return filteredQueryArr;
+}
+
+const parseCsv = (csvData: string) => {
 	if (csvData) {
 		buildRcptObj(csvData);
 	} else {
@@ -65,7 +74,7 @@ export const parseCsv = async (fileName: string) => {
 	}
 };
 
-export const parseOfx = async () => {
+const parseOfx = async () => {
 	const receipts = [];
 	const ofxString = await getData('./inputs/debit.ofx');
 	const objectify = (ofxData: string) => {
@@ -112,3 +121,5 @@ export const parseOfx = async () => {
 	}
 	console.log('Error with getData()');
 };
+
+export { parseQueries, parseCsv, parseOfx };

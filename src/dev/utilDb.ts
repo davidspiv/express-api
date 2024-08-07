@@ -8,18 +8,6 @@ const getData = async (fileName: string) => {
 	return contents;
 };
 
-async function getQueries(filePath: string) {
-	const data = await getData(filePath);
-	const queryArr = data.split(/(?<=;)/g);
-
-	const filteredQueryArr = queryArr.filter((query) => {
-		const firstWord = query.trim().split(' ')[0];
-		return firstWord === 'CREATE' || firstWord === 'INSERT';
-	});
-
-	return filteredQueryArr;
-}
-
 function execDbTransaction(queries: string[]) {
 	const db = new Database('accounting.db');
 	const enterQueries = db.transaction(() => {
@@ -31,4 +19,4 @@ function execDbTransaction(queries: string[]) {
 	db.close();
 }
 
-export { getData, getQueries, execDbTransaction };
+export { getData, execDbTransaction };
