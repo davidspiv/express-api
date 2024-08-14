@@ -9,10 +9,10 @@ const buildDb = (data: [string[], string[], Receipt[]]) => {
 	execDbTransaction(schema);
 	console.log('Schema successful.');
 
-	execDbTransaction(seed);
-	console.log('Initial seed successful.');
+	// execDbTransaction(seed);
+	// console.log('Initial seed successful.');
 
-	inputReceipts(receipts);
+	// inputReceipts(receipts);
 };
 
 const inputReceipts = (csvData: Receipt[]) => {

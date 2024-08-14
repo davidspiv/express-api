@@ -8,11 +8,12 @@ CREATE TABLE users (
 CREATE TABLE sources (
     src_id INTEGER PRIMARY KEY,
     src_name TEXT NOT NULL,
-    src_routing_number INTEGER NOT NULL,
+    src_is_debit BOOLEAN DEFAULT 1,
     user_id INTEGER NOT NULL,
+    src_routing_number INTEGER,
     FOREIGN KEY (user_id)
         REFERENCES users(user_id)
-        ON UPDATE CASCADE
+        ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     UNIQUE (src_name, user_id)
 );
@@ -25,56 +26,87 @@ CREATE TABLE accounts (
     user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id)
         REFERENCES users(user_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-);
-
-CREATE TABLE receipts (
-    rcpt_id TEXT PRIMARY KEY,
-    rcpt_date TEXT NOT NULL,
-    rcpt_date_offset INTEGER NOT NULL,
-    rcpt_amount INTEGER NOT NULL,
-    rcpt_memo TEXT NOT NULL,
-    rcpt_fitid TEXT,
-    src_id INTEGER NOT NULL,
-    is_debit BOOLEAN DEFAULT 1,
-    FOREIGN KEY (src_id)
-        REFERENCES sources(src_id)
-        ON UPDATE CASCADE
+        ON UPDATE RESTRICT
         ON DELETE RESTRICT,
-    UNIQUE (rcpt_date, rcpt_date_offset, src_id)
-);
-
-CREATE TABLE transactions (
-    trans_id TEXT PRIMARY KEY,
-    trans_date TEXT NOT NULL,
-    trans_amount INTEGER NOT NULL,
-    trans_description TEXT NOT NULL,
-    debit_acc INTEGER NOT NULL,
-    credit_acc INTEGER NOT NULL,
-    rcpt_id TEXT,
-    FOREIGN KEY (debit_acc)
-        REFERENCES accounts(acc_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    FOREIGN KEY (credit_acc)
-        REFERENCES accounts(acc_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-    FOREIGN KEY (rcpt_id)
-        REFERENCES receipts(rcpt_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
+    UNIQUE (acc_name, user_id)
 );
 
 CREATE TABLE memos (
     memo_id INTEGER PRIMARY KEY,
+    memo_text TEXT NOT NULL,
     user_id INTEGER NOT NULL,
-    acc_default INTEGER NOT NULL,
-    memo_text TEXT,
-    FOREIGN KEY (acc_default)
-        REFERENCES accounts(acc_id)
-        ON UPDATE CASCADE
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     UNIQUE (memo_text, user_id)
+);
+
+CREATE TABLE templates (
+    template_id TEXT PRIMARY KEY,
+    template_percent REAL NOT NULL,
+    memo_id INTEGER NOT NULL,
+    acc_id INTEGER NOT NULL,
+    FOREIGN KEY (memo_id)
+        REFERENCES memos(memo_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    FOREIGN KEY (acc_id)
+        REFERENCES accounts(acc_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+);
+
+CREATE TABLE documents (
+    doc_id TEXT PRIMARY KEY,
+    doc_date TEXT NOT NULL,
+    doc_date_offset INTEGER NOT NULL,
+    doc_amount INTEGER NOT NULL,
+    memo_text TEXT NOT NULL,
+    src_id INTEGER NOT NULL,
+    doc_fitid TEXT,
+    FOREIGN KEY (memo_text)
+        REFERENCES memos(memo_text)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    FOREIGN KEY (src_id)
+        REFERENCES sources(src_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    UNIQUE (doc_date, doc_date_offset, src_id)
+);
+
+CREATE TABLE entries (
+    entry_id TEXT PRIMARY KEY,
+    entry_type TEXT NOT NULL,
+    entry_description TEXT NOT NULL
+);
+
+CREATE TABLE entry_documents (
+    doc_id TEXT NOT NULL,
+    entry_id TEXT NOT NULL,
+    FOREIGN KEY (doc_id)
+        REFERENCES documents(doc_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    FOREIGN KEY (entry_id)
+        REFERENCES entries(entry_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    PRIMARY KEY (doc_id, entry_id)
+);
+
+CREATE TABLE line_items (
+    line_amount INTEGER NOT NULL,
+    entry_id TEXT NOT NULL,
+    acc_id INTEGER NOT NULL,
+    FOREIGN KEY (entry_id)
+        REFERENCES entries(entry_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    FOREIGN KEY (acc_id)
+        REFERENCES accounts(acc_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    PRIMARY KEY (entry_id, acc_id)
 );

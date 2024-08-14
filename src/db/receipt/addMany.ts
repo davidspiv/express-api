@@ -26,7 +26,7 @@ const addMany = (rcptArr: Receipt[]) => {
 	VALUES
 	  (@dateOffset, @usrId);
   INSERT INTO
-		receipt (rcpt_id)
+		receipts (rcpt_id)
   SELECT last_insert_rowid();
 	`;
 	const statement = db.prepare(query);

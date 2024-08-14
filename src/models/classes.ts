@@ -4,10 +4,10 @@ class Receipt {
 	id: string;
 	date: string;
 	dateOffset: number;
-	amount: number;
 	memo: string;
-	srcId: number;
+	amount: number;
 	isDebit: boolean;
+	srcId: number;
 	fitid?: string;
 
 	constructor(

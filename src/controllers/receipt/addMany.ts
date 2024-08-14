@@ -11,6 +11,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		);
 	const rcptArr = req.body.receipts;
 	const isArray = Array.isArray(rcptArr);
+
 	if (!isArray) return next(new Error('@req.receipts is not an array.'));
 
 	const recentDbRcpt = <ReceiptData | null>(
@@ -38,7 +39,6 @@ export default (req: Request, res: Response, next: NextFunction) => {
 			);
 			arr.push(rcpt);
 		}
-
 		return arr;
 	}
 
