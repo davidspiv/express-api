@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import readMany from '../../db/receipt/readMany.js';
+import readMany from '../../models/receipt/readMany.js';
 
 //@route GET /api/receipts
 export default (req: Request, res: Response, next: NextFunction) => {

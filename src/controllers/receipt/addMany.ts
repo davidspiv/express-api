@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import { readLatest, addMany } from '../../db/receipt/addMany.js';
-import { Receipt } from '../../models/classes.js';
-import type { ReceiptData } from '../../models/interfaces.js';
+import { readLatest, addMany } from '../../models/receipt/addMany.js';
+import { Receipt } from '../../types/classes.js';
+import type { ReceiptData } from '../../types/interfaces.js';
 
 //@route POST /api/receipts/
 export default (req: Request, res: Response, next: NextFunction) => {

@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Receipt } from '../../models/classes.js';
+import type { Receipt } from '../../types/classes.js';
 
 export default (rcptArr: Receipt[]) => {
 	const db = new Database('accounting.db', { fileMustExist: true });

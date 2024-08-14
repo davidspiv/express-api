@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import readRcpt from '../../db/receipt/readOne.js';
-import updateMany from '../../db/receipt/updateMany.js';
-import { Receipt } from '../../models/classes.js';
+import readRcpt from '../../models/receipt/readOne.js';
+import updateMany from '../../models/receipt/updateMany.js';
+import { Receipt } from '../../types/classes.js';
 
 //@route PUT /api/receipts/update
 export default (req: Request, res: Response, next: NextFunction) => {
@@ -18,9 +18,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
 	if (!updateArr.length)
 		return next(
-			Error(
-				`Input after ${updateRcptIdArr[updateRcptIdArr.length - 1]} failed.`,
-			),
+			Error(`Input after ${updateRcptIdArr[updateRcptIdArr.length - 1]} failed.`),
 		);
 
 	updateMany(updateArr);

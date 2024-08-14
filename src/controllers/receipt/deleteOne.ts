@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import readRcpt from '../../db/receipt/readOne.js';
-import deleteOne from '../../db/receipt/deleteOne.js';
+import readRcpt from '../../models/receipt/readOne.js';
+import deleteOne from '../../models/receipt/deleteOne.js';
 
 //@route DELETE /api/receipts/
 export default (req: Request, res: Response, next: NextFunction) => {

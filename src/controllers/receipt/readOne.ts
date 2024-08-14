@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import readOne from '../../db/receipt/readOne.js';
+import readOne from '../../models/receipt/readOne.js';
 
 //@route GET /api/receipts/:id
 export default (req: Request, res: Response, next: NextFunction) => {

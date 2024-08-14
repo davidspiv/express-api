@@ -1,7 +1,7 @@
 import { execDbTransaction, getData } from './utilDb.js';
 import { parseQueries, parseCsv, parseOfx } from './utilParse.js';
 import Database from 'better-sqlite3';
-import type { Receipt } from '../models/classes.js';
+import type { Receipt } from '../types/classes.js';
 
 const buildDb = (data: [string[], string[], Receipt[]]) => {
 	const [schema, seed, receipts] = data;
