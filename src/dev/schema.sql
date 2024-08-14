@@ -8,9 +8,9 @@ CREATE TABLE users (
 CREATE TABLE sources (
     src_id INTEGER PRIMARY KEY,
     src_name TEXT NOT NULL,
-    src_is_debit BOOLEAN DEFAULT 1,
-    user_id INTEGER NOT NULL,
+    src_is_debit BOOLEAN DEFAULT "TRUE",
     src_routing_number INTEGER,
+    user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id)
         REFERENCES users(user_id)
         ON UPDATE RESTRICT
@@ -20,6 +20,7 @@ CREATE TABLE sources (
 
 CREATE TABLE accounts (
     acc_id INTEGER PRIMARY KEY,
+    acc_code INTEGER NOT NULL,
     acc_name TEXT NOT NULL,
     acc_initial_bal INTEGER DEFAULT 0,
     acc_is_hidden BOOLEAN DEFAULT 0,
@@ -29,17 +30,6 @@ CREATE TABLE accounts (
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     UNIQUE (acc_name, user_id)
-);
-
-CREATE TABLE memos (
-    memo_id INTEGER PRIMARY KEY,
-    memo_text TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id)
-        REFERENCES users(user_id)
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT,
-    UNIQUE (memo_text, user_id)
 );
 
 CREATE TABLE templates (
@@ -57,23 +47,29 @@ CREATE TABLE templates (
         ON DELETE RESTRICT
 );
 
-CREATE TABLE documents (
-    doc_id TEXT PRIMARY KEY,
-    doc_date TEXT NOT NULL,
-    doc_date_offset INTEGER NOT NULL,
-    doc_amount INTEGER NOT NULL,
-    memo_text TEXT NOT NULL,
+CREATE TABLE refs (
+    ref_id TEXT PRIMARY KEY,
+    ref_date TEXT NOT NULL,
+    ref_date_offset INTEGER NOT NULL,
+    ref_amount INTEGER NOT NULL,
     src_id INTEGER NOT NULL,
-    doc_fitid TEXT,
-    FOREIGN KEY (memo_text)
-        REFERENCES memos(memo_text)
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT,
+    ref_fitid TEXT,
     FOREIGN KEY (src_id)
         REFERENCES sources(src_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
-    UNIQUE (doc_date, doc_date_offset, src_id)
+    UNIQUE (ref_date, ref_date_offset, src_id)
+);
+
+CREATE TABLE memos (
+    memo_id INTEGER PRIMARY KEY,
+    memo_text TEXT NOT NULL,
+    ref_id INTEGER NOT NULL,
+    FOREIGN KEY (ref_id)
+        REFERENCES refs(ref_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    UNIQUE (memo_text, ref_id)
 );
 
 CREATE TABLE entries (
@@ -82,18 +78,18 @@ CREATE TABLE entries (
     entry_description TEXT NOT NULL
 );
 
-CREATE TABLE entry_documents (
-    doc_id TEXT NOT NULL,
+CREATE TABLE entry_refs (
+    ref_id TEXT NOT NULL,
     entry_id TEXT NOT NULL,
-    FOREIGN KEY (doc_id)
-        REFERENCES documents(doc_id)
+    FOREIGN KEY (ref_id)
+        REFERENCES refs(ref_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     FOREIGN KEY (entry_id)
         REFERENCES entries(entry_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
-    PRIMARY KEY (doc_id, entry_id)
+    PRIMARY KEY (ref_id, entry_id)
 );
 
 CREATE TABLE line_items (

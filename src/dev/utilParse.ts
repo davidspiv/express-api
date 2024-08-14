@@ -1,4 +1,4 @@
-import { Receipt } from '../types/classes.js';
+import { Receipt } from '../definitions/classes.js';
 import { getData } from './utilDb.js';
 
 const receipts: Receipt[] = [];

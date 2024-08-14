@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
-import { Receipt } from '../../types/classes.js';
-import type { ReceiptData } from '../../types/interfaces.js';
+import { Receipt } from '../../definitions/classes.js';
+import type { ReceiptData } from '../../definitions/interfaces.js';
 
 export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const getMostRecentDate = () => {

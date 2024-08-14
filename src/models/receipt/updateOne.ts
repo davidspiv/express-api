@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Receipt } from '../../types/classes.js';
+import type { Receipt } from '../../definitions/classes.js';
 
 export default (rcpt: Receipt) => {
 	const { id, date, dateOffset, amount, memo, srcId } = rcpt;

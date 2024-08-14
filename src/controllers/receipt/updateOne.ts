@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import readOne from '../../models/receipt/readOne.js';
 import updateOne from '../../models/receipt/updateOne.js';
-import { Receipt } from '../../types/classes.js';
+import { Receipt } from '../../definitions/classes.js';
 
 //@route PUT /api/receipts/update
 export default (req: Request, res: Response, next: NextFunction) => {

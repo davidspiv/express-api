@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import fetch from 'node-fetch';
-import type { Receipt } from '../../types/classes.js';
+import type { Receipt } from '../../definitions/classes.js';
 
 const PORT = process.env.PORT;
 

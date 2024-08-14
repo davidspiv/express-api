@@ -2,11 +2,11 @@ INSERT INTO users (user_name, user_password, user_email)
     VALUES
     ('Crandice', 'crandice123', 'crandice@gmail.com');
 
-INSERT INTO sources (src_name, src_routing_number, user_id)
+INSERT INTO sources (src_name, src_is_debit, user_id)
     VALUES
-    ('Chase Debit', 121000248, 1);
+    ('Chase Debit', 'TRUE', 1);
 
-INSERT INTO accounts (acc_id, acc_name, user_id)
+INSERT INTO accounts (acc_code, acc_name, user_id)
     VALUES
     (1001, 'Chase Checking', 1),
     (1002, 'Chase Savings', 1),
