@@ -1,0 +1,10 @@
+[
+	{
+		"type": "transfer",
+		"description": "description"
+	},
+	{
+		"type": "opening",
+		"description": "description1"
+	}
+]

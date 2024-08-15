@@ -63,7 +63,7 @@ CREATE TABLE refs (
 );
 
 CREATE TABLE entries (
-    entry_id TEXT PRIMARY KEY,
+    entry_id INTEGER PRIMARY KEY,
     entry_type TEXT NOT NULL,
     entry_description TEXT NOT NULL
 );

@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import Database from 'better-sqlite3';
-import type { Reference } from '../interfaces.js';
+import type { Reference, Entry } from '../interfaces.js';
 
 const getData = async (fileName: string) => {
 	const contents = await readFile(fileName, {
@@ -19,7 +19,10 @@ const execTransaction = (queries: string[]) => {
 	db.close();
 };
 
-const execTransactionBound = (queryDynamic: string, models: Reference[]) => {
+const execTransactionBound = (
+	queryDynamic: string,
+	models: (Reference | Entry)[],
+) => {
 	const db = new Database('accounting.db');
 	db.transaction(() => {
 		for (const model of models) {
