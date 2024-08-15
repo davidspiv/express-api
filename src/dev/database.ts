@@ -3,32 +3,20 @@ import { execTransaction, execTransactionBound } from './utilDb.js';
 import { parseQueries, parseCsv, parseOfx } from './utilParse.js';
 
 const main = async () => {
-	const fileNames = {
-		schema: './src/models/schema.sql',
-		reference: './src/models/schema.sql',
-		account: './src/models/schema.sql',
-		entry: './src/models/schema.sql',
-		source: './src/models/schema.sql',
-		user: './src/models/schema.sql',
-	};
+	const fileNames = [
+		'./src/models/schema.sql',
+		'./testInputs/transactions.csv',
+		'./testInputs/accounts.json',
+		'./testInputs/entries.json',
+		'./testInputs/sources.json',
+		'./testInputs/users.json',
+	];
 
 	const data: string[] = [];
 
 	try {
-		data.push(
-			...(<string[]>(
-				await Promise.all(
-					getData([
-						'./src/models/schema.sql',
-						'./testInputs/transactions.csv',
-						'./testInputs/accounts.json',
-						'./testInputs/entries.json',
-						'./testInputs/sources.json',
-						'./testInputs/users.json',
-					]),
-				)
-			)),
-		);
+		const promises = getData(fileNames);
+		data.push(...(await Promise.all(promises)));
 	} catch (err) {
 		console.log(err);
 	}

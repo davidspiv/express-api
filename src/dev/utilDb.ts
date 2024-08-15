@@ -2,15 +2,12 @@ import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import Database from 'better-sqlite3';
 
-const readFileUtf8 = async (fileName: string) => {
-	const contents = await readFile(fileName, {
-		encoding: 'utf8',
-	});
-	return contents;
-};
-
 const getData = (fileNames: string[]) => {
-	return fileNames.map((fileName) => readFileUtf8(fileName));
+	return fileNames.map((fileName) =>
+		readFile(fileName, {
+			encoding: 'utf8',
+		}),
+	);
 };
 
 const execTransaction = (queries: string[]) => {
