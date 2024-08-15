@@ -48,7 +48,7 @@ CREATE TABLE templates (
 );
 
 CREATE TABLE refs (
-    ref_id INTEGER PRIMARY KEY,
+    ref_id TEXT PRIMARY KEY,
     ref_date TEXT NOT NULL,
     ref_date_offset INTEGER NOT NULL,
     ref_memo TEXT NOT NULL,

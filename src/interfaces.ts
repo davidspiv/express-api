@@ -29,6 +29,16 @@ interface Reference {
 	fitid?: string;
 }
 
+interface ReferenceData {
+	ref_id: string;
+	ref_date: string;
+	ref_date_offset: number;
+	ref_memo: string;
+	ref_amount: number;
+	src_id: number;
+	ref_fitid: string;
+}
+
 interface Entry {
 	id: string;
 	type: string; //Opening, Transfer, Closing, Adjusting, Compound
@@ -41,4 +51,12 @@ interface LineItem {
 	accId: number;
 }
 
-export type { User, Source, Account, Reference, Entry, LineItem };
+export type {
+	User,
+	Source,
+	Account,
+	Reference,
+	ReferenceData,
+	Entry,
+	LineItem,
+};

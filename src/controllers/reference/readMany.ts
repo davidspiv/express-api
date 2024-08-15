@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import readMany from '../../models/receipt/readMany.js';
+import readMany from '../../models/reference/readMany.js';
 
-//@route GET /api/receipts
+//@route GET /api/references
 export default (req: Request, res: Response, next: NextFunction) => {
 	const parameterArr = req.url.slice(req.url.indexOf('?') + 2).split('_');
 	const parameterObj: { time?: string; acc?: string; limit?: string } = {};
@@ -9,14 +9,14 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		const string = <'time' | 'acc' | 'limit'>el.slice(0, el.indexOf('='));
 		parameterObj[string] = el.slice(el.indexOf('=') + 1);
 	});
-	const rcptArr = readMany(
+	const refArr = readMany(
 		parameterObj.time,
 		parameterObj.acc,
 		parameterObj.limit ? Number.parseInt(parameterObj.limit) : 0,
 	);
-	if (rcptArr instanceof Error) {
+	if (refArr instanceof Error) {
 		res.status(500);
-		next(rcptArr);
+		next(refArr);
 		return;
 	}
 
@@ -24,9 +24,9 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	if (limitData.length > 0) {
 		const limit = Number.parseInt(limitData);
 		if (!Number.isNaN(limit) && limit > 0) {
-			return res.status(200).json(rcptArr.slice(0, limit));
+			return res.status(200).json(refArr.slice(0, limit));
 		}
-		return res.status(200).json({ receipts: rcptArr });
+		return res.status(200).json({ references: refArr });
 	}
 	const error = new Error('Server Error');
 	res.status(500);

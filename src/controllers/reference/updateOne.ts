@@ -1,9 +1,10 @@
-import type { Request, Response, NextFunction } from 'express';
-import readOne from '../../models/receipt/readOne.js';
-import updateOne from '../../models/receipt/updateOne.js';
-import { Receipt } from '../../definitions/classes.js';
+import readOne from '../../models/reference/readOne.js';
+import updateOne from '../../models/reference/updateOne.js';
 
-//@route PUT /api/receipts/update
+import type { Request, Response, NextFunction } from 'express';
+import type { Reference } from '../../interfaces.js';
+
+//@route PUT /api/references/update
 export default (req: Request, res: Response, next: NextFunction) => {
 	const id = req.params.id;
 	const post = readOne(id);
@@ -14,17 +15,18 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		return next(error);
 	}
 
-	const newRcpt = new Receipt(
-		id,
-		req.body.date,
-		req.body.dateOffset,
-		req.body.amount,
-		req.body.memo,
-		req.body.accCode,
-		req.body.userId,
-	);
+	const [date, dateOffset, amount, memo, srcId] = req.body;
 
-	updateOne(newRcpt);
+	const newRef: Reference = {
+		id,
+		date,
+		dateOffset,
+		amount,
+		memo,
+		srcId,
+	};
+
+	updateOne(newRef);
 
 	const newPost = readOne(id);
 

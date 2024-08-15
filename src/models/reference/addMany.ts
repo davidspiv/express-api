@@ -1,12 +1,12 @@
 import Database from 'better-sqlite3';
-import type { Receipt } from '../../definitions/classes.js';
+import type { Reference } from '../../interfaces.js';
 
 const readLatest = (srcId: number) => {
 	const selectStatement = `
 		SELECT *
-		FROM receipts
+		FROM refs
 		WHERE src_id = '${srcId}'
-		ORDER BY rcpt_date
+		ORDER BY ref_date
 		DESC LIMIT 1;
 		`;
 	const db = new Database('accounting.db', {
@@ -18,7 +18,7 @@ const readLatest = (srcId: number) => {
 	return result;
 };
 
-const addMany = (rcptArr: Receipt[]) => {
+const addMany = (refArr: Reference[]) => {
 	const db = new Database('accounting.db', { fileMustExist: true });
 	const query = `
 	INSERT INTO
@@ -26,16 +26,16 @@ const addMany = (rcptArr: Receipt[]) => {
 	VALUES
 	  (@dateOffset, @usrId);
   INSERT INTO
-		receipts (rcpt_id)
+		references (ref_id)
   SELECT last_insert_rowid();
 	`;
 	const statement = db.prepare(query);
-	const insertMany = db.transaction((rcptArr) => {
-		for (const rcpt of rcptArr) {
-			statement.run({ ...rcpt, usrId: 1 });
+	const insertMany = db.transaction((refArr) => {
+		for (const ref of refArr) {
+			statement.run({ ...ref, usrId: 1 });
 		}
 	});
-	insertMany(rcptArr);
+	insertMany(refArr);
 	db.close();
 };
 
@@ -79,7 +79,7 @@ const runTestQuery = () => {
 	    (${dateOffset}, ${usrId});
 
     INSERT INTO
-		  receipt (rcpt_id)
+		  reference (ref_id)
     VALUES
 	    (last_insert_rowid());
 

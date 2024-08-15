@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import type { Response } from 'express';
 
-import addMany from '../controllers/receipt/addMany.js';
-import readOne from '../controllers/receipt/readOne.js';
-import readMany from '../controllers/receipt/readMany.js';
-import deleteOne from '../controllers/receipt/deleteOne.js';
-import deleteMany from '../controllers/receipt/deleteMany.js';
-import updateOne from '../controllers/receipt/updateOne.js';
-import updateMany from '../controllers/receipt/updateMany.js';
+import addMany from '../controllers/reference/addMany.js';
+import readOne from '../controllers/reference/readOne.js';
+import readMany from '../controllers/reference/readMany.js';
+import deleteOne from '../controllers/reference/deleteOne.js';
+import deleteMany from '../controllers/reference/deleteMany.js';
+import updateOne from '../controllers/reference/updateOne.js';
+import updateMany from '../controllers/reference/updateMany.js';
 
 import getFormData from '../controllers/getFormData.js';
 import getAccData from '../controllers/getAccData.js';
@@ -15,13 +15,13 @@ import getAccData from '../controllers/getAccData.js';
 const router = Router();
 
 //Journal view
-router.post('/receipts/', addMany);
-router.get('/receipts/', readMany);
-router.put('/receipts/', updateMany);
-router.put('/receipts/', deleteMany);
-router.get('/receipts/:id', readOne);
-router.put('/receipts/:id', updateOne);
-router.delete('/receipts/:id', deleteOne);
+router.post('/references/', addMany);
+router.get('/references/', readMany);
+router.put('/references/', updateMany);
+router.put('/references/', deleteMany);
+router.get('/references/:id', readOne);
+router.put('/references/:id', updateOne);
+router.delete('/references/:id', deleteOne);
 
 //Transaction view
 router.get('/transactions/', (res: Response) => {

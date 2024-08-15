@@ -1,12 +1,11 @@
 import Database from 'better-sqlite3';
-import { Receipt } from '../../definitions/classes.js';
-import type { ReceiptData } from '../../interfaces.js';
+import type { Reference, ReferenceData } from '../../interfaces.js';
 
 export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const getMostRecentDate = () => {
 		const recentRefStatement = `
     SELECT ref_date
-    FROM receipts
+    FROM refs
     ORDER BY ref_date
     DESC LIMIT 1;
     `;
@@ -65,7 +64,7 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 		return '';
 	};
 
-	const baseStatement = 'SELECT * FROM receipts';
+	const baseStatement = 'SELECT * FROM refs';
 
 	const timeRange = getTimeRange();
 	const accRange = getAccRange();
@@ -91,36 +90,34 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const resultArr = db.prepare(selectStatement).all();
 	db.close();
 
-	const refArr: Receipt[] = [];
+	const refArr: Reference[] = [];
 
 	for (const resultEl of resultArr) {
 		if (!isRef(resultEl)) return new Error('Internal database issue');
 
-		refArr.push(
-			new Receipt(
-				resultEl.ref_date,
-				resultEl.ref_date_offset,
-				resultEl.ref_amount,
-				resultEl.ref_memo,
-				resultEl.src_id,
-				resultEl.is_debit,
-				resultEl.ref_id,
-				resultEl.ref_fitid,
-			),
-		);
+		const reference: Reference = {
+			id: resultEl.ref_id,
+			date: resultEl.ref_date,
+			dateOffset: resultEl.ref_date_offset,
+			memo: resultEl.ref_memo,
+			amount: resultEl.ref_amount,
+			srcId: resultEl.src_id,
+			fitid: resultEl.ref_fitid,
+		};
+
+		refArr.push(reference);
 	}
 
 	return refArr;
 };
 
-function isRef(obj: unknown): obj is ReceiptData {
+function isRef(obj: unknown): obj is ReferenceData {
 	return (
-		(obj as ReceiptData)?.ref_id !== undefined &&
-		(obj as ReceiptData)?.ref_date !== undefined &&
-		(obj as ReceiptData)?.ref_date_offset !== undefined &&
-		(obj as ReceiptData)?.ref_amount !== undefined &&
-		(obj as ReceiptData)?.ref_memo !== undefined &&
-		(obj as ReceiptData)?.src_id !== undefined &&
-		(obj as ReceiptData)?.is_debit !== undefined
+		(obj as ReferenceData)?.ref_id !== undefined &&
+		(obj as ReferenceData)?.ref_date !== undefined &&
+		(obj as ReferenceData)?.ref_date_offset !== undefined &&
+		(obj as ReferenceData)?.ref_memo !== undefined &&
+		(obj as ReferenceData)?.ref_amount !== undefined &&
+		(obj as ReferenceData)?.src_id !== undefined
 	);
 }
