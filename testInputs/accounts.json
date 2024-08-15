@@ -1,0 +1,62 @@
+[
+	{
+		"code": 1001,
+		"name": "Chase Checking"
+	},
+	{
+		"code": 1002,
+		"name": "Chase Savings"
+	},
+	{
+		"code": 1003,
+		"name": "Petty Cash"
+	},
+	{
+		"code": 1004,
+		"name": "Receivable"
+	},
+	{
+		"code": 1005,
+		"name": "Prepaid"
+	},
+	{
+		"code": 2001,
+		"name": "Payable"
+	},
+	{
+		"code": 3001,
+		"name": "Stock"
+	},
+	{
+		"code": 5001,
+		"name": "Housing"
+	},
+	{
+		"code": 5002,
+		"name": "Food"
+	},
+	{
+		"code": 5003,
+		"name": "Utilities"
+	},
+	{
+		"code": 5004,
+		"name": "Transportation"
+	},
+	{
+		"code": 5005,
+		"name": "Household"
+	},
+	{
+		"code": 5006,
+		"name": "Education"
+	},
+	{
+		"code": 5007,
+		"name": "Gifts"
+	},
+	{
+		"code": 5008,
+		"name": "Personal"
+	}
+]

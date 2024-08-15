@@ -1,13 +1,16 @@
 import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import Database from 'better-sqlite3';
-import type { Reference, Entry } from '../interfaces.js';
 
-const getData = async (fileName: string) => {
+const readFileUtf8 = async (fileName: string) => {
 	const contents = await readFile(fileName, {
 		encoding: 'utf8',
 	});
 	return contents;
+};
+
+const getData = (fileNames: string[]) => {
+	return fileNames.map((fileName) => readFileUtf8(fileName));
 };
 
 const execTransaction = (queries: string[]) => {
@@ -23,18 +26,22 @@ const execTransaction = (queries: string[]) => {
 
 const execTransactionBound = (
 	queryDynamic: string,
-	models: (Reference | Entry)[],
-) => {
+	models: object[],
+): string[] => {
 	const db = new Database('accounting.db');
+	const idArr: string[] = [];
 
 	db.transaction(() => {
 		for (const model of models) {
+			const id = randomUUID();
 			//better-sql-3 will reject a class instance
-			db.prepare(queryDynamic).run({ ...model, id: randomUUID() });
+			db.prepare(queryDynamic).run({ ...model, id });
+			idArr.push(id);
 		}
 	})();
 	db.close();
 	console.log(`${models.length} models input successfully.`);
+	return idArr;
 };
 
 export { getData, execTransaction, execTransactionBound };

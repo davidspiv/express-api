@@ -1,12 +1,12 @@
 CREATE TABLE users (
-    user_id INTEGER PRIMARY KEY,
+    user_id TEXT PRIMARY KEY,
     user_name TEXT NOT NULL UNIQUE,
     user_email TEXT NOT NULL UNIQUE,
     user_password TEXT NOT NULL
 );
 
 CREATE TABLE sources (
-    src_id INTEGER PRIMARY KEY,
+    src_id TEXT PRIMARY KEY,
     src_name TEXT NOT NULL,
     src_is_debit BOOLEAN DEFAULT "TRUE",
     src_routing_number INTEGER,
@@ -19,7 +19,7 @@ CREATE TABLE sources (
 );
 
 CREATE TABLE accounts (
-    acc_id INTEGER PRIMARY KEY,
+    acc_id TEXT PRIMARY KEY,
     acc_code INTEGER NOT NULL,
     acc_name TEXT NOT NULL,
     acc_initial_bal INTEGER DEFAULT 0,
@@ -84,14 +84,14 @@ CREATE TABLE entry_refs (
 
 CREATE TABLE line_items (
     line_amount INTEGER NOT NULL,
-    entry_id TEXT NOT NULL,
     acc_id INTEGER NOT NULL,
-    FOREIGN KEY (entry_id)
-        REFERENCES entries(entry_id)
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT,
+    entry_id TEXT NOT NULL,
     FOREIGN KEY (acc_id)
         REFERENCES accounts(acc_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    FOREIGN KEY (entry_id)
+        REFERENCES entries(entry_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     PRIMARY KEY (entry_id, acc_id)

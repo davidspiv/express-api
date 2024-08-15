@@ -25,7 +25,7 @@ interface Reference {
 	dateOffset: number;
 	memo: string;
 	amount: number;
-	srcId: number;
+	srcId: string;
 	fitid?: string;
 }
 
@@ -35,7 +35,7 @@ interface ReferenceData {
 	ref_date_offset: number;
 	ref_memo: string;
 	ref_amount: number;
-	src_id: number;
+	src_id: string;
 	ref_fitid: string;
 }
 
