@@ -1,38 +1,5 @@
 import { getData, execTransaction, execTransactionBound } from './utilDb.js';
 import { parseQueries, parseCsv, parseOfx } from './utilParse.js';
-import type { Reference, Entry } from '../interfaces.js';
-
-interface DataObj {
-	queries: {
-		schema: string[];
-		seed: string[];
-	};
-	dynamicQueries: {
-		insertRefs: string;
-		insertEntries: string;
-	};
-	references: Reference[];
-	entries: Entry[];
-}
-
-const buildDb = (data: DataObj) => {
-	const { queries, dynamicQueries, references, entries } = data;
-
-	execTransaction(queries.schema);
-	console.log('Schema successful.');
-
-	//pop users, sources, accounts
-	execTransaction(queries.seed);
-	console.log('Initial seed successful.');
-
-	//pop refs
-	execTransactionBound(dynamicQueries.insertRefs, references);
-	console.log(`${references.length} references input successfully.`);
-
-	//pop entries
-	execTransactionBound(dynamicQueries.insertEntries, entries);
-	console.log(`${entries.length} entries input successfully.`);
-};
 
 const main = async () => {
 	try {
@@ -44,6 +11,9 @@ const main = async () => {
 				getData('./testInputs/entries.json'),
 			])
 		);
+
+		const createSchema = parseQueries(schemaData);
+		const seedDatabase = parseQueries(seedData);
 
 		const insertRefs = `
 		INSERT INTO refs (
@@ -64,20 +34,11 @@ const main = async () => {
 		VALUES (@type, @description);
 		`;
 
-		const data: DataObj = {
-			queries: {
-				schema: parseQueries(schemaData),
-				seed: parseQueries(seedData),
-			},
-			dynamicQueries: {
-				insertRefs,
-				insertEntries,
-			},
-			references: parseCsv(referenceData),
-			entries: JSON.parse(entryData),
-		};
+		execTransaction(createSchema);
+		execTransaction(seedDatabase);
 
-		buildDb(data);
+		execTransactionBound(insertRefs, parseCsv(referenceData));
+		execTransactionBound(insertEntries, JSON.parse(entryData));
 	} catch (err) {
 		console.log(err);
 	}

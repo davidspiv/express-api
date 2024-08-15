@@ -17,6 +17,7 @@ const execTransaction = (queries: string[]) => {
 		}
 	})();
 	db.close();
+	console.log('Transaction successful.');
 };
 
 const execTransactionBound = (
@@ -31,6 +32,7 @@ const execTransactionBound = (
 		}
 	})();
 	db.close();
+	console.log(`${models.length} models input successfully.`);
 };
 
 export { getData, execTransaction, execTransactionBound };
