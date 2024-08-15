@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import { Receipt } from '../../definitions/classes.js';
-import type { ReceiptData } from '../../definitions/interfaces.js';
+import type { ReceiptData } from '../../interfaces.js';
 
 export default (id: string) => {
 	const selectStatement = `

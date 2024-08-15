@@ -1,7 +1,8 @@
-import { Receipt } from '../definitions/classes.js';
 import { getData } from './utilDb.js';
+import type { Reference } from '../interfaces.js';
+const { randomUUID } = await import('node:crypto');
 
-const receipts: Receipt[] = [];
+const references: Reference[] = [];
 
 function parseQueries(data: string) {
 	const queryArr = data.split(/(?<=;)/g);
@@ -21,7 +22,7 @@ const parseCsv = (csvData: string) => {
 		console.log('Error with getData()');
 	}
 
-	return receipts;
+	return references;
 
 	function buildRcptObj(data: string) {
 		const csvValues = splitCsv(data.replace(/[\n]/g, ','));
@@ -31,6 +32,7 @@ const parseCsv = (csvData: string) => {
 		let dateOffset = 0;
 
 		for (let i = 1; i < Math.floor(csvValues.length / totalCol); i++) {
+			const id = randomUUID();
 			const date = new Date(csvValues[i * totalCol]).toISOString();
 
 			if (lastDate === date) {
@@ -49,9 +51,9 @@ const parseCsv = (csvData: string) => {
 			const memo = csvValues[i * totalCol + 1];
 			const srcId = 1;
 
-			const rcptObj = new Receipt(date, dateOffset, amount, memo, srcId);
+			const rcptObj = { id, date, dateOffset, amount, memo, srcId };
 
-			receipts.push(rcptObj);
+			references.push(rcptObj);
 		}
 	}
 
@@ -75,7 +77,7 @@ const parseCsv = (csvData: string) => {
 };
 
 const parseOfx = async () => {
-	const receipts = [];
+	const references = [];
 	const ofxString = await getData('./inputs/debit.ofx');
 	const objectify = (ofxData: string) => {
 		const rcptType = ofxData.slice(
@@ -114,10 +116,10 @@ const parseOfx = async () => {
 		const ofxDataArr = ofxString.split('<STMTTRN>');
 		//skip first AND last el
 		for (let i = 1; i < ofxDataArr.length - 1; i++) {
-			const receipt = objectify(ofxDataArr[i]);
-			receipts.push(receipt);
+			const reference = objectify(ofxDataArr[i]);
+			references.push(reference);
 		}
-		return receipts;
+		return references;
 	}
 	console.log('Error with getData()');
 };

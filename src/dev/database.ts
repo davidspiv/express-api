@@ -1,27 +1,13 @@
 import { execDbTransaction, getData } from './utilDb.js';
 import { parseQueries, parseCsv, parseOfx } from './utilParse.js';
 import Database from 'better-sqlite3';
-import type { Receipt } from '../definitions/classes.js';
-const { randomUUID } = await import('node:crypto');
+import type { Reference } from '../interfaces.js';
 
-const buildDb = (data: [string[], string[], Receipt[]]) => {
-	const [schema, seed, receipts] = data;
-
-	execDbTransaction(schema);
-	console.log('Schema successful.');
-
-	execDbTransaction(seed);
-	console.log('Initial seed successful.');
-
-	inputReceipts(receipts);
-};
-
-const inputReceipts = (csvData: Receipt[]) => {
+const inputReferences = (csvData: Reference[]) => {
 	const db = new Database('accounting.db');
 
 	db.transaction(() => {
 		for (const reference of csvData) {
-
 			const sqlInsertRefs = `
 			INSERT INTO refs (
 				ref_date,
@@ -39,7 +25,19 @@ const inputReceipts = (csvData: Receipt[]) => {
 	})();
 
 	db.close();
-	console.log(`${csvData.length} receipts input successfully.`);
+	console.log(`${csvData.length} references input successfully.`);
+};
+
+const buildDb = (data: [string[], string[], Reference[]]) => {
+	const [schema, seed, references] = data;
+
+	execDbTransaction(schema);
+	console.log('Schema successful.');
+
+	execDbTransaction(seed);
+	console.log('Initial seed successful.');
+
+	inputReferences(references);
 };
 
 const main = async () => {
@@ -54,7 +52,7 @@ const main = async () => {
 
 		const [schemaData, seedData, csvData] = rawData;
 
-		const parsedData: [string[], string[], Receipt[]] = [
+		const parsedData: [string[], string[], Reference[]] = [
 			parseQueries(schemaData),
 			parseQueries(seedData),
 			parseCsv(csvData),

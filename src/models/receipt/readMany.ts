@@ -1,25 +1,25 @@
 import Database from 'better-sqlite3';
 import { Receipt } from '../../definitions/classes.js';
-import type { ReceiptData } from '../../definitions/interfaces.js';
+import type { ReceiptData } from '../../interfaces.js';
 
 export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const getMostRecentDate = () => {
-		const recentRcptStatement = `
-    SELECT rcpt_date
+		const recentRefStatement = `
+    SELECT ref_date
     FROM receipts
-    ORDER BY rcpt_date
+    ORDER BY ref_date
     DESC LIMIT 1;
     `;
 		const db = new Database('accounting.db', {
 			fileMustExist: true,
 			readonly: true,
 		});
-		const recentRcpt = <[{ rcpt_date: string }] | null>(
-			db.prepare(recentRcptStatement).all()
+		const recentRef = <[{ ref_date: string }] | null>(
+			db.prepare(recentRefStatement).all()
 		);
 		db.close();
 
-		return recentRcpt ? recentRcpt[0].rcpt_date : 'now';
+		return recentRef ? recentRef[0].ref_date : 'now';
 	};
 
 	const targetDate = getMostRecentDate();
@@ -27,15 +27,15 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const getTimeRange = () => {
 		switch (timeInput) {
 			case 'day':
-				return `rcpt_date > date('${targetDate}')`;
+				return `ref_date > date('${targetDate}')`;
 			case 'week':
-				return `rcpt_date > date('${targetDate}', '-6 day')`;
+				return `ref_date > date('${targetDate}', '-6 day')`;
 			case 'month':
-				return `rcpt_date > date('${targetDate}', '-29 day')`;
+				return `ref_date > date('${targetDate}', '-29 day')`;
 			case 'year-to-date':
-				return `rcpt_date > date('${targetDate}', '-364 day')`;
+				return `ref_date > date('${targetDate}', '-364 day')`;
 			case 'year':
-				return `rcpt_date > date('${targetDate}', '-364 day')`;
+				return `ref_date > date('${targetDate}', '-364 day')`;
 			default:
 				return '';
 		}
@@ -79,7 +79,7 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 		timeRange,
 		andConnector,
 		accRange,
-		' ORDER BY rcpt_date DESC',
+		' ORDER BY ref_date DESC',
 		limit,
 		';',
 	);
@@ -91,35 +91,35 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const resultArr = db.prepare(selectStatement).all();
 	db.close();
 
-	const rcptArr: Receipt[] = [];
+	const refArr: Receipt[] = [];
 
 	for (const resultEl of resultArr) {
-		if (!isRcpt(resultEl)) return new Error('Internal database issue');
+		if (!isRef(resultEl)) return new Error('Internal database issue');
 
-		rcptArr.push(
+		refArr.push(
 			new Receipt(
-				resultEl.rcpt_date,
-				resultEl.rcpt_date_offset,
-				resultEl.rcpt_amount,
-				resultEl.rcpt_memo,
+				resultEl.ref_date,
+				resultEl.ref_date_offset,
+				resultEl.ref_amount,
+				resultEl.ref_memo,
 				resultEl.src_id,
 				resultEl.is_debit,
-				resultEl.rcpt_id,
-				resultEl.rcpt_fitid,
+				resultEl.ref_id,
+				resultEl.ref_fitid,
 			),
 		);
 	}
 
-	return rcptArr;
+	return refArr;
 };
 
-function isRcpt(obj: unknown): obj is ReceiptData {
+function isRef(obj: unknown): obj is ReceiptData {
 	return (
-		(obj as ReceiptData)?.rcpt_id !== undefined &&
-		(obj as ReceiptData)?.rcpt_date !== undefined &&
-		(obj as ReceiptData)?.rcpt_date_offset !== undefined &&
-		(obj as ReceiptData)?.rcpt_amount !== undefined &&
-		(obj as ReceiptData)?.rcpt_memo !== undefined &&
+		(obj as ReceiptData)?.ref_id !== undefined &&
+		(obj as ReceiptData)?.ref_date !== undefined &&
+		(obj as ReceiptData)?.ref_date_offset !== undefined &&
+		(obj as ReceiptData)?.ref_amount !== undefined &&
+		(obj as ReceiptData)?.ref_memo !== undefined &&
 		(obj as ReceiptData)?.src_id !== undefined &&
 		(obj as ReceiptData)?.is_debit !== undefined
 	);
