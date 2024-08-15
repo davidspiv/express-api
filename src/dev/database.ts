@@ -1,48 +1,41 @@
-import { execDbTransaction, getData } from './utilDb.js';
+import { getData, execTransaction, execTransactionBound } from './utilDb.js';
 import { parseQueries, parseCsv, parseOfx } from './utilParse.js';
-import Database from 'better-sqlite3';
 import type { Reference } from '../interfaces.js';
 
-const inputReferences = (csvData: Reference[]) => {
-	const db = new Database('accounting.db');
+interface QueryObj {
+	schema: string[];
+	seed: string[];
+	references: Reference[];
+}
 
-	db.transaction(() => {
-		for (const reference of csvData) {
-			const sqlInsertRefs = `
-			INSERT INTO refs (
-				ref_date,
-				ref_date_offset,
-				ref_memo,
-				ref_amount,
-				src_id
-				)
-			VALUES (@date, @dateOffset, @memo, @amount, @srcId);
-			`;
+const buildDb = (queries: QueryObj) => {
+	const { schema, seed, references } = queries;
 
-			//better-sql-3 will reject a class instance
-			db.prepare(sqlInsertRefs).run({ ...reference, srcId: 1 });
-		}
-	})();
-
-	db.close();
-	console.log(`${csvData.length} references input successfully.`);
-};
-
-const buildDb = (data: [string[], string[], Reference[]]) => {
-	const [schema, seed, references] = data;
-
-	execDbTransaction(schema);
+	execTransaction(schema);
 	console.log('Schema successful.');
 
-	execDbTransaction(seed);
+	//pop users, sources, accounts
+	execTransaction(seed);
 	console.log('Initial seed successful.');
 
-	inputReferences(references);
+	//pop refs
+	const queryInsertRefs = `
+	INSERT INTO refs (
+		ref_date,
+		ref_date_offset,
+		ref_memo,
+		ref_amount,
+		src_id
+		)
+	VALUES (@date, @dateOffset, @memo, @amount, @srcId);
+	`;
+	execTransactionBound(queryInsertRefs, references);
+	console.log(`${references.length} references input successfully.`);
 };
 
 const main = async () => {
 	try {
-		const rawData = <string[]>(
+		const [schemaData, seedData, referenceData] = <string[]>(
 			await Promise.all([
 				getData('./src/models/schema.sql'),
 				getData('./src/models/seed.sql'),
@@ -50,15 +43,13 @@ const main = async () => {
 			])
 		);
 
-		const [schemaData, seedData, csvData] = rawData;
+		const queries = {
+			schema: parseQueries(schemaData),
+			seed: parseQueries(seedData),
+			references: parseCsv(referenceData),
+		};
 
-		const parsedData: [string[], string[], Reference[]] = [
-			parseQueries(schemaData),
-			parseQueries(seedData),
-			parseCsv(csvData),
-		];
-
-		buildDb(parsedData);
+		buildDb(queries);
 	} catch (err) {
 		console.log(err);
 	}

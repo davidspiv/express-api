@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import Database from 'better-sqlite3';
+import type { Reference } from '../interfaces.js';
 
 const getData = async (fileName: string) => {
 	const contents = await readFile(fileName, {
@@ -8,15 +9,25 @@ const getData = async (fileName: string) => {
 	return contents;
 };
 
-function execDbTransaction(queries: string[]) {
+const execTransaction = (queries: string[]) => {
 	const db = new Database('accounting.db');
-	const enterQueries = db.transaction(() => {
+	db.transaction(() => {
 		for (const query of queries) {
 			db.prepare(query).run();
 		}
-	});
-	enterQueries();
+	})();
 	db.close();
-}
+};
 
-export { getData, execDbTransaction };
+const execTransactionBound = (queryDynamic: string, models: Reference[]) => {
+	const db = new Database('accounting.db');
+	db.transaction(() => {
+		for (const model of models) {
+			//better-sql-3 will reject a class instance
+			db.prepare(queryDynamic).run({ ...model });
+		}
+	})();
+	db.close();
+};
+
+export { getData, execTransaction, execTransactionBound };
