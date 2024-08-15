@@ -19,35 +19,25 @@ const buildDb = (data: [string[], string[], Receipt[]]) => {
 const inputReceipts = (csvData: Receipt[]) => {
 	const db = new Database('accounting.db');
 
-	const enterReference = db.transaction(() => {
+	db.transaction(() => {
 		for (const reference of csvData) {
-			const refId = randomUUID()
 
 			const sqlInsertRefs = `
 			INSERT INTO refs (
-				ref_id,
 				ref_date,
 				ref_date_offset,
+				ref_memo,
 				ref_amount,
 				src_id
 				)
-			VALUES (@refId, @date, @dateOffset, @amount, @srcId);
+			VALUES (@date, @dateOffset, @memo, @amount, @srcId);
 			`;
+
 			//better-sql-3 will reject a class instance
-			db.prepare(sqlInsertRefs).run({ ...reference, refId, srcId: 1 });
-
-			const sqlInsertMemos = `
-			INSERT OR IGNORE INTO memos (
-				memo_text,
-				ref_id
-				)
-			VALUES (@memo, @refId);
-			`;
-
-			db.prepare(sqlInsertMemos).run({ memo: reference.memo, refId });
+			db.prepare(sqlInsertRefs).run({ ...reference, srcId: 1 });
 		}
-	});
-	enterReference();
+	})();
+
 	db.close();
 	console.log(`${csvData.length} receipts input successfully.`);
 };

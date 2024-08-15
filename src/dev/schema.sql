@@ -35,10 +35,10 @@ CREATE TABLE accounts (
 CREATE TABLE templates (
     template_id TEXT PRIMARY KEY,
     template_percent REAL NOT NULL,
-    memo_id INTEGER NOT NULL,
+    ref_memo INTEGER NOT NULL,
     acc_id INTEGER NOT NULL,
-    FOREIGN KEY (memo_id)
-        REFERENCES memos(memo_id)
+    FOREIGN KEY (ref_memo)
+        REFERENCES refs(ref_memo)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     FOREIGN KEY (acc_id)
@@ -48,9 +48,10 @@ CREATE TABLE templates (
 );
 
 CREATE TABLE refs (
-    ref_id TEXT PRIMARY KEY,
+    ref_id INTEGER PRIMARY KEY,
     ref_date TEXT NOT NULL,
     ref_date_offset INTEGER NOT NULL,
+    ref_memo TEXT NOT NULL,
     ref_amount INTEGER NOT NULL,
     src_id INTEGER NOT NULL,
     ref_fitid TEXT,
@@ -59,17 +60,6 @@ CREATE TABLE refs (
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     UNIQUE (ref_date, ref_date_offset, src_id)
-);
-
-CREATE TABLE memos (
-    memo_id INTEGER PRIMARY KEY,
-    memo_text TEXT NOT NULL,
-    ref_id INTEGER NOT NULL,
-    FOREIGN KEY (ref_id)
-        REFERENCES refs(ref_id)
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT,
-    UNIQUE (memo_text, ref_id)
 );
 
 CREATE TABLE entries (
