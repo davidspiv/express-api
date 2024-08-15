@@ -1,6 +1,6 @@
 import { getData } from './utilDb.js';
 import type { Reference } from '../interfaces.js';
-const { randomUUID } = await import('node:crypto');
+import { randomUUID } from 'node:crypto';
 
 const references: Reference[] = [];
 

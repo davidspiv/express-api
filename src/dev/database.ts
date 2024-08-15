@@ -14,31 +14,35 @@ const main = async () => {
 
 		const createSchema = parseQueries(schemaData);
 		const seedDatabase = parseQueries(seedData);
+		const references = parseCsv(referenceData);
+		const entries = JSON.parse(entryData);
 
 		const insertRefs = `
 		INSERT INTO refs (
+			ref_id,
 			ref_date,
 			ref_date_offset,
 			ref_memo,
 			ref_amount,
 			src_id
 			)
-		VALUES (@date, @dateOffset, @memo, @amount, @srcId);
+		VALUES (@id, @date, @dateOffset, @memo, @amount, @srcId);
 		`;
 
 		const insertEntries = `
 		INSERT INTO entries (
+			entry_id,
 			entry_type,
 			entry_description
 			)
-		VALUES (@type, @description);
+		VALUES (@id, @type, @description);
 		`;
 
 		execTransaction(createSchema);
 		execTransaction(seedDatabase);
 
-		execTransactionBound(insertRefs, parseCsv(referenceData));
-		execTransactionBound(insertEntries, JSON.parse(entryData));
+		execTransactionBound(insertRefs, references);
+		execTransactionBound(insertEntries, entries);
 	} catch (err) {
 		console.log(err);
 	}

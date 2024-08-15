@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import Database from 'better-sqlite3';
 import type { Reference, Entry } from '../interfaces.js';
@@ -25,10 +26,11 @@ const execTransactionBound = (
 	models: (Reference | Entry)[],
 ) => {
 	const db = new Database('accounting.db');
+
 	db.transaction(() => {
 		for (const model of models) {
 			//better-sql-3 will reject a class instance
-			db.prepare(queryDynamic).run({ ...model });
+			db.prepare(queryDynamic).run({ ...model, id: randomUUID() });
 		}
 	})();
 	db.close();
