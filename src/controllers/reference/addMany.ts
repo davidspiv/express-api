@@ -29,6 +29,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		const arr: Reference[] = [];
 
 		for (let i = 0; i < refArr.length; i++) {
+			//move data creation to model
 			const id = randomUUID();
 			const [date, dateOffset, amount, memo, srcId, accCode] = refArr[i];
 			const ref = {
@@ -45,6 +46,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		return arr;
 	}
 
+	//use query to return sorted data
 	function sortRefDataArr() {
 		const filterDate = (date: string) => {
 			return new Date(Number.parseInt(date)).getTime();

@@ -44,9 +44,9 @@ const main = async () => {
 	try {
 		const rawData = <string[]>(
 			await Promise.all([
-				getData('./src/dev/schema.sql'),
-				getData('./src/dev/seed.sql'),
-				getData('./testInputs/receipts(1).csv'),
+				getData('./src/models/schema.sql'),
+				getData('./src/models/seed.sql'),
+				getData('./testInputs/references.csv'),
 			])
 		);
 
