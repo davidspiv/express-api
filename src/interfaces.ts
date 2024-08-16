@@ -20,12 +20,12 @@ interface Account {
 }
 
 interface Reference {
-	id: string;
+	id: string | null;
 	date: string;
 	dateOffset: number;
 	memo: string;
 	amount: number;
-	srcId: string;
+	srcId: string | null;
 	fitid?: string;
 }
 

@@ -1,6 +1,6 @@
-import { getData } from './utilDb.js';
-import { execTransaction, execTransactionBound } from './utilDb.js';
-import { parseQueries, parseCsv, parseOfx } from './utilParse.js';
+import { getDataPromises } from './utilDb.js';
+import { buildSchema, insertModels } from './utilDb.js';
+import { parseQueries, parseCsv } from './utilParse.js';
 
 const main = async () => {
 	const fileNames = [
@@ -13,27 +13,30 @@ const main = async () => {
 	];
 
 	const data: string[] = [];
+	const promises = getDataPromises(fileNames);
 
 	try {
-		const promises = getData(fileNames);
 		data.push(...(await Promise.all(promises)));
 	} catch (err) {
 		console.log(err);
 	}
 
 	const [
-		schemaData,
-		referenceData,
-		accountData,
-		entryData,
-		sourceData,
-		userData,
+		dataSchema,
+		dataReferences,
+		dataAccounts,
+		dataEntries,
+		dataSources,
+		dataUsers,
 	] = data;
 
-	const createSchema = parseQueries(schemaData);
-	execTransaction(createSchema);
+	const schema = parseQueries(dataSchema);
+	const references = parseCsv(dataReferences);
+	const accounts = JSON.parse(dataAccounts);
+	const entries = JSON.parse(dataEntries);
+	const sources = JSON.parse(dataSources);
+	const users = JSON.parse(dataUsers);
 
-	const users = JSON.parse(userData);
 	const insertUsers = `
 		INSERT INTO users (
 			user_id,
@@ -43,14 +46,6 @@ const main = async () => {
 			)
 		VALUES (@id, @name, @email, @password);
 		`;
-	const userIds = execTransactionBound(insertUsers, users);
-
-	//need to add userId
-	const sources = JSON.parse(sourceData);
-	for (const source of sources) {
-		source.userId = userIds[0];
-		source.isDebit = 1; //sqlite accepts bool as 1 or 'TRUE'
-	}
 
 	const insertSources = `
 		INSERT INTO sources (
@@ -61,13 +56,6 @@ const main = async () => {
 			)
 		VALUES (@id, @name, @isDebit, @userId);
 		`;
-	const srcIds = execTransactionBound(insertSources, sources);
-
-	//need to add userId
-	const accounts = JSON.parse(accountData);
-	for (const account of accounts) {
-		account.userId = userIds[0];
-	}
 	const insertAccounts = `
 		INSERT INTO accounts (
 			acc_id,
@@ -77,13 +65,6 @@ const main = async () => {
 			)
 		VALUES (@id, @code, @name, @userId);
 		`;
-	const accountIds = execTransactionBound(insertAccounts, accounts);
-
-	//need to add srcId
-	const references = parseCsv(referenceData);
-	for (const reference of references) {
-		reference.srcId = srcIds[0];
-	}
 	const insertRefs = `
 		INSERT INTO refs (
 			ref_id,
@@ -95,9 +76,6 @@ const main = async () => {
 			)
 		VALUES (@id, @date, @dateOffset, @memo, @amount, @srcId);
 		`;
-	execTransactionBound(insertRefs, references);
-
-	const entries = JSON.parse(entryData);
 	const insertEntries = `
 		INSERT INTO entries (
 			entry_id,
@@ -106,9 +84,6 @@ const main = async () => {
 			)
 		VALUES (@id, @type, @description);
 		`;
-	execTransactionBound(insertEntries, entries);
-
-	//need to add accId and entryId
 	const insertLineItems = `
 		INSERT INTO line_items (
 			line_amount,
@@ -117,6 +92,29 @@ const main = async () => {
 			)
 		VALUES (@id, @type, @description);
 		`;
+
+	buildSchema(schema);
+
+	const userIds = insertModels(insertUsers, users);
+
+	for (const source of sources) {
+		source.userId = userIds[0];
+		source.isDebit = 1; //sqlite accepts bool as 1 or 'TRUE'
+	}
+	const srcIds = insertModels(insertSources, sources);
+
+	for (const account of accounts) {
+		account.userId = userIds[0];
+	}
+
+	const accountIds = insertModels(insertAccounts, accounts);
+
+	for (const reference of references) {
+		reference.srcId = srcIds[0];
+	}
+
+	insertModels(insertRefs, references);
+	insertModels(insertEntries, entries);
 };
 
 main();

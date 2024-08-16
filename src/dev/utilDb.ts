@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import Database from 'better-sqlite3';
 
-const getData = (fileNames: string[]) => {
+const getDataPromises = (fileNames: string[]) => {
 	return fileNames.map((fileName) =>
 		readFile(fileName, {
 			encoding: 'utf8',
@@ -10,7 +10,7 @@ const getData = (fileNames: string[]) => {
 	);
 };
 
-const execTransaction = (queries: string[]) => {
+const buildSchema = (queries: string[]) => {
 	const db = new Database('accounting.db');
 	db.transaction(() => {
 		for (const query of queries) {
@@ -18,13 +18,10 @@ const execTransaction = (queries: string[]) => {
 		}
 	})();
 	db.close();
-	console.log('Transaction successful.');
+	console.log('Schema successful.');
 };
 
-const execTransactionBound = (
-	queryDynamic: string,
-	models: object[],
-): string[] => {
+const insertModels = (queryDynamic: string, models: object[]): string[] => {
 	const db = new Database('accounting.db');
 	const idArr: string[] = [];
 
@@ -41,4 +38,4 @@ const execTransactionBound = (
 	return idArr;
 };
 
-export { getData, execTransaction, execTransactionBound };
+export { getDataPromises, buildSchema, insertModels };
