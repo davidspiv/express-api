@@ -46,6 +46,7 @@ const main = async () => {
 		source.userId = userIds[0];
 		source.isDebit = 1; //sqlite accepts bool as 1 or 'TRUE'
 	}
+
 	const srcIds = insertModels(dynamicQueries.insertSources, sources);
 
 	for (const account of accounts) {
@@ -58,8 +59,9 @@ const main = async () => {
 		reference.srcId = srcIds[0];
 	}
 
-	insertModels(dynamicQueries.insertRefs, references);
-	insertModels(dynamicQueries.insertEntries, entries);
+	const refIds = insertModels(dynamicQueries.insertRefs, references);
+
+	const entryIds = insertModels(dynamicQueries.insertEntries, entries);
 };
 
 main();

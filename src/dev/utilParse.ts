@@ -1,4 +1,5 @@
 import type { Reference } from '../interfaces.js';
+import fakeMemos from './fakeMemos.js';
 
 const references: Reference[] = [];
 
@@ -45,7 +46,8 @@ const parseCsv = (csvData: string) => {
 				),
 			);
 
-			const memo = csvValues[i * totalCol + 1];
+			// const memo = csvValues[i * totalCol + 1];
+			const memo = fakeMemos[Math.floor(Math.random() * (fakeMemos.length - 1))];
 
 			const refObj = { id: null, date, dateOffset, amount, memo, srcId: null };
 
