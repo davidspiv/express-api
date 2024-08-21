@@ -1,9 +1,11 @@
-import { randomUUID } from 'node:crypto';
 import { insertModels } from '../../dev/utilDb.js';
 import Database from 'better-sqlite3';
 import dynamicQueries from '../../dev/dynamicQueries.js';
 
-import type { Reference, ReferenceData } from '../../interfaces.js';
+import type {
+	ReferenceData,
+	ReferenceInput,
+} from '../../interfaces.js';
 
 const readLatest = (srcId: string) => {
 	const selectStatement = `
@@ -25,56 +27,25 @@ const readLatest = (srcId: string) => {
 	return result;
 };
 
-const sortByDate = (refArr: Reference[]) => {
+const sortByDate = (refArr: ReferenceInput[]) => {
 	const filterDate = (date: string) => {
 		return new Date(Number.parseInt(date)).getTime();
 	};
-	refArr.sort(
-		(a: Reference, b: Reference) => filterDate(b.date) - filterDate(a.date),
+
+	return refArr.sort(
+		(a: ReferenceInput, b: ReferenceInput) =>
+			filterDate(b.date) - filterDate(a.date),
 	);
 };
 
-const getFilteredRefs = (references: Reference[]): Reference[] => {
-	const recentDbRef = <ReferenceData | null>(
-		readLatest(references[0].srcId as string)[0]
-	);
-
-	const getSliceIndex = (recentDbRef: ReferenceData) => {
-		const id = recentDbRef.ref_id;
-		if (!id) return 0;
-		for (let i = 0; i < references.length; i++) {
-			if (references[i].id === id) return i;
+const getSliceIndex = (recentDate: string, refArr: ReferenceInput[]) => {
+	for (let i = 0; i < refArr.length; i++) {
+		if (refArr[i].date === recentDate) {
+			return i;
 		}
-		return references.length;
-	};
-
-	if (recentDbRef) {
-		const sortedInputRefArr = sortByDate(references);
-		const sliceIndex = getSliceIndex(recentDbRef);
-		const filteredRefArr = references.slice(0, sliceIndex);
 	}
 
-	const buildInputRefArr = () => {
-		const arr: Reference[] = [];
-
-		for (let i = 0; i < references.length; i++) {
-			//move data creation to model
-			const id = randomUUID();
-			const { date, dateOffset, amount, memo, srcId } = references[i];
-			const ref = {
-				id,
-				date,
-				dateOffset,
-				amount,
-				memo,
-				srcId,
-			};
-			arr.push(ref);
-		}
-		return arr;
-	};
-
-	return buildInputRefArr();
+	return refArr.length;
 };
 
 const getSourceId = () => {
@@ -94,18 +65,25 @@ const getSourceId = () => {
 	return result[0].src_id;
 };
 
-const addMany = (refArr: Reference[]): string => {
-	const sourceId = getSourceId();
+const addMany = (refArr: ReferenceInput[]): string => {
+	const srcId = getSourceId();
+	const refLatest = <ReferenceData[]>readLatest(srcId);
+	const latestDate = refLatest[0]?.ref_date;
 
-	refArr.map((ref) => {
-		ref.srcId = sourceId;
-		return ref;
-	});
+	const filteredRefArr: ReferenceInput[] = [];
+	if (latestDate) {
+		const sortedRefArr = latestDate ? sortByDate(refArr) : refArr;
+		const sliceIndex = getSliceIndex(latestDate, sortedRefArr);
+		console.log(sliceIndex);
+		filteredRefArr.push(...sortedRefArr.slice(0, sliceIndex));
+	} else {
+		filteredRefArr.push(...refArr);
+	}
 
-	// const filteredRefs = getFilteredRefs(references);
+	const modifiedRefArr = filteredRefArr.map((ref) => ({ ...ref, srcId }));
 
 	try {
-		const refIds = insertModels(dynamicQueries.insertRefs, refArr);
+		const refIds = insertModels(dynamicQueries.insertRefs, modifiedRefArr);
 
 		console.log(`${refIds.length} references submitted`);
 		return String(refIds);

@@ -29,6 +29,14 @@ interface Reference {
 	fitid?: string;
 }
 
+interface ReferenceInput {
+	date: string;
+	dateOffset: number;
+	memo: string;
+	amount: number;
+	fitid?: string;
+}
+
 interface ReferenceData {
 	ref_id: string;
 	ref_date: string;
@@ -57,6 +65,7 @@ export type {
 	Account,
 	Reference,
 	ReferenceData,
+	ReferenceInput,
 	Entry,
 	LineItem,
 };
