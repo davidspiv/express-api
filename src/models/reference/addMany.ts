@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
+import { insertModels } from '../../dev/utilDb.js';
 import Database from 'better-sqlite3';
+import dynamicQueries from '../../dev/dynamicQueries.js';
 
 import type { Reference, ReferenceData } from '../../interfaces.js';
 
@@ -21,24 +23,6 @@ const readLatest = (srcId: string) => {
 
 	db.close();
 	return result;
-};
-
-const insertModels = (queryDynamic: string, models: object[]): string[] => {
-	const db = new Database('accounting.db');
-	const idArr: string[] = [];
-
-	db.transaction(() => {
-		for (const model of models) {
-			const id = randomUUID();
-			//better-sql-3 will reject a class instance
-			db.prepare(queryDynamic).run({ ...model, id });
-			idArr.push(id);
-		}
-	})();
-
-	db.close();
-	console.log(`${models.length} models input successfully.`);
-	return idArr;
 };
 
 const sortByDate = (refArr: Reference[]) => {
@@ -93,14 +77,41 @@ const getFilteredRefs = (references: Reference[]): Reference[] => {
 	return buildInputRefArr();
 };
 
-const addMany = (references: Reference[]) => {
-	const dynamicQuery =
-		'INSERT INTO refs ( ref_id, ref_date, ref_date_offset, ref_memo, ref_amount, src_id )VALUES ( @id, @date, @dateOffset, @memo, @amount, @srcId );';
+const getSourceId = () => {
+	const selectStatement = `
+		SELECT *
+		FROM sources;
+		`;
 
-	const filteredRefs = getFilteredRefs(references);
+	const db = new Database('accounting.db', {
+		fileMustExist: true,
+		readonly: true,
+	});
 
-	const refIds = insertModels(dynamicQuery, filteredRefs);
-	return refIds.length;
+	const result = <ReferenceData[]>db.prepare(selectStatement).all();
+
+	db.close();
+	return result[0].src_id;
+};
+
+const addMany = (refArr: Reference[]): string => {
+	const sourceId = getSourceId();
+
+	refArr.map((ref) => {
+		ref.srcId = sourceId;
+		return ref;
+	});
+
+	// const filteredRefs = getFilteredRefs(references);
+
+	try {
+		const refIds = insertModels(dynamicQueries.insertRefs, refArr);
+
+		console.log(`${refIds.length} references submitted`);
+		return String(refIds);
+	} catch (error) {
+		return String(error);
+	}
 };
 
 export { addMany };
