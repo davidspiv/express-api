@@ -29,13 +29,12 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		return next(
 			new Error("@res.body is not an object or doesn't have references key."),
 		);
+
 	const refArr = req.body.references;
 	const isArray = Array.isArray(refArr);
 
 	if (!isArray) return next(new Error('@req.references is not an array.'));
-
 	const message = addMany(refArr);
 
-	// const message = addMany(refArr);
 	res.status(200).json(message);
 };
