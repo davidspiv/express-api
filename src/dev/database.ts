@@ -59,9 +59,9 @@ const main = async () => {
 		reference.srcId = srcIds[0];
 	}
 
-	const refIds = insertModels(dynamicQueries.insertRefs, references);
+	// const refIds = insertModels(dynamicQueries.insertRefs, references);
 
-	const entryIds = insertModels(dynamicQueries.insertEntries, entries);
+	// const entryIds = insertModels(dynamicQueries.insertEntries, entries);
 };
 
 main();

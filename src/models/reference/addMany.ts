@@ -1,7 +1,9 @@
+import { randomUUID } from 'node:crypto';
 import Database from 'better-sqlite3';
-import type { Reference } from '../../interfaces.js';
 
-const readLatest = (srcId: number) => {
+import type { Reference, ReferenceData } from '../../interfaces.js';
+
+const readLatest = (srcId: string) => {
 	const selectStatement = `
 		SELECT *
 		FROM refs
@@ -9,106 +11,96 @@ const readLatest = (srcId: number) => {
 		ORDER BY ref_date
 		DESC LIMIT 1;
 		`;
+
 	const db = new Database('accounting.db', {
 		fileMustExist: true,
 		readonly: true,
 	});
+
 	const result = db.prepare(selectStatement).all();
+
 	db.close();
 	return result;
 };
 
-const addMany = (refArr: Reference[]) => {
-	const db = new Database('accounting.db', { fileMustExist: true });
-	const query = `
-	INSERT INTO
-		document (doc_date_offset, usr_id)
-	VALUES
-	  (@dateOffset, @usrId);
-  INSERT INTO
-		references (ref_id)
-  SELECT last_insert_rowid();
-	`;
-	const statement = db.prepare(query);
-	const insertMany = db.transaction((refArr) => {
-		for (const ref of refArr) {
-			statement.run({ ...ref, usrId: 1 });
+const insertModels = (queryDynamic: string, models: object[]): string[] => {
+	const db = new Database('accounting.db');
+	const idArr: string[] = [];
+
+	db.transaction(() => {
+		for (const model of models) {
+			const id = randomUUID();
+			//better-sql-3 will reject a class instance
+			db.prepare(queryDynamic).run({ ...model, id });
+			idArr.push(id);
 		}
-	});
-	insertMany(refArr);
-	db.close();
-};
-
-const runTestQuery = () => {
-	const usrId = 1;
-	const date = new Date('1/1/2024').toDateString();
-	const dateOffset = 0;
-	const memoText = 'hello';
-
-	const defaultDebitAcc = 5002;
-	const defaultCreditAcc = 1001;
-	const amount = 200;
-
-	const query1 = `
-  INSERT INTO
-    memo (memo_text, usr_id, acc_default_dr, acc_default_cr)
-  VALUES
-    ('${memoText}', ${usrId}, ${defaultDebitAcc}, ${defaultCreditAcc});
-`;
-
-	const query2 = 'SELECT last_insert_rowid();';
-
-	const db = new Database('accounting.db', {
-		fileMustExist: true,
-	});
-
-	const createMemo = db.transaction(() => {
-		db.prepare(query1).run();
-		const selectArr = <[{ 'last_insert_rowid()': number }]>(
-			db.prepare(query2).all()
-		);
-		return selectArr[0]['last_insert_rowid()'];
-	});
-
-	const memoId = createMemo();
-
-	const queryString = `
-    INSERT INTO
-		  document (doc_date_offset, usr_id)
-	  VALUES
-	    (${dateOffset}, ${usrId});
-
-    INSERT INTO
-		  reference (ref_id)
-    VALUES
-	    (last_insert_rowid());
-
-    INSERT INTO
-		  activity (act_memo, act_date, usr_id, doc_id)
-    VALUES
-	    (${memoId}, 'date', ${usrId}, 1);
-
-    INSERT INTO
-		  adjustment (adj_is_dr, adj_amount, act_id, acc_to_adjust)
-    VALUES
-	    (1, ${amount}, last_insert_rowid(), ${defaultDebitAcc});
-
-    INSERT INTO
-		  adjustment (adj_is_dr, adj_amount, act_id, acc_to_adjust)
-    VALUES
-	    (0, ${amount}, last_insert_rowid(), ${defaultCreditAcc});
-	`;
-
-	const queryArr = queryString.split(/(?<=;)/g);
-	queryArr.pop();
-	const enterQueries = db.transaction(() => {
-		for (const query of queryArr) {
-			db.prepare(query).run();
-		}
-	});
-	enterQueries();
+	})();
 
 	db.close();
+	console.log(`${models.length} models input successfully.`);
+	return idArr;
 };
 
-export { readLatest, addMany, runTestQuery };
+const sortByDate = (refArr: Reference[]) => {
+	const filterDate = (date: string) => {
+		return new Date(Number.parseInt(date)).getTime();
+	};
+	refArr.sort(
+		(a: Reference, b: Reference) => filterDate(b.date) - filterDate(a.date),
+	);
+};
+
+const getFilteredRefs = (references: Reference[]): Reference[] => {
+	const recentDbRef = <ReferenceData | null>(
+		readLatest(references[0].srcId as string)[0]
+	);
+
+	const getSliceIndex = (recentDbRef: ReferenceData) => {
+		const id = recentDbRef.ref_id;
+		if (!id) return 0;
+		for (let i = 0; i < references.length; i++) {
+			if (references[i].id === id) return i;
+		}
+		return references.length;
+	};
+
+	if (recentDbRef) {
+		const sortedInputRefArr = sortByDate(references);
+		const sliceIndex = getSliceIndex(recentDbRef);
+		const filteredRefArr = references.slice(0, sliceIndex);
+	}
+
+	const buildInputRefArr = () => {
+		const arr: Reference[] = [];
+
+		for (let i = 0; i < references.length; i++) {
+			//move data creation to model
+			const id = randomUUID();
+			const { date, dateOffset, amount, memo, srcId } = references[i];
+			const ref = {
+				id,
+				date,
+				dateOffset,
+				amount,
+				memo,
+				srcId,
+			};
+			arr.push(ref);
+		}
+		return arr;
+	};
+
+	return buildInputRefArr();
+};
+
+const addMany = (references: Reference[]) => {
+	const dynamicQuery =
+		'INSERT INTO refs ( ref_id, ref_date, ref_date_offset, ref_memo, ref_amount, src_id )VALUES ( @id, @date, @dateOffset, @memo, @amount, @srcId );';
+
+	const filteredRefs = getFilteredRefs(references);
+
+	const refIds = insertModels(dynamicQuery, filteredRefs);
+	return refIds.length;
+};
+
+export { addMany };
