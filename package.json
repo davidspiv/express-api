@@ -5,9 +5,9 @@
 	"type": "module",
 	"main": "index.js",
 	"scripts": {
-		"dev": "pnpm exec tsc --watch & nodemon --env-file=.env dist/index.js",
-		"db": "node ./dist/dev/database.js",
-		"test": "vitest run"
+		"dev": "pnpm exec tsc --watch & node --env-file=.env --watch dist/index.js",
+		"db": "node --env-file=.env ./dist/dev/database.js",
+		"test": "node --test"
 	},
 	"keywords": [],
 	"author": "",
@@ -15,14 +15,12 @@
 	"dependencies": {
 		"better-sqlite3": "^10.0.0",
 		"cors": "^2.8.5",
-		"dotenv": "^16.4.5",
 		"express": "^4.19.2"
 	},
 	"devDependencies": {
 		"node-fetch": "^3.3.2",
-		"nodemon": "^3.1.0",
 		"typescript": "^5.4.5",
-		"vitest": "^1.6.0",
+
 		"@types/better-sqlite3": "^7.6.10",
 		"@types/cors": "^2.8.17",
 		"@types/express": "^4.17.21",
