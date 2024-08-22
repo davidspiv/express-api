@@ -33,6 +33,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
 		res.status(200).json({ refIds });
 	} catch (error) {
-		res.status(500).json(error);
+		const errorMessage = (error as { message: string })?.message;
+		next(new Error(`[DATABASE] ${errorMessage || 'Unknown'}`));
 	}
 };
