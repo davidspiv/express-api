@@ -1,4 +1,4 @@
-import { test } from 'vitest';
+import { describe, it } from 'node:test';
 import fetch from 'node-fetch';
 import type { Reference } from '../../interfaces.js';
 
@@ -11,7 +11,7 @@ async function getData(address: string) {
 	return data;
 }
 
-test('@route GET /api/references: res formatted correctly', async () => {
+describe('@route GET /api/references: res formatted correctly', async () => {
 	const resBody = await getData(
 		`http://localhost:${PORT}/api/references/${idToTest}`,
 	);
