@@ -53,6 +53,12 @@ interface Entry {
 	description: string;
 }
 
+interface EntryData {
+	entry_id: string;
+	entry_type: string;
+	entry_description: string;
+}
+
 interface LineItem {
 	amount: number;
 	entryId: string;
@@ -67,5 +73,6 @@ export type {
 	ReferenceData,
 	ReferenceInput,
 	Entry,
+	EntryData,
 	LineItem,
 };
