@@ -6,21 +6,32 @@ import {
 
 import type { Request, Response, NextFunction } from 'express';
 
+const isError = (body: { references: object[] }) => {
+	if (typeof body !== 'object') {
+		return '[REQUEST BODY] Not an object.';
+	}
+
+	if (!body?.references) {
+		return "[REQUEST BODY] Doesn't have references key.";
+	}
+
+	if (!Array.isArray(body?.references)) {
+		return '[REQUEST BODY] References value is not an array.';
+	}
+
+	return null;
+};
+
 //@route POST /api/references/
 export default (req: Request, res: Response, next: NextFunction) => {
-	if (typeof req.body !== 'object' || !req.body || !('references' in req.body)) {
-		return next(
-			new Error("[REQUEST BODY] Not an object or doesn't have references key."),
-		);
+	const { body } = req;
+	const errorMessage = isError(body);
+
+	if (errorMessage) {
+		return next(new Error(errorMessage));
 	}
 
-	const refArr = req.body.references;
-	const isArray = Array.isArray(refArr);
-
-	if (!isArray) {
-		return next(new Error('[REQUEST BODY] References value is not an array.'));
-	}
-
+	const refArr = body.references;
 	const sourceId = getSourceId();
 	const newRefs = removeDuplicateRefs(sourceId, refArr);
 

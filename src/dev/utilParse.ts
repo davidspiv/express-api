@@ -1,5 +1,14 @@
-import type { Reference } from '../interfaces.js';
 import fakeMemos from './fakeMemos.js';
+
+interface Reference {
+	id: string | null;
+	date: string;
+	dateOffset: number;
+	memo: string;
+	amount: number;
+	srcId: string | null;
+	fitid?: string;
+}
 
 const references: Reference[] = [];
 

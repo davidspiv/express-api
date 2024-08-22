@@ -13,7 +13,7 @@ router.post('/references/', addManyRefs);
 router.get('/references/', readManyRefs);
 
 //Ledger view
-router.post('/entries/', addManyEntries);
-router.get('/entries/', readManyEntries);
+router.post('/journal/', addManyEntries);
+router.get('/journal/', readManyEntries);
 
 export default router;

@@ -40,10 +40,12 @@ export default {
 	insertEntries: `
   INSERT INTO entries (
     entry_id,
+    entry_date,
     entry_type,
-    entry_description
+    entry_description,
+    user_id
     )
-  VALUES (@id, @type, @description);
+  VALUES (@id, @date, @type, @description, @userId);
   `,
 	insertLineItems: `
   INSERT INTO line_items (

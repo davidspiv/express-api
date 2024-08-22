@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Reference, ReferenceData } from '../../interfaces.js';
+import type { Reference, Reference_Data } from './00_interfaces.js';
 
 export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const getMostRecentDate = () => {
@@ -111,13 +111,13 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	return refArr;
 };
 
-function isRef(obj: unknown): obj is ReferenceData {
+function isRef(obj: unknown): obj is Reference_Data {
 	return (
-		(obj as ReferenceData)?.ref_id !== undefined &&
-		(obj as ReferenceData)?.ref_date !== undefined &&
-		(obj as ReferenceData)?.ref_date_offset !== undefined &&
-		(obj as ReferenceData)?.ref_memo !== undefined &&
-		(obj as ReferenceData)?.ref_amount !== undefined &&
-		(obj as ReferenceData)?.src_id !== undefined
+		(obj as Reference_Data)?.ref_id !== undefined &&
+		(obj as Reference_Data)?.ref_date !== undefined &&
+		(obj as Reference_Data)?.ref_date_offset !== undefined &&
+		(obj as Reference_Data)?.ref_memo !== undefined &&
+		(obj as Reference_Data)?.ref_amount !== undefined &&
+		(obj as Reference_Data)?.src_id !== undefined
 	);
 }

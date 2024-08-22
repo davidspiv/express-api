@@ -1,6 +1,6 @@
 import {describe, it} from 'node:test';
 import fetch from 'node-fetch';
-import type { Reference } from '../../interfaces.js';
+import type { Reference } from '../../models/reference/00_interfaces.js';
 
 const PORT = process.env.PORT;
 

@@ -64,8 +64,15 @@ CREATE TABLE refs (
 
 CREATE TABLE entries (
     entry_id TEXT PRIMARY KEY,
+    entry_date TEXT NOT NULL,
     entry_type TEXT NOT NULL,
-    entry_description TEXT NOT NULL
+    entry_description TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    UNIQUE (entry_date, entry_type, entry_description, user_id)
 );
 
 CREATE TABLE entry_refs (

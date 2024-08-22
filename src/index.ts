@@ -1,5 +1,5 @@
 import express from 'express';
-import router from './routes/references.js';
+import router from './routes/index.js';
 import logger from './middlewares/logger.js';
 import errorHandler from './middlewares/errorHandler.js';
 import notFound from './middlewares/notFound.js';

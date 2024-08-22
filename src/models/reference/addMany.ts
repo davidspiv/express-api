@@ -1,8 +1,8 @@
 import Database from 'better-sqlite3';
-import { randomUUID } from 'node:crypto';
 import dynamicQueries from '../../dev/dynamicQueries.js';
+import { randomUUID } from 'node:crypto';
 
-import type { ReferenceData, ReferenceInput } from '../../interfaces.js';
+import type { Reference_Data, Reference_Input } from './00_interfaces.js';
 
 const readLatest = (srcId: string) => {
 	const selectStatement = `
@@ -35,24 +35,24 @@ const getSourceId = () => {
 		readonly: true,
 	});
 
-	const result = <ReferenceData[]>db.prepare(selectStatement).all();
+	const result = <Reference_Data[]>db.prepare(selectStatement).all();
 
 	db.close();
 	return result[0].src_id;
 };
 
-const sortByDate = (refArr: ReferenceInput[]) => {
+const sortByDate = (refArr: Reference_Input[]) => {
 	const filterDate = (date: string) => {
 		return new Date(Number.parseInt(date)).getTime();
 	};
 
 	return refArr.sort(
-		(a: ReferenceInput, b: ReferenceInput) =>
+		(a: Reference_Input, b: Reference_Input) =>
 			filterDate(b.date) - filterDate(a.date),
 	);
 };
 
-const getSliceIndex = (recentDate: string, refArr: ReferenceInput[]) => {
+const getSliceIndex = (recentDate: string, refArr: Reference_Input[]) => {
 	for (let i = 0; i < refArr.length; i++) {
 		if (refArr[i].date <= recentDate) {
 			return i;
@@ -62,8 +62,8 @@ const getSliceIndex = (recentDate: string, refArr: ReferenceInput[]) => {
 	return refArr.length;
 };
 
-const removeDuplicateRefs = (srcId: string, refArr: ReferenceInput[]) => {
-	const refLatest = <ReferenceData[]>readLatest(srcId);
+const removeDuplicateRefs = (srcId: string, refArr: Reference_Input[]) => {
+	const refLatest = <Reference_Data[]>readLatest(srcId);
 	const latestDate = refLatest[0]?.ref_date;
 
 	if (!latestDate) {
@@ -77,7 +77,7 @@ const removeDuplicateRefs = (srcId: string, refArr: ReferenceInput[]) => {
 	return filteredRefArr;
 };
 
-const insertRefs = (srcId: string, models: ReferenceInput[]) => {
+const insertRefs = (srcId: string, models: Reference_Input[]) => {
 	const db = new Database('accounting.db');
 	const idArr: string[] = [];
 
