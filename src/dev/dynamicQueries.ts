@@ -8,6 +8,7 @@ export default {
     )
   VALUES (@id, @name, @email, @password);
   `,
+  
 	insertSources: `
   INSERT INTO sources (
     src_id,
@@ -17,6 +18,7 @@ export default {
     )
   VALUES (@id, @name, @isDebit, @userId);
   `,
+
 	insertAccounts: `
   INSERT INTO accounts (
     acc_id,
@@ -26,6 +28,7 @@ export default {
     )
   VALUES (@id, @code, @name, @userId);
   `,
+
 	insertRefs: `
   INSERT INTO refs (
     ref_id,
@@ -37,6 +40,7 @@ export default {
     )
   VALUES (@id, @date, @dateOffset, @memo, @amount, @srcId);
   `,
+
 	insertEntries: `
   INSERT INTO entries (
     entry_id,
@@ -47,12 +51,18 @@ export default {
     )
   VALUES (@id, @date, @type, @description, @userId);
   `,
+
 	insertLineItems: `
   INSERT INTO line_items (
+    line_id,
     line_amount,
-    acc_id,
+    acc_code,
     entry_id
     )
-  VALUES (@id, @type, @description);
+    VALUES ( @id, @amount, @accCode, @entryId );
+  `,
+
+  insertEntryRefs: `
+  INSERT INTO entry_refs ( ref_id, entry_id ) VALUES ( @refIf, @entryId );
   `,
 };

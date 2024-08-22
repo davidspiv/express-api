@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import dynamicQueries from '../../dev/dynamicQueries.js';
 import { randomUUID } from 'node:crypto';
 
-import type { User_Data, Entry_Input } from '../../interfaces.js';
+import type { User_Data, Entry_Input } from '../../types.js';
 
 const getUserId = () => {
 	const selectStatement = `
@@ -28,17 +28,28 @@ const insertEntries = (models: Entry_Input[]) => {
 
 	db.transaction(() => {
 		for (const model of models) {
-			const id = randomUUID();
+			const entryId = randomUUID();
 
-			//better-sql-3 will reject a class instance
-			db.prepare(dynamicQueries.insertEntries).run({ ...model, id, userId });
-			idArr.push(id);
+			db
+				.prepare(dynamicQueries.insertEntries)
+				.run({ ...model, id: entryId, userId });
+
+			db.transaction(() => {
+				for (const lineItem of model.lineItems) {
+					const lineItemId = randomUUID();
+					db
+						.prepare(dynamicQueries.insertLineItems)
+						.run({ ...lineItem, id: lineItemId, entryId: '212313' });
+				}
+
+				idArr.push(entryId);
+			});
 		}
 	})();
 
 	db.close();
 	console.log(`${models.length} entries input successfully.`);
-	return idArr;
+	return models[0];
 };
 
 export { insertEntries };

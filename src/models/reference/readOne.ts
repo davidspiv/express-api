@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 
-import type { Reference, Reference_Data } from '../../interfaces.js';
+import type { Reference, Reference_Data } from '../../types.js';
 
 export default (id: string) => {
 	const selectStatement = `

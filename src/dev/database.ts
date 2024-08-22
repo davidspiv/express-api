@@ -38,7 +38,6 @@ const main = async () => {
 	const sources = JSON.parse(dataSources);
 	const users = JSON.parse(dataUsers);
 
-	// console.log(JSON.stringify(references.slice(0, 10)));
 	buildSchema(schema);
 
 	const userIds = insertModels(dynamicQueries.insertUsers, users);

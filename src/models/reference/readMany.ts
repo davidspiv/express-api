@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Reference, Reference_Data } from '../../interfaces.js';
+import type { Reference, Reference_Data } from '../../types.js';
 
 export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const getMostRecentDate = () => {

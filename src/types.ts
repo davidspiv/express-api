@@ -13,6 +13,7 @@ export interface Entry {
 export interface Entry_Input {
 	date: string;
 	type: string;
+	lineItems: LineItem_Input[];
 	description: string;
 }
 
@@ -23,9 +24,15 @@ export interface Entry_Data {
 	user_id: string;
 }
 
+export interface LineItem {
+	amount: number;
+	entryId: string;
+	accCode: number;
+}
+
 export interface LineItem_Input {
 	amount: number;
-	accId: number;
+	accCode: number;
 }
 
 export interface LineItem_Data {
@@ -88,10 +95,4 @@ export interface Account {
 	code: string;
 	typeId: string;
 	initialBal?: number;
-}
-
-export interface LineItem {
-	amount: number;
-	entryId: string;
-	accId: number;
 }

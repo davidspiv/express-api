@@ -90,16 +90,17 @@ CREATE TABLE entry_refs (
 );
 
 CREATE TABLE line_items (
+    line_id TEXT PRIMARY KEY,
     line_amount INTEGER NOT NULL,
-    acc_id INTEGER NOT NULL,
+    acc_code INTEGER NOT NULL,
     entry_id TEXT NOT NULL,
-    FOREIGN KEY (acc_id)
-        REFERENCES accounts(acc_id)
+    FOREIGN KEY (acc_code)
+        REFERENCES accounts(acc_code)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     FOREIGN KEY (entry_id)
         REFERENCES entries(entry_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
-    PRIMARY KEY (entry_id, acc_id)
+    UNIQUE (entry_id, acc_code)
 );

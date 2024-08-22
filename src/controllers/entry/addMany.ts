@@ -34,7 +34,10 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
 		res.status(200).json({ entryIds });
 	} catch (error) {
-		const errorMessage = (error as { message: string })?.message;
-		next(new Error(`[DATABASE ERR] ${errorMessage || 'Unknown'}`));
+		next(
+			new Error(
+				`[DATABASE ERR] ${(error as { message: string })?.message || 'unknown'}`,
+			),
+		);
 	}
 };
