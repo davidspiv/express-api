@@ -7,7 +7,7 @@ export default (
 	next: NextFunction,
 ) => {
 	if (err.message) {
-		res.json({ message: err.message });
+		res.json(err.message);
 		return;
 	}
 

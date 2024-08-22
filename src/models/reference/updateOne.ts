@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Reference } from './00_interfaces.js';
+import type { Reference } from '../../interfaces.js';
 
 export default (ref: Reference) => {
 	const { id, date, dateOffset, amount, memo, srcId } = ref;

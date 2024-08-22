@@ -4,15 +4,15 @@ import type { Request, Response, NextFunction } from 'express';
 
 const isError = (body: { entries: object[] }) => {
 	if (typeof body !== 'object') {
-		return '[REQUEST BODY] Not an object.';
+		return '[REQUEST BODY ERR] Not an object.';
 	}
 
 	if (!body?.entries) {
-		return "[REQUEST BODY] Doesn't have entries key.";
+		return "[REQUEST BODY ERR] Doesn't have entries key.";
 	}
 
 	if (!Array.isArray(body?.entries)) {
-		return '[REQUEST BODY] Entries value is not an array.';
+		return '[REQUEST BODY ERR] Entries value is not an array.';
 	}
 
 	return null;
@@ -35,6 +35,6 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		res.status(200).json({ entryIds });
 	} catch (error) {
 		const errorMessage = (error as { message: string })?.message;
-		next(new Error(`[DATABASE] ${errorMessage || 'Unknown'}`));
+		next(new Error(`[DATABASE ERR] ${errorMessage || 'Unknown'}`));
 	}
 };

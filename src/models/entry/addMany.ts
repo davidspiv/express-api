@@ -2,8 +2,7 @@ import Database from 'better-sqlite3';
 import dynamicQueries from '../../dev/dynamicQueries.js';
 import { randomUUID } from 'node:crypto';
 
-import type { User_Data } from '../../interfaces.js';
-import type { Entry_Input } from './00_interfaces.js';
+import type { User_Data, Entry_Input } from '../../interfaces.js';
 
 const getUserId = () => {
 	const selectStatement = `
