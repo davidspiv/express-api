@@ -15,6 +15,7 @@ export interface Entry_Input {
 	type: string;
 	lineItems: LineItem_Input[];
 	description: string;
+	refId?: string;
 }
 
 export interface Entry_Data {

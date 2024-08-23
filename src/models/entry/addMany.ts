@@ -21,22 +21,24 @@ const getUserId = () => {
 	return result[0].user_id;
 };
 
-const insertEntries = (models: Entry_Input[]) => {
+const insertEntries = (entries: Entry_Input[]) => {
 	const idArr: string[] = [];
 	const userId = getUserId();
 	const db = new Database('accounting.db');
 
 	db.transaction(() => {
-		for (const model of models) {
+		for (const entry of entries) {
 			const entryId = randomUUID();
 
+			//TABLE entries
 			db
 				.prepare(dynamicQueries.insertEntries)
-				.run({ ...model, id: entryId, userId });
+				.run({ ...entry, id: entryId, userId });
 
-			for (const lineItem of model.lineItems) {
+			for (const lineItem of entry.lineItems) {
 				const lineItemId = randomUUID();
 
+				//TABLE line-items
 				db.prepare(dynamicQueries.insertLineItems).run({
 					...lineItem,
 					id: lineItemId,
@@ -44,13 +46,19 @@ const insertEntries = (models: Entry_Input[]) => {
 				});
 			}
 
+			//TABLE entry-refs
+			db.prepare(dynamicQueries.insertEntryRefs).run({
+				refId: entry.refId,
+				entryId,
+			});
+
 			idArr.push(entryId);
 		}
 	})();
 
 	db.close();
-	console.log(`${models.length} entries input successfully.`);
-	return models[0];
+	console.log(`${entries.length} entries input successfully.`);
+	return entries[0];
 };
 
 export { insertEntries };

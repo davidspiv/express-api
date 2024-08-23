@@ -8,7 +8,7 @@ export default {
     )
   VALUES (@id, @name, @email, @password);
   `,
-  
+
 	insertSources: `
   INSERT INTO sources (
     src_id,
@@ -62,7 +62,7 @@ export default {
     VALUES ( @id, @amount, @accCode, @entryId );
   `,
 
-  insertEntryRefs: `
-  INSERT INTO entry_refs ( ref_id, entry_id ) VALUES ( @refIf, @entryId );
+	insertEntryRefs: `
+  INSERT INTO entry_refs ( ref_id, entry_id ) VALUES ( @refId, @entryId );
   `,
 };
