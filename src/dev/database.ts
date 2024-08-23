@@ -1,14 +1,22 @@
 import { getDataPromises } from './utilDb.js';
 import { buildSchema, insertModels } from './utilDb.js';
-import { parseQueries, parseCsv } from './utilParse.js';
 import dynamicQueries from './dynamicQueries.js';
+
+const parseQueries = (data: string) => {
+	const queryArr = data.split(/(?<=;)/g);
+
+	const filteredQueryArr = queryArr.filter((query) => {
+		const firstWord = query.trim().split(' ')[0];
+		return firstWord === 'CREATE' || firstWord === 'INSERT';
+	});
+
+	return filteredQueryArr;
+};
 
 const main = async () => {
 	const fileNames = [
 		'./src/models/schema.sql',
-		'./testInputs/transactions.csv',
 		'./testInputs/accounts.json',
-		'./testInputs/entries.json',
 		'./testInputs/sources.json',
 		'./testInputs/users.json',
 	];
@@ -24,17 +32,13 @@ const main = async () => {
 
 	const [
 		dataSchema,
-		dataReferences,
 		dataAccounts,
-		dataEntries,
 		dataSources,
 		dataUsers,
 	] = data;
 
 	const schema = parseQueries(dataSchema);
-	const references = parseCsv(dataReferences);
 	const accounts = JSON.parse(dataAccounts);
-	const entries = JSON.parse(dataEntries);
 	const sources = JSON.parse(dataSources);
 	const users = JSON.parse(dataUsers);
 
@@ -47,21 +51,13 @@ const main = async () => {
 		source.isDebit = 1; //sqlite accepts bool as 1 or 'TRUE'
 	}
 
-	const srcIds = insertModels(dynamicQueries.insertSources, sources);
+	insertModels(dynamicQueries.insertSources, sources);
 
 	for (const account of accounts) {
 		account.userId = userIds[0];
 	}
 
-	const accountIds = insertModels(dynamicQueries.insertAccounts, accounts);
-
-	// for (const reference of references) {
-	// 	reference.srcId = srcIds[0];
-	// }
-
-	// const refIds = insertModels(dynamicQueries.insertRefs, references);
-
-	// const entryIds = insertModels(dynamicQueries.insertEntries, entries);
+	insertModels(dynamicQueries.insertAccounts, accounts);
 };
 
 main();
