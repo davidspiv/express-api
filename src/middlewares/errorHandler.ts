@@ -7,6 +7,7 @@ export default (
 	next: NextFunction,
 ) => {
 	if (err.message) {
+		console.log(err.message);
 		res.status(400).json({ message: err.message });
 		return;
 	}

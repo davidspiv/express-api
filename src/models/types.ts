@@ -2,20 +2,20 @@ export interface ApiShape {
 	entries: [Entry_Input, lineItems: LineItem_Input[]];
 }
 
-export interface Entry {
-	is: string;
-	date: string;
-	type: string; //Opening, Transfer, Closing, Adjusting, Compound
-	description: string;
-	userId: string;
-}
-
 export interface Entry_Input {
 	date: string;
 	type: string;
 	lineItems: LineItem_Input[];
 	description: string;
 	refId?: string;
+}
+
+export interface Entry {
+	is: string;
+	date: string;
+	type: string; //Opening, Transfer, Closing, Adjusting, Compound
+	description: string;
+	userId: string;
 }
 
 export interface Entry_Data {
@@ -25,14 +25,14 @@ export interface Entry_Data {
 	user_id: string;
 }
 
-export interface LineItem {
+export interface LineItem_Input {
 	amount: number;
-	entryId: string;
 	accCode: number;
 }
 
-export interface LineItem_Input {
+export interface LineItem {
 	amount: number;
+	entryId: string;
 	accCode: number;
 }
 
@@ -42,6 +42,14 @@ export interface LineItem_Data {
 	entry_id: string;
 }
 
+export interface Reference_Input {
+	date: string;
+	dateOffset: number;
+	memo: string;
+	amount: number;
+	fitid?: string;
+}
+
 export interface Reference {
 	id: string;
 	date: string;
@@ -49,14 +57,6 @@ export interface Reference {
 	memo: string;
 	amount: number;
 	srcId: string;
-	fitid?: string;
-}
-
-export interface Reference_Input {
-	date: string;
-	dateOffset: number;
-	memo: string;
-	amount: number;
 	fitid?: string;
 }
 

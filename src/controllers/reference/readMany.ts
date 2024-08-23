@@ -19,9 +19,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	);
 
 	if (refArr instanceof Error) {
-		res.status(500);
-		next(refArr);
-		return;
+		return next(refArr);
 	}
 
 	const limitData = String(req.query.limit);

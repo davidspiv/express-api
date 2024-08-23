@@ -1,5 +1,7 @@
 import Database from 'better-sqlite3';
-import type { Reference, Reference_Data } from '../types.js';
+import { removeDbPrefix, snakeToCamel } from '../../dev/snakeToCamel.js';
+
+import type { Reference } from '../types.js';
 
 export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const getMostRecentDate = () => {
@@ -14,7 +16,7 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 				fileMustExist: true,
 				readonly: true,
 			});
-			const recentRef = <[Reference_Data] | []>(
+			const recentRef = <[{ ref_date: string }] | []>(
 				db.prepare(recentRefStatement).all()
 			);
 			db.close();
@@ -91,36 +93,32 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 		readonly: true,
 	});
 	const resultArr = db.prepare(selectStatement).all();
+
 	db.close();
 
-	const refArr: Reference[] = [];
-
 	for (const resultEl of resultArr) {
-		if (!isRef(resultEl)) return new Error('Internal database issue');
+		const obj = resultEl as Record<string, string | number | null>;
+		const keys = Object.keys(obj);
+		for (const key of keys) {
+			const newKey = snakeToCamel(removeDbPrefix(key));
 
-		const reference: Reference = {
-			id: resultEl.ref_id,
-			date: resultEl.ref_date,
-			dateOffset: resultEl.ref_date_offset,
-			memo: resultEl.ref_memo,
-			amount: resultEl.ref_amount,
-			srcId: resultEl.src_id,
-			fitid: resultEl.ref_fitid,
-		};
-
-		refArr.push(reference);
+			delete Object.assign(obj, { [newKey]: obj[key] })[key];
+		}
+		if (!isRef(obj)) {
+			return new Error('[DATABASE] references formatted incorrectly');
+		}
 	}
 
-	return refArr;
+	return resultArr;
 };
 
-function isRef(obj: unknown): obj is Reference_Data {
+function isRef(obj: unknown): obj is Reference {
 	return (
-		(obj as Reference_Data)?.ref_id !== undefined &&
-		(obj as Reference_Data)?.ref_date !== undefined &&
-		(obj as Reference_Data)?.ref_date_offset !== undefined &&
-		(obj as Reference_Data)?.ref_memo !== undefined &&
-		(obj as Reference_Data)?.ref_amount !== undefined &&
-		(obj as Reference_Data)?.src_id !== undefined
+		(obj as Reference)?.id !== undefined &&
+		(obj as Reference)?.date !== undefined &&
+		(obj as Reference)?.dateOffset !== undefined &&
+		(obj as Reference)?.memo !== undefined &&
+		(obj as Reference)?.amount !== undefined &&
+		(obj as Reference)?.id !== undefined
 	);
 }
