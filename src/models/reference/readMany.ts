@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Reference, Reference_Data } from '../../types.js';
+import type { Reference, Reference_Data } from '../types.js';
 
 export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
 	const getMostRecentDate = () => {
@@ -9,16 +9,19 @@ export default (timeInput = 'all', accInput = 'all', limitInput = 0) => {
     ORDER BY ref_date
     DESC LIMIT 1;
     `;
-		const db = new Database('accounting.db', {
-			fileMustExist: true,
-			readonly: true,
-		});
-		const recentRef = <[{ ref_date: string }] | null>(
-			db.prepare(recentRefStatement).all()
-		);
-		db.close();
-
-		return recentRef ? recentRef[0].ref_date : 'now';
+		try {
+			const db = new Database('accounting.db', {
+				fileMustExist: true,
+				readonly: true,
+			});
+			const recentRef = <[Reference_Data] | []>(
+				db.prepare(recentRefStatement).all()
+			);
+			db.close();
+			return recentRef[0] ? recentRef[0].ref_date : new Date().toISOString();
+		} catch (error) {
+			return new Date().toISOString();
+		}
 	};
 
 	const targetDate = getMostRecentDate();

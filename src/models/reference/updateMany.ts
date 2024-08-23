@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Reference } from '../../types.js';
+import type { Reference } from '../types.js';
 
 export default (refArr: Reference[]) => {
 	const db = new Database('accounting.db', { fileMustExist: true });

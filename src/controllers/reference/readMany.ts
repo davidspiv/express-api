@@ -37,7 +37,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 	}
 
 	const error = new Error('Server Error');
-
-	res.status(500);
 	next(error);
+
+	// res.status(200).json({ references: [] });
 };

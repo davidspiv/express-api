@@ -7,9 +7,9 @@ export default (
 	next: NextFunction,
 ) => {
 	if (err.message) {
-		res.json(err.message);
+		res.status(400).json({ message: err.message });
 		return;
 	}
 
-	res.status(500).json({ message: err.message });
+	res.status(500).json({ result: 'error', message: 'Unknown' });
 };

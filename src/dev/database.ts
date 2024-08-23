@@ -55,9 +55,9 @@ const main = async () => {
 
 	const accountIds = insertModels(dynamicQueries.insertAccounts, accounts);
 
-	for (const reference of references) {
-		reference.srcId = srcIds[0];
-	}
+	// for (const reference of references) {
+	// 	reference.srcId = srcIds[0];
+	// }
 
 	// const refIds = insertModels(dynamicQueries.insertRefs, references);
 

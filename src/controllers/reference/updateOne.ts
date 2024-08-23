@@ -2,7 +2,7 @@ import readOne from '../../models/reference/readOne.js';
 import updateOne from '../../models/reference/updateOne.js';
 
 import type { Request, Response, NextFunction } from 'express';
-import type { Reference } from '../../types.js';
+import type { Reference } from '../../models/types.js';
 
 //@route PUT /api/references/update
 export default (req: Request, res: Response, next: NextFunction) => {
