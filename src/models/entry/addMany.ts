@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import dynamicQueries from '../../dev/dynamicQueries.js';
+import dynamicQueries from '../dynamicQueries.js';
 import { randomUUID } from 'node:crypto';
 
 import type { User_Data, Entry_Input } from '../types.js';
@@ -34,13 +34,15 @@ const insertEntries = (models: Entry_Input[]) => {
 				.prepare(dynamicQueries.insertEntries)
 				.run({ ...model, id: entryId, userId });
 
-			// for (const lineItem of model.lineItems) {
-			// 	const lineItemId = randomUUID();
+			for (const lineItem of model.lineItems) {
+				const lineItemId = randomUUID();
 
-			// 	db
-			// 		.prepare(dynamicQueries.insertLineItems)
-			// 		.run({ ...lineItem, id: lineItemId, entryId });
-			// }
+				db.prepare(dynamicQueries.insertLineItems).run({
+					...lineItem,
+					id: lineItemId,
+					entryId,
+				});
+			}
 
 			idArr.push(entryId);
 		}

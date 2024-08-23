@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import getFormData from '../models/getFormData.js';
+import getFormData from '../models/report/getFormData.js';
 
 export default (req: Request, res: Response, next: NextFunction) => {
 	const data = getFormData();

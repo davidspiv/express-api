@@ -1,6 +1,6 @@
 import { getDataPromises } from './utilDb.js';
 import { buildSchema, insertModels } from './utilDb.js';
-import dynamicQueries from './dynamicQueries.js';
+import dynamicQueries from '../models/dynamicQueries.js';
 
 const parseQueries = (data: string) => {
 	const queryArr = data.split(/(?<=;)/g);
@@ -30,12 +30,7 @@ const main = async () => {
 		console.log(err);
 	}
 
-	const [
-		dataSchema,
-		dataAccounts,
-		dataSources,
-		dataUsers,
-	] = data;
+	const [dataSchema, dataAccounts, dataSources, dataUsers] = data;
 
 	const schema = parseQueries(dataSchema);
 	const accounts = JSON.parse(dataAccounts);

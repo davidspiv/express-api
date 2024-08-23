@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import getAccData from '../models/getAccData.js';
+import getAccData from '../models/report/getAccData.js';
 
 export default (req: Request, res: Response, next: NextFunction) => {
 	const data = getAccData();

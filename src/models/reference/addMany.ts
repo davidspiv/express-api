@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import dynamicQueries from '../../dev/dynamicQueries.js';
+import dynamicQueries from '../dynamicQueries.js';
 import { randomUUID } from 'node:crypto';
 
 import type { Reference_Data, Reference_Input } from '../types.js';
