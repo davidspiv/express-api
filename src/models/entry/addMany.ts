@@ -34,16 +34,15 @@ const insertEntries = (models: Entry_Input[]) => {
 				.prepare(dynamicQueries.insertEntries)
 				.run({ ...model, id: entryId, userId });
 
-			db.transaction(() => {
-				for (const lineItem of model.lineItems) {
-					const lineItemId = randomUUID();
-					db
-						.prepare(dynamicQueries.insertLineItems)
-						.run({ ...lineItem, id: lineItemId, entryId: '212313' });
-				}
+			// for (const lineItem of model.lineItems) {
+			// 	const lineItemId = randomUUID();
 
-				idArr.push(entryId);
-			});
+			// 	db
+			// 		.prepare(dynamicQueries.insertLineItems)
+			// 		.run({ ...lineItem, id: lineItemId, entryId });
+			// }
+
+			idArr.push(entryId);
 		}
 	})();
 

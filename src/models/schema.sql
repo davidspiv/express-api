@@ -94,12 +94,12 @@ CREATE TABLE line_items (
     line_amount INTEGER NOT NULL,
     acc_code INTEGER NOT NULL,
     entry_id TEXT NOT NULL,
-    FOREIGN KEY (acc_code)
-        REFERENCES accounts(acc_code)
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT,
     FOREIGN KEY (entry_id)
         REFERENCES entries(entry_id)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT,
+    FOREIGN KEY (acc_code)
+        REFERENCES accounts(acc_code)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
     UNIQUE (entry_id, acc_code)
